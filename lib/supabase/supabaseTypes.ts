@@ -1,0 +1,1 @@
+/// either generate a supabase types file from your supabase dashboard (and delete this one) or copy paste your types here
