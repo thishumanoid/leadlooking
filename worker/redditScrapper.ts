@@ -1,5 +1,7 @@
 import axios from 'axios';
-import { cleanText } from '@/utils/functions/helpers';
+import { cleanText, delay } from '@/utils/functions/helpers';
+import { analysePost } from './ai/analyseIntent';
+
 
 interface RedditPost {
   id: string;
@@ -38,46 +40,40 @@ interface RedditSearchResponse {
 
 async function scanRedditForKeywords(
   keywords: string[],
-  limit: number = 10
+  limit: number = 5
 ): Promise<RedditPost[]> {
   const allPosts: RedditPost[] = [];
-  const seenPostIds = new Set<string>();
+  const seenPostIds = new Set();
 
-  // Reddit API base URL
   const baseUrl = 'https://www.reddit.com/search.json';
 
   for (const keyword of keywords) {
     try {
       console.log(`Searching for keyword: "${keyword}"`);
 
-      // Make request to Reddit's search API
       const response = await axios.get<RedditSearchResponse>(baseUrl, {
         params: {
           q: `"${keyword}"`,
           sort: 'new',
-          limit: 5,
-          // t: 'all',
+          limit: limit,
         },
         headers: {
           'User-Agent': 'RedditKeywordScanner/1.0',
         },
       });
 
-      // Process the results
       const posts = response.data.data.children;
 
 
       for (const post of posts) {
         const postData = post.data;
 
-        // Skip if we've already seen this post (from another keyword)
         if (seenPostIds.has(postData.id)) {
           continue;
         }
 
         seenPostIds.add(postData.id);
 
-        // Add post to results
         allPosts.push({
           id: postData.id,
           title: postData.title,
@@ -93,7 +89,6 @@ async function scanRedditForKeywords(
         });
       }
 
-      // Add delay between requests to respect rate limits
       await new Promise((resolve) => setTimeout(resolve, 2000));
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -113,26 +108,42 @@ async function scanRedditForKeywords(
   return allPosts;
 }
 
-// Example usage:
+
+export const EXAMPLE = {
+  title: '',
+  content: ``,
+  keywords: ['need boilerplate'],
+  productDescription:
+    'A production-ready Next.js boilerplate designed to help you build and launch faster. It comes with a clean project structure, modern best practices, and essential features preconfigured so you can focus on your product instead of setup. Ideal for developers who want a solid foundation for scalable, maintainable web applications.',
+};
+
 export default async function runReddit() {
-  const keywords = ['SEO specialist wanted'];
+  const keywords = EXAMPLE.keywords;
+  const productDescription = EXAMPLE.productDescription
 
-  const posts = await scanRedditForKeywords(keywords, 5);
+  const posts = await scanRedditForKeywords(keywords, 2);
 
-  console.log(`Found ${posts.length} posts`);
 
-  // Display first few results
-  posts.slice(0, 5).forEach((post) => {
+  for (const post of posts) {
+    const postLabels = await analysePost(post.title, post.selftext, productDescription, keywords)
+    console.log('📄📄postLabels: ', postLabels)
+
     console.log('------------------------------------------------------------');
-    console.log(`Title: ${post.title}`);
-    console.log(`Subreddit: r/${post.subreddit}`);
-    console.log(`Author: u/${post.author}`);
+    // console.log(`Title: ${post.title}`);
+    // console.log(`Subreddit: r/${post.subreddit}`);
+    // console.log(`Author: u/${post.author}`);
     // console.log(`Matched: "${post.matchedKeyword}"`);
     console.log(`URL: ${post.permalink}`);
-    console.log(`Post Text: ${post.selftext}`)
-    console.log(`Posted: ${new Date(post.created_utc * 1000).toLocaleString()}`);
+    // console.log(`Post Text: ${post.selftext}`)
+    // console.log(`Posted: ${new Date(post.created_utc * 1000).toLocaleString()}`);
     console.log('------------------------------------------------------------');
-  });
+
+    console.log('delllayyyy start')
+    
+    await delay(10000)
+    console.log('delllayyyy end')
+  }
+
 }
 
 
