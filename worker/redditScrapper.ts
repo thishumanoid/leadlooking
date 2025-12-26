@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { cleanText, delay } from '@/utils/functions/helpers';
+import { cleanText, delay, truncateText } from '@/utils/functions/helpers';
 import { analysePost } from './ai/analyseIntent';
 
 
@@ -77,7 +77,7 @@ async function scanRedditForKeywords(
         allPosts.push({
           id: postData.id,
           title: postData.title,
-          selftext: cleanText(postData.selftext) ,
+          selftext: truncateText(cleanText(postData.selftext), 700),
           author: postData.author,
           subreddit: postData.subreddit,
           created_utc: postData.created_utc,
@@ -112,9 +112,9 @@ async function scanRedditForKeywords(
 export const EXAMPLE = {
   title: '',
   content: ``,
-  keywords: ['need boilerplate'],
+  keywords: ['looking for CRM'],
   productDescription:
-    'A production-ready Next.js boilerplate designed to help you build and launch faster. It comes with a clean project structure, modern best practices, and essential features preconfigured so you can focus on your product instead of setup. Ideal for developers who want a solid foundation for scalable, maintainable web applications.',
+    'A Joky CRM that helps you manage customer relationships, track interactions, and organize sales in one place—so you can build stronger connections and grow your business.',
 };
 
 export default async function runReddit() {

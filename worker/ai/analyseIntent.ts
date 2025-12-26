@@ -1,9 +1,11 @@
-import { createGoogleGenerativeAI } from '@ai-sdk/google';
+import { createGroq } from '@ai-sdk/groq';
 import { generateText, Output } from 'ai';
 import { z } from 'zod';
 
-const google = createGoogleGenerativeAI({
-  apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY,
+
+
+const groq = createGroq({
+  apiKey: process.env.GROQ_API_KEY
 });
 
 const LeadAnalysisSchema = z.object({
@@ -35,10 +37,10 @@ export async function analysePost(
 ) {
   const aiPrompt = createPrompt(title, content, productDescription, keywords);
 
-  console.log('💸 running gemini for:', aiPrompt);
+  console.log('💸 running AI for:', aiPrompt);
 
   const { output } = await generateText({
-    model: google('gemini-2.5-flash-lite'),
+    model: groq('openai/gpt-oss-120b'),
     output: Output.object({
       schema: LeadAnalysisSchema,
     }),
