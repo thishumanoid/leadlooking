@@ -1,7 +1,6 @@
 import axios from 'axios';
-import { cleanText, delay } from '@/utils/functions/helpers';
-import { analysePost } from './ai/analyseIntent';
-
+import { cleanText, delay, truncateText } from '@/utils/functions/helpers';
+import { analysePost } from './ai/analysePost';
 
 interface RedditPost {
   id: string;
@@ -36,12 +35,7 @@ interface RedditSearchResponse {
   };
 }
 
-
-
-async function scanRedditForKeywords(
-  keywords: string[],
-  limit: number = 5
-): Promise<RedditPost[]> {
+async function scanRedditForKeywords(keywords: string[], limit: number = 5): Promise<RedditPost[]> {
   const allPosts: RedditPost[] = [];
   const seenPostIds = new Set();
 
@@ -64,7 +58,6 @@ async function scanRedditForKeywords(
 
       const posts = response.data.data.children;
 
-
       for (const post of posts) {
         const postData = post.data;
 
@@ -77,7 +70,7 @@ async function scanRedditForKeywords(
         allPosts.push({
           id: postData.id,
           title: postData.title,
-          selftext: cleanText(postData.selftext) ,
+          selftext: truncateText(cleanText(postData.selftext), 700),
           author: postData.author,
           subreddit: postData.subreddit,
           created_utc: postData.created_utc,
@@ -108,25 +101,23 @@ async function scanRedditForKeywords(
   return allPosts;
 }
 
-
 export const EXAMPLE = {
   title: '',
   content: ``,
-  keywords: ['need boilerplate'],
+  keywords: ['looking for CRM'],
   productDescription:
-    'A production-ready Next.js boilerplate designed to help you build and launch faster. It comes with a clean project structure, modern best practices, and essential features preconfigured so you can focus on your product instead of setup. Ideal for developers who want a solid foundation for scalable, maintainable web applications.',
+    'A Joky CRM that helps you manage customer relationships, track interactions, and organize sales in one place—so you can build stronger connections and grow your business.',
 };
 
 export default async function runReddit() {
   const keywords = EXAMPLE.keywords;
-  const productDescription = EXAMPLE.productDescription
+  const productDescription = EXAMPLE.productDescription;
 
   const posts = await scanRedditForKeywords(keywords, 2);
 
-
   for (const post of posts) {
-    const postLabels = await analysePost(post.title, post.selftext, productDescription, keywords)
-    console.log('📄📄postLabels: ', postLabels)
+    const postLabels = await analysePost(post.title, post.selftext, productDescription, keywords);
+    console.log('📄📄postLabels: ', postLabels);
 
     console.log('------------------------------------------------------------');
     // console.log(`Title: ${post.title}`);
@@ -138,13 +129,9 @@ export default async function runReddit() {
     // console.log(`Posted: ${new Date(post.created_utc * 1000).toLocaleString()}`);
     console.log('------------------------------------------------------------');
 
-    console.log('delllayyyy start')
-    
-    await delay(10000)
-    console.log('delllayyyy end')
+    console.log('delllayyyy start');
+
+    await delay(10000);
+    console.log('delllayyyy end');
   }
-
 }
-
-
-

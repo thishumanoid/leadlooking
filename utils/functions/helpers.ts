@@ -1,3 +1,12 @@
+
+export function truncateText(text: string, maxLength: number = 500): string {
+  if (!text || text.length <= maxLength) return text;
+  
+  // Truncate and add ellipsis
+  return text.substring(0, maxLength).trim() + '...';
+}
+
+
 export function cleanText(text: string): string {
   if (!text) return '';
 
