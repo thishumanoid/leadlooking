@@ -1,12 +1,14 @@
 import axios from 'axios';
 import { cleanText, delay, truncateText } from '@/utils/functions/helpers';
 import { analysePost } from './ai/analysePost';
+import { sendLeadEmail } from './email/mailtrap';
 
 interface RedditPost {
   id: string;
   title: string;
   selftext: string;
   author: string;
+  chatURL: string;
   subreddit: string;
   created_utc: number;
   url: string;
@@ -72,6 +74,7 @@ async function scanRedditForKeywords(keywords: string[], limit: number = 5): Pro
           title: postData.title,
           selftext: truncateText(cleanText(postData.selftext), 700),
           author: postData.author,
+          chatURL: '',
           subreddit: postData.subreddit,
           created_utc: postData.created_utc,
           url: postData.url,
@@ -117,6 +120,13 @@ export default async function runReddit() {
 
   for (const post of posts) {
     const postLabels = await analysePost(post.title, post.selftext, productDescription, keywords);
+
+    if (postLabels.leadScore > 40) {
+      const chatURL = await getUserChatURL(post.author)
+      console.log('chatURL:', chatURL)
+      sendLeadEmail(post.permalink, chatURL)
+    }
+
     console.log('📄📄postLabels: ', postLabels);
 
     console.log('------------------------------------------------------------');
@@ -124,7 +134,8 @@ export default async function runReddit() {
     // console.log(`Subreddit: r/${post.subreddit}`);
     // console.log(`Author: u/${post.author}`);
     // console.log(`Matched: "${post.matchedKeyword}"`);
-    console.log(`URL: ${post.permalink}`);
+    console.log(`permalink: ${post.permalink}`);
+    // console.log(`URL: ${post.url}`);
     // console.log(`Post Text: ${post.selftext}`)
     // console.log(`Posted: ${new Date(post.created_utc * 1000).toLocaleString()}`);
     console.log('------------------------------------------------------------');
@@ -133,5 +144,18 @@ export default async function runReddit() {
 
     await delay(10000);
     console.log('delllayyyy end');
+  }
+}
+
+
+async function getUserChatURL(username: string): Promise<string> {
+  try {
+    const response = await fetch(`https://www.reddit.com/user/${username}/about.json`);
+    const data = await response.json();
+    const userId = data.data.id;
+    return `https://chat.reddit.com/user/t2_${userId}`;
+  } catch (error) {
+    console.error(`Failed to fetch user ID for ${username}:`, error);
+    return '';
   }
 }
