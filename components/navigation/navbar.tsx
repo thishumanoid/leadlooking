@@ -20,7 +20,7 @@ import MobileNavbar from './mobile-navbar';
 import AnimationContainer from '../global/animation-container';
 // import { useAuth } from '@/context/AuthContext';
 import { usePathname } from 'next/navigation';
-import Logo from '../YourLogo';
+import Logo from '../global/YourLogo';
 // import { appName } from '@/config';
 import config from '@/config';
 

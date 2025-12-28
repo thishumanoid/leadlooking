@@ -3,7 +3,7 @@
 import { LayoutDashboard, Megaphone, Settings, Users, HelpCircle, Crown } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import Logo from '@/components/YourLogo';
+import Logo from '@/components/global/YourLogo';
 
 import {
   Sidebar,
@@ -31,11 +31,11 @@ const items = [
     url: '/campaigns',
     icon: Megaphone,
   },
-  {
-    title: 'Leads',
-    url: '/leads',
-    icon: Users,
-  },
+  // {
+  //   title: 'Leads',
+  //   url: '/leads',
+  //   icon: Users,
+  // },
   {
     title: 'Settings',
     url: '/settings',

@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import AnimationContainer from '../global/animation-container';
 // import { useAuth } from '@/context/AuthContext';
-import Logo from '../YourLogo';
+import Logo from '../global/YourLogo';
 import config from '@/config';
 const Footer = () => {
   // const { session, user } = useAuth();
@@ -119,33 +119,33 @@ const Footer = () => {
                 </div>
               </AnimationContainer>
               <AnimationContainer delay={0.5}>
-              <div className="flex flex-col">
-                <h3 className="text-base font-medium text-white">Legal</h3>
-                <ul className="text-sm text-muted-foreground">
-                  {/* <li className="">
+                <div className="flex flex-col">
+                  <h3 className="text-base font-medium text-white">Legal</h3>
+                  <ul className="text-sm text-muted-foreground">
+                    {/* <li className="">
                     <Link href="" className="hover:text-foreground transition-all duration-300">
                       About Us
                     </Link>
                   </li> */}
-                  <li className="mt-2">
-                    <Link
-                      href="/privacy"
-                      className="hover:text-foreground transition-all duration-300"
-                    >
-                      Privacy Policy
-                    </Link>
-                  </li>
-                  <li className="mt-2">
-                    <Link
-                      href="/terms"
-                      className="hover:text-foreground transition-all duration-300"
-                    >
-                      Terms & Conditions
-                    </Link>
-                  </li>
-                </ul>
-              </div>
-            </AnimationContainer>
+                    <li className="mt-2">
+                      <Link
+                        href="/privacy"
+                        className="hover:text-foreground transition-all duration-300"
+                      >
+                        Privacy Policy
+                      </Link>
+                    </li>
+                    <li className="mt-2">
+                      <Link
+                        href="/terms"
+                        className="hover:text-foreground transition-all duration-300"
+                      >
+                        Terms & Conditions
+                      </Link>
+                    </li>
+                  </ul>
+                </div>
+              </AnimationContainer>
             </div>
           </div>
         </div>

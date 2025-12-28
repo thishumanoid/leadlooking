@@ -1,4 +1,4 @@
-import Logo from '@/components/YourLogo';
+import Logo from '@/components/global/YourLogo';
 
 export default function LoadingWidget() {
   return (

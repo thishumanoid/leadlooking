@@ -2,8 +2,8 @@
 
 import { motion } from 'framer-motion';
 import { FaReddit } from 'react-icons/fa';
-import RedditIcon from './RedditIcon';
-import { Bell, Check, Search, Plus, X, Mail, WandSparkles  } from 'lucide-react';
+import RedditIcon from './global/RedditIcon';
+import { Bell, Check, Search, Plus, X, Mail, WandSparkles } from 'lucide-react';
 import MaxWidthWrapper from '@/components/global/MaxWidthWrapper';
 import React from 'react';
 
@@ -136,29 +136,26 @@ function Step1Content() {
           </p>
 
           <div className="space-y-2">
-            {['need CRM software', 'looking for CRM', 'HubSpot alternative'].map(
-              (val, i) => (
-                <div key={i} className="relative flex items-center gap-2 group">
-                  <div className="relative flex-1">
-                    <input
-                      type="text"
-                      defaultValue={val}
-                      placeholder="Enter keyword..."
-                      className="w-full h-8 px-3 text-xs transition-all border rounded-lg bg-background/60 border-border/60 focus:outline-none focus:ring-1 focus:ring-primary/50 focus:border-primary/50 placeholder:text-muted-foreground/50"
-                      readOnly
-                    />
-                    {val && (
-                      <div className="absolute -translate-y-1/2 cursor-pointer right-2 top-1/2 text-muted-foreground/50 hover:text-destructive transition-colors">
-                        <X className="w-3 h-3" />
-                      </div>
-                    )}
-                  </div>
+            {['need CRM software', 'looking for CRM', 'HubSpot alternative'].map((val, i) => (
+              <div key={i} className="relative flex items-center gap-2 group">
+                <div className="relative flex-1">
+                  <input
+                    type="text"
+                    defaultValue={val}
+                    placeholder="Enter keyword..."
+                    className="w-full h-8 px-3 text-xs transition-all border rounded-lg bg-background/60 border-border/60 focus:outline-none focus:ring-1 focus:ring-primary/50 focus:border-primary/50 placeholder:text-muted-foreground/50"
+                    readOnly
+                  />
+                  {val && (
+                    <div className="absolute -translate-y-1/2 cursor-pointer right-2 top-1/2 text-muted-foreground/50 hover:text-destructive transition-colors">
+                      <X className="w-3 h-3" />
+                    </div>
+                  )}
                 </div>
-              )
-            )}
+              </div>
+            ))}
           </div>
         </div>
-
       </div>
     </div>
   );

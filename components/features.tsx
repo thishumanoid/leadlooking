@@ -12,7 +12,7 @@ import {
   ArrowRight,
 } from 'lucide-react';
 import { FaXTwitter } from 'react-icons/fa6';
-import RedditIcon from './RedditIcon';
+import RedditIcon from './global/RedditIcon';
 import { cn } from '@/lib/utils'; // Assuming you have a utils file for class mixing
 
 const caseStudies = [
