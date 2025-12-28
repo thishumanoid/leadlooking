@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { FaReddit } from 'react-icons/fa';
+import RedditIcon from './RedditIcon';
 import { Bell, Check, Search, Plus, X, Mail, WandSparkles  } from 'lucide-react';
 import MaxWidthWrapper from '@/components/global/MaxWidthWrapper';
 import React from 'react';
@@ -199,7 +200,7 @@ function Step2Content() {
 
       {/* Central Icon */}
       <div className="relative z-10 flex items-center justify-center w-20 h-20 bg-background rounded-full border-2 border-primary shadow-lg shadow-primary/30">
-        <FaReddit className="w-10 h-10 text-[#FF4500]" />
+        <RedditIcon size={60} />
       </div>
 
       {/* Floating Elements (Posts) */}

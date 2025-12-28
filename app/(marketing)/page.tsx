@@ -15,7 +15,7 @@ export default function LandingPage() {
       <Steps />
       <Features />
       <PricingCard />
-      <Testimonials />
+      {/* <Testimonials /> */}
       <FAQ />
       <CTA />
     </MaxWidthWrapper>

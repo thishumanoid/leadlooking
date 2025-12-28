@@ -1,11 +1,19 @@
 'use client';
 
-import React from 'react';
-import { Card } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Rocket, Building2, Lightbulb, Smartphone, Palette } from 'lucide-react';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  Rocket,
+  Building2,
+  Lightbulb,
+  Smartphone,
+  Palette,
+  CheckCircle2,
+  ArrowRight,
+} from 'lucide-react';
 import { FaXTwitter } from 'react-icons/fa6';
-import { FaReddit } from "react-icons/fa";
+import RedditIcon from './RedditIcon';
+import { cn } from '@/lib/utils'; // Assuming you have a utils file for class mixing
 
 const caseStudies = [
   {
@@ -185,105 +193,136 @@ const caseStudies = [
 ];
 
 export default function Features() {
+  const [activeTab, setActiveTab] = useState(caseStudies[0].id);
+
+  const activeStudy = caseStudies.find((study) => study.id === activeTab);
+
   return (
-    <div className="w-full max-w-6xl mx-auto space-y-8 py-20 px-4">
-      {/* Header */}
-      <div className="space-y-4 text-center mb-12">
-        <h1 className="text-4xl md:text-5xl font-bold text-foreground">Case Studies</h1>
-        <p className="text-lg md:text-xl text-muted-foreground">
-          See real examples of what Leadverse can find for you daily.
-        </p>
+    <section className="relative w-full py-24 overflow-hidden">
+      {/* Background Decor */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-7xl pointer-events-none">
+        <div className="absolute top-20 left-10 w-72 h-72 bg-primary/5 rounded-full blur-[100px]" />
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-blue-500/5 rounded-full blur-[100px]" />
       </div>
 
-      <Tabs defaultValue="saas-founders" className="w-full">
-        {/* Tabs List */}
-        <div className="flex justify-center mb-12 overflow-x-auto pb-4 md:pb-0 :hidden [scrollbar-width:none]">
-          <TabsList className="bg-transparent gap-2 h-auto p-0 flex-wrap justify-center">
-            {caseStudies.map((study) => {
-              const Icon = study.icon;
-              return (
-                <TabsTrigger
-                  key={study.id}
-                  value={study.id}
-                  className="data-[state=active]:bg-secondary/20 data-[state=active]:text-primary data-[state=active]:border-primary/20 border border-transparent hover:bg-secondary/10 px-6 py-3 rounded-lg gap-2 text-muted-foreground transition-all duration-300"
-                >
-                  <Icon className="w-4 h-4" />
-                  {study.label}
-                </TabsTrigger>
-              );
-            })}
-          </TabsList>
+      <div className="relative w-full max-w-6xl mx-auto px-4 space-y-12">
+        {/* Header */}
+        <div className="space-y-4 text-center max-w-3xl mx-auto">
+          <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground">
+            Case Studies
+          </h2>
+          <p className="text-lg text-muted-foreground">
+            Real-time examples of high-intent leads we discover daily for different industries.
+          </p>
         </div>
 
-        {/* Tab Content */}
-        {caseStudies.map((study) => (
-          <TabsContent
-            key={study.id}
-            value={study.id}
-            className="space-y-12 animate-in fade-in-50 slide-in-from-bottom-2 duration-500"
-          >
-            {/* Quote */}
-            <div className="text-center max-w-4xl mx-auto px-4">
-              <h2 className="text-2xl md:text-3xl font-medium text-green-500 leading-relaxed">
-                {study.quote}
-              </h2>
-            </div>
+        {/* Tabs */}
+        <div className="flex flex-wrap justify-center gap-2">
+          {caseStudies.map((study) => {
+            const Icon = study.icon;
+            const isActive = activeTab === study.id;
+            return (
+              <button
+                key={study.id}
+                onClick={() => setActiveTab(study.id)}
+                className={cn(
+                  'relative px-6 py-3 rounded-full text-sm font-medium transition-colors duration-300 flex items-center gap-2',
+                  isActive ? 'text-white' : 'text-muted-foreground hover:text-foreground'
+                )}
+              >
+                {isActive && (
+                  <motion.div
+                    layoutId="activeTab"
+                    className="absolute inset-0 bg-primary rounded-full"
+                    transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
+                  />
+                )}
+                <span className="relative z-10 flex items-center gap-2">
+                  <Icon className="w-4 h-4" />
+                  {study.label}
+                </span>
+              </button>
+            );
+          })}
+        </div>
 
-            {/* Leads List */}
-            <div className="space-y-4 max-w-4xl mx-auto">
-              {study.leads.map((lead, index) => (
-                <Card
-                  key={index}
-                  className="bg-card/50 border-white/5 hover:border-white/10 transition-colors p-6"
-                >
-                  <div className="flex flex-col gap-3">
-                    {/* Header: Icon, Source, Time, Score */}
-                    <div className="flex items-center justify-between text-muted-foreground text-sm">
-                      <div className="flex items-center gap-3">
-                        {lead.platform === 'reddit' ? (
-                          <div className="relative flex items-center justify-center w-6 h-6">
-                            <div className="absolute inset-[1.5px] bg-white rounded-full" />
-                            <FaReddit className="relative z-10 w-6 h-6 text-[#FF4500]" />
-                          </div>
-                        ) : (
-                          <div className="p-1 rounded bg-secondary/10">
-                            <FaXTwitter className="w-4 h-4 text-white" />
-                          </div>
-                        )}
-                        <div className="flex items-center gap-2">
-                          <span className="font-medium text-foreground">{lead.source}</span>
-                          {lead.user && (
-                            <>
-                              <span>•</span>
-                              <span>{lead.user}</span>
-                            </>
+        {/* Content Area */}
+        <AnimatePresence mode="wait">
+          {activeStudy && (
+            <motion.div
+              key={activeStudy.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.4 }}
+              className="space-y-10"
+            >
+              {/* Quote */}
+              <div className="text-center max-w-3xl mx-auto">
+                <p className="text-xl md:text-2xl font-light text-foreground/90 italic leading-relaxed">
+                  {activeStudy.quote}
+                </p>
+              </div>
+
+              {/* List */}
+              <div className="flex flex-col gap-4">
+                {activeStudy.leads.map((lead, index) => (
+                  <motion.div
+                    key={`${activeStudy.id}-${index}`}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1, duration: 0.4 }}
+                    className="relative overflow-hidden rounded-xl border border-white/10 bg-[#0A0A0A] p-6 hover:bg-white/[0.02] transition-colors duration-300"
+                  >
+                    <div className="flex flex-col gap-3">
+                      {/* Card Header */}
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-center gap-3 text-sm text-muted-foreground/60">
+                          {lead.platform === 'reddit' ? (
+                            <RedditIcon size={25} />
+                          ) : (
+                            <div className="bg-black rounded-sm p-0.5">
+                              <FaXTwitter className="w-3 h-3 text-white" />
+                            </div>
                           )}
-                          <span>•</span>
-                          <span>{lead.time}</span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-muted-foreground hover:text-foreground transition-colors font-medium">
+                              {lead.source}
+                            </span>
+                            {lead.user && (
+                              <>
+                                <span className="text-muted-foreground/40">•</span>
+                                <span className="text-muted-foreground">{lead.user}</span>
+                              </>
+                            )}
+                            <span className="text-muted-foreground/40">•</span>
+                            <span>{lead.time}</span>
+                          </div>
+                        </div>
+
+                        <div className="flex items-baseline gap-0.5">
+                          <span className="text-xl font-bold text-green-500">{lead.score}</span>
+                          <span className="text-sm font-medium text-muted-foreground/40">/10</span>
                         </div>
                       </div>
-                      <div className="flex items-end gap-1">
-                        <span className="text-lg font-bold text-green-500">{lead.score}</span>
-                        <span className="text-xs mb-1">/10</span>
+
+                      {/* Card Content */}
+                      <div className="space-y-1 mt-1">
+                        <h3 className="text-base font-bold text-foreground">{lead.title}</h3>
+                        {lead.content && (
+                          <p className="text-sm text-muted-foreground/70 leading-relaxed font-medium">
+                            {lead.content}
+                          </p>
+                        )}
                       </div>
                     </div>
-
-                    {/* Content */}
-                    <div className="space-y-1">
-                      <h3 className="text-lg font-semibold text-foreground/90">{lead.title}</h3>
-                      {lead.content && (
-                        <p className="text-muted-foreground text-base leading-relaxed">
-                          {lead.content}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                </Card>
-              ))}
-            </div>
-          </TabsContent>
-        ))}
-      </Tabs>
-    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </section>
   );
 }

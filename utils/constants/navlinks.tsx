@@ -16,36 +16,36 @@ export const NAV_LINKS: NavLink[] = [
         title: "Home",
         href: "/",
     },
-    {
-        title: "Features",
-        href: "/features",
-        menu: [
-            {
-                title: "Lorem ipsum1",
-                tagline: "eiusmod tempor incididunt ut.",
-                href: "/",
-                icon: Zap,
-            },
-            {
-                title: "Lorem ipsum2",
-                tagline: "eiusmod tempor incididunt ut.",
-                href: "/",
-                icon: Zap,
-            },
-            {
-                title: "Lorem ipsum3",
-                tagline: "eiusmod tempor incididunt ut.",
-                href: "/",
-                icon: Zap,
-            },
-            {
-                title: "Lorem ipsum4",
-                tagline: "eiusmod tempor incididunt ut.",
-                href: "/",
-                icon: Zap,
-            },
-        ],
-    },
+    // {
+    //     title: "Features",
+    //     href: "/features",
+    //     menu: [
+    //         {
+    //             title: "Lorem ipsum1",
+    //             tagline: "eiusmod tempor incididunt ut.",
+    //             href: "/",
+    //             icon: Zap,
+    //         },
+    //         {
+    //             title: "Lorem ipsum2",
+    //             tagline: "eiusmod tempor incididunt ut.",
+    //             href: "/",
+    //             icon: Zap,
+    //         },
+    //         {
+    //             title: "Lorem ipsum3",
+    //             tagline: "eiusmod tempor incididunt ut.",
+    //             href: "/",
+    //             icon: Zap,
+    //         },
+    //         {
+    //             title: "Lorem ipsum4",
+    //             tagline: "eiusmod tempor incididunt ut.",
+    //             href: "/",
+    //             icon: Zap,
+    //         },
+    //     ],
+    // },
     {
         title: "Pricing",
         href: "/pricing",

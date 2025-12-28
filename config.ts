@@ -7,7 +7,7 @@ import type { ConfigProps } from './types/config';
 
 const config = {
   // REQUIRED
-  appName: 'YourSaaS',
+  appName: 'LeadLooking',
   // REQUIRED: a short description of your app for SEO tags (can be overwritten)
   appDescription: 'The gratest chrome extension ever built description.',
 
