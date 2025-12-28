@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Check, X, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/context/AuthContext';
+// import { useAuth } from '@/context/AuthContext';
 import getProductId from '@/utils/functions/findProductId';
 
 
@@ -89,7 +89,7 @@ export default function PricingCards() {
   const router = useRouter();
   const [activePlans] = useState<PlanConfig[]>(planConfig);
   const [loadingPlanId, setLoadingPlanId] = useState<string | null>(null);
-  const { user } = useAuth();
+  const user = false;
 
   const handleClick = async (plan: PlanConfig) => {
     if (!user) {
@@ -114,7 +114,7 @@ export default function PricingCards() {
           },
           body: JSON.stringify({
             id: plan.id,
-            userEmail: user.email,
+            // userEmail: user.email,
             mode: plan.isSubscription === true ? 'subscription' : 'payment',
           }),
         });

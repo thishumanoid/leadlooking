@@ -9,7 +9,7 @@ import Link from 'next/link';
 import MaxWidthWrapper from './global/MaxWidthWrapper';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
-import { useAuth } from '@/context/AuthContext';
+// import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import { Input } from './ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
@@ -17,7 +17,7 @@ import GetStartedBtn from './ui/GetStartedBtn';
 
 function Hero() {
   const { push } = useRouter();
-  const { user } = useAuth();
+  const user = false;
 
   function handleClick() {
     if (user) {

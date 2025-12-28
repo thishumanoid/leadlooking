@@ -13,10 +13,10 @@ import { NAV_LINKS } from '@/utils/constants/navlinks';
 import { LucideIcon, Menu, X } from 'lucide-react';
 import Link from 'next/link';
 import React, { useState } from 'react';
-import { useAuth } from '@/context/AuthContext';
+// import { useAuth } from '@/context/AuthContext';
 
 const MobileNavbar = () => {
-  const { user } = useAuth();
+  const user = false;
   const [isOpen, setIsOpen] = useState(false);
 
   const handleClose = () => setIsOpen(false);

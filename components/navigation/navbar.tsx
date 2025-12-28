@@ -18,14 +18,14 @@ import React from 'react';
 import MaxWidthWrapper from '../global/MaxWidthWrapper';
 import MobileNavbar from './mobile-navbar';
 import AnimationContainer from '../global/animation-container';
-import { useAuth } from '@/context/AuthContext';
+// import { useAuth } from '@/context/AuthContext';
 import { usePathname } from 'next/navigation';
 import Logo from '../YourLogo';
 // import { appName } from '@/config';
 import config from '@/config';
 
 const Navbar = () => {
-  const { user } = useAuth();
+  const user = false;
   const pathname = usePathname();
   const isAuthPage = pathname.includes('auth');
 
@@ -48,7 +48,9 @@ const Navbar = () => {
                     <NavigationMenuItem key={link.title}>
                       {link.menu ? (
                         <>
-                          <NavigationMenuTrigger className="bg-transparent data-[state=open]:bg-transparent">{link.title}</NavigationMenuTrigger>
+                          <NavigationMenuTrigger className="bg-transparent data-[state=open]:bg-transparent">
+                            {link.title}
+                          </NavigationMenuTrigger>
                           <NavigationMenuContent>
                             <ul
                               className={cn(
@@ -116,7 +118,7 @@ const Navbar = () => {
                   Dashboard
                 </Link>
               ) : (
-                <Link href="/auth" className={buttonVariants({ size: 'sm' })}>
+                <Link href="/sign-in" className={buttonVariants({ size: 'sm' })}>
                   Sign Up
                   <ArrowRight className="size-4 ml-1.5" />
                 </Link>

@@ -3,10 +3,10 @@
 import { CheckCircle2, Sparkles, Zap } from 'lucide-react';
 import MaxWidthWrapper from '@/components/global/MaxWidthWrapper';
 import Link from 'next/link';
-import { useAuth } from '@/context/AuthContext';
+// import { useAuth } from '@/context/AuthContext';
 
 export default function AuthSuccess() {
-  const { user, session } = useAuth();
+  const user = false;
   
   return (
     <MaxWidthWrapper className="mb-12">

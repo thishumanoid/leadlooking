@@ -1,9 +1,10 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
-import { AuthProvider } from '@/context/AuthContext';
 // import { DemoBanner } from '@/components/demoBanner';
 import config from '@/config';
+import { ClerkProvider } from '@clerk/nextjs';
+import { dark } from '@clerk/themes';
 
 const inter = Inter({
   variable: '--font-inter',
@@ -45,13 +46,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${inter.className} antialiased dark`}>
-        {/* <DemoBanner /> */}
-        <AuthProvider>
-          {children}
-          </AuthProvider>
-      </body>
-    </html>
+    <ClerkProvider
+      appearance={{
+        theme: dark,
+      }}
+    >
+      <html lang="en">
+        <body className={`${inter.className} antialiased dark`}>
+          {/* <DemoBanner /> */}
+         {children}
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

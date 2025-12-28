@@ -2,24 +2,13 @@
 
 import Link from 'next/link';
 import AnimationContainer from '../global/animation-container';
-import { useAuth } from '@/context/AuthContext';
+// import { useAuth } from '@/context/AuthContext';
 import Logo from '../YourLogo';
 import config from '@/config';
 const Footer = () => {
-  const { session, user } = useAuth();
+  // const { session, user } = useAuth();
   return (
     <>
-
-    {/* MOST IMPORTANT TO SYNC WEB APP AUTH WITH CHROME EXTENSION */}
-
-      {session && (
-        <div className="sr-only">
-          <div className="userEmailDiv">{user?.email}</div>
-          <div className="accessTokenDiv">{session?.access_token}</div>
-          <div className="refreshTokenDiv">{session?.refresh_token}</div>
-        </div>
-      )}
-
       <footer className="flex flex-col relative items-center justify-center border-t border-border pt-16 pb-8 md:pb-0 px-6 lg:px-8 w-full max-w-6xl mx-auto lg:pt-32 bg-[radial-gradient(35%_128px_at_50%_0%,theme(backgroundColor.white/8%),transparent)]">
         <div className="absolute top-0 left-1/2 right-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-1.5 bg-foreground rounded-full"></div>
 
