@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
-import { useClerk, UserButton } from '@clerk/nextjs';
+import { useClerk } from '@clerk/nextjs';
 
 const DashboardPage = () => {
   const router = useRouter();
@@ -14,10 +14,6 @@ const DashboardPage = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-black text-white p-4 relative">
-      <div className="absolute top-8 right-8">
-        <UserButton />
-      </div>
-
       <div className="max-w-md w-full bg-[#0a0a0a] border border-white/10 rounded-2xl p-8 text-center shadow-2xl">
         <div className="mb-6 flex justify-center">
           <div className="p-3 rounded-full bg-white/5 border border-white/10">
