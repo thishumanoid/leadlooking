@@ -1,7 +1,8 @@
 'use client';
 
+import { FaReddit } from 'react-icons/fa';
 import AnimationContainer from './global/animation-container';
-import { ArrowUpRight, CirclePlay } from 'lucide-react';
+import { ArrowUpRight, CirclePlay, Globe } from 'lucide-react';
 import { Badge } from './ui/badge';
 import Link from 'next/link';
 
@@ -10,8 +11,9 @@ import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
+import { Input } from './ui/input';
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import GetStartedBtn from './ui/GetStartedBtn';
-import config from '@/config';
 
 function Hero() {
   const { push } = useRouter();
@@ -19,7 +21,7 @@ function Hero() {
 
   function handleClick() {
     if (user) {
-      push('/dashboard'); /// or push(chromeWebStoreUrl);
+      push('/dashboard');
     } else {
       push('/auth');
     }
@@ -28,27 +30,68 @@ function Hero() {
   return (
     <MaxWidthWrapper>
       <AnimationContainer className="flex flex-col items-center justify-center w-full text-center">
-        <div className="md:mt-6 flex items-center justify-center">
-          <div className="text-center max-w-2xl">
-            <Badge className="bg-primary rounded-full py-1 border-primary">v2.0.0 is live!</Badge>
-            <h1 className="mt-6 text-3xl xs:text-4xl sm:text-5xl md:text-6xl font-bold !leading-[1.2] tracking-tight">
-             This is super cool right?
-            </h1>
+        <div className="md:mt-8 flex items-center justify-center">
+          <div className="text-center max-w-2xl w-full">
+            {/* <Badge className="bg-primary rounded-full py-1 border-primary">v2.0.0 is live!</Badge> */}
+            <div className="relative mx-auto mt-6 max-w-fit flex items-center justify-center">
+              <h1 className="text-3xl xs:text-4xl sm:text-5xl md:text-6xl font-semibold !leading-[1.2] tracking-tight">
+                Find People Looking for What{' '}
+                <span className="relative text-primary whitespace-nowrap">
+                  You Offer
+                  <svg
+                    className="absolute -bottom-2 sm:-bottom-3 md:-bottom-4 left-0 w-full h-3 sm:h-4 md:h-5 text-primary/70 rotate-1"
+                    viewBox="0 0 200 9"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    preserveAspectRatio="none"
+                  >
+                    <path
+                      d="M2.00025 6.99997C25.3333 3.66664 82.8 -1.00003 198 2.00003"
+                      stroke="currentColor"
+                      strokeWidth="3"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                </span>
+              </h1>
+              <div className="absolute -right-12 sm:-right-14 md:-right-16 top-0 sm:top-1/2 sm:-translate-y-1/2 hidden sm:block rotate-12 animate-subtle-float"></div>
+            </div>
             <p className="mt-6 xs:text-lg">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-              incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.
+              We scan thousands of social media posts every day to surface people {<br />} actively
+              asking for tools, services, or skills like yours.
             </p>
-            <div className="mt-12 flex flex-col sm:flex-row items-center sm:justify-center gap-4">
-              <GetStartedBtn onClick={handleClick} />
-              <Link target='_blank' href={config.chromeWebStoreUrl ?? ''}>
-              <Button
-                variant="outline"
-                size="lg"
-                className="gap-4"
-              >
-                <CirclePlay className="!h-5 !w-5" /> Watch Demo
-              </Button>
-              </Link>
+            <div className="mt-8 flex flex-col items-center justify-center gap-4 w-full max-w-xs mx-auto">
+              <div className="relative w-full group">
+                <div className="absolute left-1.5 top-1.5 bottom-1.5 w-10 bg-card border-none rounded flex items-center justify-center z-10">
+                  <span className="text-muted-foreground font-semibold">
+                    <Globe className="w-5 h-5" />
+                  </span>
+                </div>
+                <Input
+                  type="text"
+                  placeholder="example.com"
+                  className="w-full pl-14 h-12 bg-background/50 backdrop-blur-sm border-border hover:border-primary/50 transition-colors"
+                />
+              </div>
+              <GetStartedBtn onClick={handleClick} className="w-full h-12 text-base" />
+            </div>
+
+            <div className="mt-10 flex flex-col items-center justify-center gap-4">
+              <p className="text-sm md:text-base text-muted-foreground">
+                Join <span className="font-bold text-foreground">15+</span> businesses and
+                freelancers
+              </p>
+              <div className="flex -space-x-4">
+                {[21, 22, 23, 24].map((i) => (
+                  <Avatar key={i} className="border-2 border-background w-10 h-10">
+                    <AvatarImage src={`https://i.pravatar.cc/100?img=${i + 10}`} />
+                    <AvatarFallback>U{i}</AvatarFallback>
+                  </Avatar>
+                ))}
+                <div className="flex items-center justify-center w-10 h-10 rounded-full border-2 border-background bg-card text-[10px] font-bold text-muted-foreground z-10">
+                  +15
+                </div>
+              </div>
             </div>
           </div>
         </div>

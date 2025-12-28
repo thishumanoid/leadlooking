@@ -46,7 +46,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} antialiased ${config.colors.theme ?? 'dark'}`}>
+      <body className={`${inter.className} antialiased dark`}>
         {/* <DemoBanner /> */}
         <AuthProvider>
           {children}

@@ -6,11 +6,12 @@ interface BtnProps {
   onClick?: () => void;
 }
 
-export default function GetStartedBtn( { className, onClick }: BtnProps) {
+export default function GetStartedBtn({ className, onClick }: BtnProps) {
   return (
-    <div className="flex flex-row gap-4">
-      <Button onClick={onClick} size="lg" className={`gap-4 ${className || ''}`}>
-        <Zap fill='white' className='-mr-2' />Get Started
+    <div className={`flex flex-row gap-4 ${className || ''}`}>
+      <Button onClick={onClick} size="lg" className="w-full gap-4">
+        <Zap fill="white" className="-mr-2" />
+        Get Started
       </Button>
     </div>
   );

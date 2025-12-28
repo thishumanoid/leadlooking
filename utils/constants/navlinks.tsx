@@ -70,10 +70,10 @@ export const NAV_LINKS: NavLink[] = [
     //         },
     //     ]
     // },
-    {
-        title: "Any Suggestion?",
-        href: "/feedback",
-    },
+    // {
+    //     title: "Any Suggestion?",
+    //     href: "/feedback",
+    // },
     // {
     //     title: "Changelog",
     //     href: "/changelog",
