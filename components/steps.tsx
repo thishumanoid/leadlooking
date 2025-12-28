@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { FaReddit } from 'react-icons/fa';
-import { Bell, Check, Search, Plus, Filter, Mail } from 'lucide-react';
+import { Bell, Check, Search, Plus, X, Mail, WandSparkles  } from 'lucide-react';
 import MaxWidthWrapper from '@/components/global/MaxWidthWrapper';
 import React from 'react';
 
@@ -106,49 +106,58 @@ export default function Steps() {
 // --- Step 1 Content: Create Campaign Mock ---
 function Step1Content() {
   return (
-    <div className="flex flex-col w-full h-full gap-4">
-      <div className="flex items-center justify-between p-3 border rounded-lg bg-card border-border">
+    <div className="flex flex-col w-full h-full gap-4 font-sans select-none">
+      <div className="flex items-center justify-between p-3 border rounded-lg bg-card/80 backdrop-blur-sm border-border shadow-sm">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
+          <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10">
             <Plus className="w-4 h-4 text-primary" />
           </div>
-          <span className="text-sm font-semibold">New Campaign</span>
-        </div>
-        <div className="px-2 py-1 text-xs rounded bg-secondary text-secondary-foreground">
-          Draft
+          <span className="text-sm font-semibold text-foreground">New Campaign</span>
         </div>
       </div>
 
-      <div className="flex flex-col flex-1 gap-3 p-4 border rounded-xl bg-card/50 border-border/50">
-        <div className="space-y-2">
-          <div className="text-xs font-medium text-muted-foreground">Keywords</div>
-          <div className="flex flex-wrap gap-2">
-            {['CRM Software', 'Marketing Tool', 'Lead Gen'].map((tag) => (
-              <span
-                key={tag}
-                className="px-2 py-1 text-xs border rounded-md bg-secondary text-secondary-foreground border-border whitespace-nowrap"
-              >
-                {tag}
-              </span>
-            ))}
-            <div className="px-2 py-1 text-xs border border-dashed rounded-md text-muted-foreground animate-pulse">
-              + Add keyword
+      <div className="relative flex flex-col flex-1 gap-3 p-4 overflow-hidden border shadow-inner rounded-xl bg-card/40 backdrop-blur-md border-border/50">
+        {/* Decorative gradient blob */}
+        <div className="absolute top-0 right-0 rounded-full w-32 h-32 bg-primary/5 blur-3xl pointer-events-none -translate-y-1/2 translate-x-1/2" />
+
+        <div className="z-10 space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-1.5 text-xs font-semibold text-foreground">
+              Keywords
+              <span className="w-1 h-1 rounded-full bg-primary" />
             </div>
+
+            <WandSparkles className="w-4 h-4" />
+          </div>
+
+          <p className="text-[10px] text-muted-foreground leading-relaxed">
+            Each keyword is searched individually. Keep them short and meaningful.
+          </p>
+
+          <div className="space-y-2">
+            {['need CRM software', 'looking for CRM', 'HubSpot alternative'].map(
+              (val, i) => (
+                <div key={i} className="relative flex items-center gap-2 group">
+                  <div className="relative flex-1">
+                    <input
+                      type="text"
+                      defaultValue={val}
+                      placeholder="Enter keyword..."
+                      className="w-full h-8 px-3 text-xs transition-all border rounded-lg bg-background/60 border-border/60 focus:outline-none focus:ring-1 focus:ring-primary/50 focus:border-primary/50 placeholder:text-muted-foreground/50"
+                      readOnly
+                    />
+                    {val && (
+                      <div className="absolute -translate-y-1/2 cursor-pointer right-2 top-1/2 text-muted-foreground/50 hover:text-destructive transition-colors">
+                        <X className="w-3 h-3" />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )
+            )}
           </div>
         </div>
 
-        <div className="space-y-2 mt-2">
-          <div className="text-xs font-medium text-muted-foreground">Exclude Keywords</div>
-          <div className="flex items-center gap-2 p-2 text-xs border rounded-md bg-background border-border text-muted-foreground">
-            <Filter className="w-3 h-3" />
-            <span>free, cheap, student...</span>
-          </div>
-        </div>
-        <div className="mt-auto pt-2">
-          <div className="w-full bg-primary h-8 rounded-md flex items-center justify-center text-primary-foreground text-xs font-medium shadow-md shadow-primary/20">
-            Start Monitoring
-          </div>
-        </div>
       </div>
     </div>
   );
