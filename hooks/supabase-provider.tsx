@@ -5,12 +5,12 @@ import { useSession } from '@clerk/nextjs'
 import { createContext, useContext, useEffect, useState } from 'react'
 
 type SupabaseContext = {
-  supabase: SupabaseClient | null
+  supabase: SupabaseClient
   isLoaded: boolean
 }
 
 const Context = createContext<SupabaseContext>({
-  supabase: null,
+  supabase: null!,
   isLoaded: false
 })
 
@@ -37,7 +37,7 @@ export default function SupabaseProvider({ children }: Props) {
   }, [session])
 
   return (
-    <Context.Provider value={{ supabase, isLoaded }}>
+    <Context.Provider value={{ supabase: supabase!, isLoaded: isLoaded }}>
       {!isLoaded ? <div>Loading...</div> : children }
     </Context.Provider>
   )
