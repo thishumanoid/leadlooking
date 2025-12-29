@@ -5,24 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import RedditIcon from '@/components/global/RedditIcon';
-import {
-  Search,
-  RefreshCw,
-  Edit,
-  Trash2,
-  CheckCircle2,
-  AlertCircle,
-  Clock,
-  TrendingUp,
-  Filter,
-  X,
-  Zap,
-  CoffeeIcon,
-  ExternalLink,
-  Sparkles,
-  WandSparkles,
-} from 'lucide-react';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Search, Filter, X, Zap, CoffeeIcon, ExternalLink, WandSparkles } from 'lucide-react';
 import PostDialog from '@/components/postDialog';
 
 // Type definition for lead data
@@ -41,28 +24,6 @@ interface Lead {
   comments: number;
   postUrl?: string;
 }
-
-// Sample data for demonstration
-const SAMPLE_CAMPAIGN = {
-  id: '1',
-  name: 'SEO',
-  description:
-    "I'm an SEO specialist helping businesses improve their search rankings and website traffic",
-  platforms: ['Reddit', 'X'],
-  keywords: [
-    'need CRM software',
-    'looking for SEO help',
-    'SEO specialist needed',
-    'improve search rankings',
-    'website traffic',
-  ],
-  lastSync: new Date(),
-  nextSync: new Date(Date.now() + 23 * 60 * 60 * 1000 + 58 * 60 * 1000),
-  strongMatches: 52,
-  partialMatches: 47,
-  strongMatchesChange: 12,
-  partialMatchesChange: 7,
-};
 
 const SAMPLE_LEADS: Lead[] = [
   {
@@ -266,7 +227,7 @@ function LeadList() {
         </CardHeader>
       </Card>
 
-      <div className="space-y-3">
+      <div className="space-y-4">
         {filteredLeads.length === 0 ? (
           <Card>
             <CardContent className="py-12">
@@ -281,66 +242,94 @@ function LeadList() {
           filteredLeads.map((lead) => (
             <Card
               key={lead.id}
-              className="group hover:border-primary/40 transition-all duration-300 cursor-pointer hover:shadow-lg hover:shadow-primary/5"
-              onClick={() => handleLeadClick(lead)}
+              className="group hover:border-primary/50 transition-all duration-300 overflow-hidden hover:shadow-md"
             >
-              <CardContent className="px-4 py-0">
-                <div className="flex items-start gap-4">
-                  {/* Platform Icon */}
-                  <div className="mt-6">
-                    <RedditIcon size={35} />
-                  </div>
-
-                  {/* Content */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-start gap-2 mb-2">
-                      {lead.isNew && (
-                        <Badge className="bg-green-700 text-white border-0 px-2 py-0.5 text-xs">
-                          New
-                        </Badge>
-                      )}
-                      <Badge
-                        variant="outline"
-                        className={`px-2 py-0.5 text-xs ${
-                          lead.matchStrength === 'strong'
-                            ? 'border-green-500/50 text-green-500 bg-green-500/5'
-                            : 'border-yellow-500/50 text-yellow-500 bg-yellow-500/5'
-                        }`}
-                      >
-                        {lead.matchStrength === 'strong' ? 'Strong Match' : 'Partial Match'}
-                      </Badge>
-                    </div>
-
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
-                      <span className="font-medium">r/{lead.subreddit}</span>
-                      <span>•</span>
-                      <span>u/{lead.author}</span>
-                      <span>•</span>
+              {/* Card Header - Metadata */}
+              <div className="px-6 pb-3">
+                <div className="flex items-center justify-between gap-4 flex-wrap">
+                  <div className="flex items-center gap-3">
+                    <RedditIcon size={24} className="flex-shrink-0" />
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground flex-wrap">
+                      <span className="font-semibold text-muted-foreground transition-colors cursor-pointer">
+                        r/{lead.subreddit}
+                      </span>
+                      <span className="text-muted-foreground/50">•</span>
+                      <span className="hover:underline cursor-pointer">u/{lead.author}</span>
+                      <span className="text-muted-foreground/50">•</span>
                       <span>{formatTimeAgo(lead.timestamp)}</span>
                     </div>
-
-                    <h3 className="text-lg font-semibold mb-2 group-hover:text-primary transition-colors">
-                      {lead.title}
-                    </h3>
-
-                    <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
-                      {lead.preview}
-                    </p>
                   </div>
-
-                  {/* Actions */}
-                  <div className="flex flex-col gap-2">
-                    <Button size="sm" className="h-10 bg-primary hover:bg-primary/90">
-                      View Post
-                      <ExternalLink className="w-4 h-4 ml-2" />
-                    </Button>
-                    <Button size="sm" variant="outline" className="h-10">
-                      Generate Reply
-                      <WandSparkles className="w-4 h-4 ml-2" />
-                    </Button>
+                  <div className="flex items-center gap-2">
+                    {lead.isNew && (
+                      <Badge className="bg-emerald-600 hover:bg-emerald-700 text-white border-0 px-2.5 py-0.5 text-xs font-medium">
+                        New
+                      </Badge>
+                    )}
+                    <Badge
+                      variant="outline"
+                      className={`px-2.5 py-0.5 text-xs font-medium ${
+                        lead.matchStrength === 'strong'
+                          ? 'border-emerald-500/50 text-emerald-600 bg-emerald-500/10 dark:text-emerald-400'
+                          : 'border-amber-500/50 text-amber-600 bg-amber-500/10 dark:text-amber-400'
+                      }`}
+                    >
+                      {lead.matchStrength === 'strong' ? '⚡ Strong Match' : '☕ Partial Match'}
+                    </Badge>
                   </div>
                 </div>
-              </CardContent>
+              </div>
+
+              {/* Card Body - Content */}
+              <div className="px-6 cursor-pointer" onClick={() => handleLeadClick(lead)}>
+                <h3 className="text-lg font-semibold mb-3 group-hover:text-primary transition-colors leading-snug">
+                  {lead.title}
+                </h3>
+
+                <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
+                  {lead.preview}
+                </p>
+              </div>
+
+              {/* Card Footer - Engagement & Actions */}
+              <div className="px-6 py-3  border-t border-border/50 flex items-center justify-between gap-4">
+                
+                <div className="flex items-center gap-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="h-9 gap-2 hover:bg-background"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      window.open(lead.postUrl, '_blank');
+                    }}
+                  >
+                    View Post
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </Button>
+                  <Button
+                    size="sm"
+                    className="h-9 gap-2 bg-primary hover:bg-primary/90"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      // Handle generate reply
+                    }}
+                  >
+                    Generate Reply
+                    <WandSparkles className="w-3.5 h-3.5" />
+                  </Button>
+                  <Button
+                    size="sm"
+                    className="h-9 gap-2 bg-primary hover:bg-primary/90"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      // Handle generate reply
+                    }}
+                  >
+                    Generate Comment
+                    <WandSparkles className="w-3.5 h-3.5" />
+                  </Button>
+                </div>
+              </div>
             </Card>
           ))
         )}
