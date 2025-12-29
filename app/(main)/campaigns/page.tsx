@@ -3,10 +3,6 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   Plus,
-  MoreVertical,
-  Edit2,
-  Trash2,
-  Copy,
   ArrowRight,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
