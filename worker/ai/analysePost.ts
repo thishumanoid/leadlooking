@@ -37,7 +37,7 @@ export async function analysePost(
 ) {
   const aiPrompt = createPrompt(title, content, productDescription, keywords);
 
-  console.log('💸 running AI for:', aiPrompt);
+  // console.log('💸 running AI for:', aiPrompt);
 
   const { output } = await generateText({
     model: groq('openai/gpt-oss-120b'),

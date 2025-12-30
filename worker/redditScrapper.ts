@@ -2,6 +2,8 @@ import axios from 'axios';
 import { cleanText, delay, truncateText } from '@/utils/functions/helpers';
 import { analysePost } from './ai/analysePost';
 import { sendLeadEmail } from './email/mailtrap';
+// import { LeadFilterEngine } from './ai/helpers';
+import { RedditLeadFilter } from './helpers';
 
 interface RedditPost {
   id: string;
@@ -48,26 +50,28 @@ async function scanRedditForKeywords(keywords: string[], limit: number = 5): Pro
       console.log(`Searching for keyword: "${keyword}"`);
 
       const response = await axios.get<RedditSearchResponse>(baseUrl, {
-        params: {
-          q: `"${keyword}"`,
-          sort: 'new',
-          limit: limit,
-        },
+    params: {
+      q: `"need" boilerplate`,
+      sort: 'new',
+      // limit: 99,
+    },
         headers: {
           'User-Agent': 'RedditKeywordScanner/1.0',
         },
       });
+
+      console.log('✅ reddit call finished');
 
       const posts = response.data.data.children;
 
       for (const post of posts) {
         const postData = post.data;
 
-        if (seenPostIds.has(postData.id)) {
-          continue;
-        }
+        // if (seenPostIds.has(postData.id)) {
+        //   continue;
+        // }
 
-        seenPostIds.add(postData.id);
+        // seenPostIds.add(postData.id);
 
         allPosts.push({
           id: postData.id,
@@ -101,52 +105,80 @@ async function scanRedditForKeywords(keywords: string[], limit: number = 5): Pro
   // Sort all posts by creation time (newest first)
   allPosts.sort((a, b) => b.created_utc - a.created_utc);
 
+  // const filterEngine = new LeadFilterEngine();
+
+  const config = {
+    productDescription:
+      'a chrome browser extension',
+    weights: {
+      productDesc: 0.8, // Product relevance is most important
+      intent: 0.4, // Intent matters moderately
+      negative: 0.2, // Penalty for promotional/negative content
+    },
+    threshold: 0.5, // Minimum score to pass (adjust based on your needs)
+    debug: true, // Set to true to see scoring details
+  };
+
+  // Create filter instance
+  const filter = new RedditLeadFilter(config);
+
+  // Filter the posts
+  // const filteredPosts = filter.filterPosts(allPosts);
+
+  // console.log(
+  //   `\n📊 Results: ${filteredPosts.length} out of ${allPosts.length} posts passed the filter\n`
+  // );
+
+  // console.log('👉👉Filterrrrrr: ', filteredPosts);
+  console.log('👉👉All Posts: ', allPosts);
+  console.log('All Posts length: ', allPosts.length);
+
   return allPosts;
 }
 
 export const EXAMPLE = {
   title: '',
   content: ``,
-  keywords: ['looking for CRM'],
-  productDescription:
-    'A Joky CRM that helps you manage customer relationships, track interactions, and organize sales in one place—so you can build stronger connections and grow your business.',
+  keywords: ["production boilerplate"],
+  // productDescription:
+  //   'Jogy - A CRM that helps you manage customer relationships, track interactions, and organize sales in one place—so you can build stronger connections and grow your business.',
 };
 
 export default async function runReddit() {
-  const keywords = EXAMPLE.keywords;
-  const productDescription = EXAMPLE.productDescription;
+  // const productDescription = EXAMPLE.productDescription;
 
-  const posts = await scanRedditForKeywords(keywords, 2);
+  const posts = await scanRedditForKeywords(EXAMPLE.keywords);
 
-  for (const post of posts) {
-    const postLabels = await analysePost(post.title, post.selftext, productDescription, keywords);
+  // console.log('all posts', posts)
 
-    if (postLabels.leadScore > 40) {
-      const chatURL = await getUserChatURL(post.author)
-      console.log('chatURL:', chatURL)
-      sendLeadEmail(post.permalink, chatURL)
-    }
+  // for (const post of posts) {
+  //   const postLabels = await analysePost(post.title, post.selftext, productDescription, keywords);
 
-    console.log('📄📄postLabels: ', postLabels);
+  //   if (postLabels.leadScore > 40) {
+  //     const chatURL = await getUserChatURL(post.author)
+  //     console.log('chatURL:', chatURL)
+  //     sendLeadEmail(post.permalink, chatURL)
+  //   }
 
-    console.log('------------------------------------------------------------');
-    // console.log(`Title: ${post.title}`);
-    // console.log(`Subreddit: r/${post.subreddit}`);
-    // console.log(`Author: u/${post.author}`);
-    // console.log(`Matched: "${post.matchedKeyword}"`);
-    console.log(`permalink: ${post.permalink}`);
-    // console.log(`URL: ${post.url}`);
-    // console.log(`Post Text: ${post.selftext}`)
-    // console.log(`Posted: ${new Date(post.created_utc * 1000).toLocaleString()}`);
-    console.log('------------------------------------------------------------');
+  //   // console.log('📄📄postLabels: ', postLabels);
 
-    console.log('delllayyyy start');
+  //   console.log('------------------------------------------------------------');
+  //   // console.log(`Title: ${post.title}`);
+  //   // console.log(`Subreddit: r/${post.subreddit}`);
+  //   // console.log(`Author: u/${post.author}`);
+  //   // console.log(`Matched: "${post.matchedKeyword}"`);
+  //   console.log(`permalink: ${post.permalink}`);
+  //   // console.log(`URL: ${post.url}`);
+  //   // console.log(`Post Text: ${post.selftext}`)
+  //   // console.log(`Posted: ${new Date(post.created_utc * 1000).toLocaleString()}`);
+  //   console.log('------------------------------------------------------------');
 
-    await delay(10000);
-    console.log('delllayyyy end');
-  }
+  //   console.log('delllayyyy start');
+
+  //   await delay(10000);
+  //   console.log('delllayyyy end');
+  // }
 }
-
 
 async function getUserChatURL(username: string): Promise<string> {
   try {

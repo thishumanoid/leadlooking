@@ -13,15 +13,12 @@
     "jsx": "react-jsx",
     "incremental": true,
 
-    
     // relaxations, make all true for strict:
     "strict": true,
     "strictPropertyInitialization": false,
     "noImplicitThis": false,
 
-    "plugins": [
-      { "name": "next" }
-    ],
+    "plugins": [{ "name": "next" }],
     "paths": { "@/*": ["./*"] }
   },
   "include": [
@@ -30,7 +27,9 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
-    "**/*.mts"
-, "worker/redditScrapper.ts", "worker/email/mailtrap.ts"  ],
+    "**/*.mts",
+    "worker/redditScrapperGemini.ts",
+    "worker/email/mailtrap.ts"
+  ],
   "exclude": ["node_modules"]
 }
