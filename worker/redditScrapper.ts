@@ -50,11 +50,10 @@ async function scanRedditForKeywords(keywords: string[], limit: number = 5): Pro
       console.log(`Searching for keyword: "${keyword}"`);
 
       const response = await axios.get<RedditSearchResponse>(baseUrl, {
-    params: {
-      q: `"need" boilerplate`,
-      sort: 'new',
-      // limit: 99,
-    },
+        params: {
+          q: '"too expensive" AND Salesforce AND CRM',
+          sort: 'new',
+        },
         headers: {
           'User-Agent': 'RedditKeywordScanner/1.0',
         },
@@ -108,8 +107,7 @@ async function scanRedditForKeywords(keywords: string[], limit: number = 5): Pro
   // const filterEngine = new LeadFilterEngine();
 
   const config = {
-    productDescription:
-      'a chrome browser extension',
+    productDescription: 'a chrome browser extension',
     weights: {
       productDesc: 0.8, // Product relevance is most important
       intent: 0.4, // Intent matters moderately
@@ -139,7 +137,7 @@ async function scanRedditForKeywords(keywords: string[], limit: number = 5): Pro
 export const EXAMPLE = {
   title: '',
   content: ``,
-  keywords: ["production boilerplate"],
+  keywords: ['production boilerplate'],
   // productDescription:
   //   'Jogy - A CRM that helps you manage customer relationships, track interactions, and organize sales in one place—so you can build stronger connections and grow your business.',
 };

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -13,16 +13,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Sparkles, Loader2 } from 'lucide-react';
+
+import { Loader2, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
 import { useSupabase } from '@/hooks/supabase-provider';
+import { scrapeMetadata } from '@/utils/functions/scrapeMetadata';
+// Make sure this path matches where you saved the helper above
+import { getKeywords } from '@/utils/functions/getKeywords'; 
 
 interface CreateCampaignDialogProps {
   open: boolean;
@@ -31,19 +28,145 @@ interface CreateCampaignDialogProps {
 }
 
 export function CreateCampaignDialog({ open, onOpenChange, onCreate }: CreateCampaignDialogProps) {
+  const [websiteUrl, setWebsiteUrl] = useState('');
   const [websiteName, setWebsiteName] = useState('');
   const [websiteDescription, setWebsiteDescription] = useState('');
-  const [websiteUrl, setWebsiteUrl] = useState('');
+  
+  // Loading states
+  const [isScrapingMetadata, setIsScrapingMetadata] = useState(false);
+  const [isGeneratingKeywords, setIsGeneratingKeywords] = useState(false);
+  
+  const [metadataError, setMetadataError] = useState('');
   const [keywords, setKeywords] = useState(['', '', '', '', '']);
-  const [replyTone, setReplyTone] = useState('friendly');
-  const [replyLength, setReplyLength] = useState('medium');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { supabase } = useSupabase();
+
+  // Track if fields were manually edited
+  const [wasManuallyEdited, setWasManuallyEdited] = useState({
+    name: false,
+    description: false,
+    keywords: false,
+  });
+
+  const debounceTimer = useRef<NodeJS.Timeout | null>(null);
+
+  const normalizeUrl = (url: string): string | null => {
+    const trimmed = url.trim();
+    if (!trimmed) return null;
+    let normalized = trimmed;
+    if (!/^https?:\/\//i.test(normalized)) {
+      normalized = 'https://' + normalized;
+    }
+    try {
+      new URL(normalized);
+      return normalized;
+    } catch {
+      return null;
+    }
+  };
+
+  // Auto-scrape metadata and Generate Keywords
+  useEffect(() => {
+    if (debounceTimer.current) {
+      clearTimeout(debounceTimer.current);
+    }
+
+    const normalizedUrl = normalizeUrl(websiteUrl);
+
+    if (!normalizedUrl) {
+      setMetadataError('');
+      return;
+    }
+
+    // Debounce for 800ms
+    debounceTimer.current = setTimeout(async () => {
+      setIsScrapingMetadata(true);
+      setMetadataError('');
+
+      try {
+        // 1. Scrape Metadata
+        const metadata = await scrapeMetadata(normalizedUrl);
+        
+        let descriptionToUse = websiteDescription;
+
+        // Auto-fill Name
+        if (!wasManuallyEdited.name && metadata.name) {
+          setWebsiteName(metadata.name);
+        }
+
+        // Auto-fill Description
+        if (!wasManuallyEdited.description && metadata.description) {
+          setWebsiteDescription(metadata.description);
+          descriptionToUse = metadata.description;
+        }
+
+        // 2. Generate Keywords
+        // Only run if we have a description and keywords haven't been touched yet
+        if (descriptionToUse && !wasManuallyEdited.keywords) {
+          setIsGeneratingKeywords(true);
+          try {
+            console.log('Triggering keyword generation for:', descriptionToUse);
+            
+            const aiKeywords = await getKeywords(descriptionToUse);
+            
+            console.log('Received keywords in component:', aiKeywords);
+
+            if (aiKeywords && aiKeywords.length > 0) {
+                // Fill the array up to 5, keeping empty strings for unused slots
+                const newKeywords = [...aiKeywords, '', '', '', ''].slice(0, 5);
+                setKeywords(newKeywords);
+                toast.success("Keywords generated successfully!");
+            }
+          } catch (kwError) {
+            console.error('Keyword generation failed silently:', kwError);
+          } finally {
+            setIsGeneratingKeywords(false);
+          }
+        }
+
+      } catch (error) {
+        console.error('Failed to scrape metadata:', error);
+        setMetadataError('Could not fetch website details. Please enter manually.');
+      } finally {
+        setIsScrapingMetadata(false);
+      }
+    }, 800);
+
+    return () => {
+      if (debounceTimer.current) {
+        clearTimeout(debounceTimer.current);
+      }
+    };
+  }, [websiteUrl, wasManuallyEdited]); 
+
+  // ... Rest of your component (Handlers, JSX) remains exactly the same as previous code
+  
+  const handleWebsiteNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setWebsiteName(e.target.value);
+    setWasManuallyEdited((prev) => ({ ...prev, name: true }));
+  };
+
+  const handleWebsiteDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setWebsiteDescription(e.target.value);
+    setWasManuallyEdited((prev) => ({ ...prev, description: true }));
+  };
+
+  useEffect(() => {
+    if (!open) {
+      setWebsiteName('');
+      setWebsiteDescription('');
+      setWebsiteUrl('');
+      setKeywords(['', '', '', '', '']);
+      setWasManuallyEdited({ name: false, description: false, keywords: false });
+      setMetadataError('');
+    }
+  }, [open]);
 
   const handleKeywordChange = (index: number, value: string) => {
     const newKeywords = [...keywords];
     newKeywords[index] = value;
     setKeywords(newKeywords);
+    setWasManuallyEdited((prev) => ({ ...prev, keywords: true }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -51,36 +174,28 @@ export function CreateCampaignDialog({ open, onOpenChange, onCreate }: CreateCam
     setIsSubmitting(true);
 
     try {
-
-      // Filter out empty keywords
       const validKeywords = keywords.filter((k) => k.trim() !== '');
-      
+
       if (validKeywords.length === 0) {
         toast.error('Please add at least one keyword');
         setIsSubmitting(false);
         return;
       }
 
-      // Step 1: Insert campaign
       const { data: campaign, error: campaignError } = await supabase
         .from('campaigns')
         .insert({
           name: websiteName,
           description: websiteDescription,
           website_url: websiteUrl,
-          config: {
-            ai_tone: replyTone.toLowerCase(),
-            message_length: replyLength.toLowerCase(),
-          },
         })
         .select()
         .single();
 
       if (campaignError) throw campaignError;
 
-      // Step 2: Handle keywords (upsert to avoid duplicates)
       const keywordInserts = validKeywords.map((kw) => ({ keyword: kw.trim().toLowerCase() }));
-      
+
       const { data: insertedKeywords, error: keywordsError } = await supabase
         .from('keywords')
         .upsert(keywordInserts, { onConflict: 'keyword', ignoreDuplicates: true })
@@ -88,15 +203,16 @@ export function CreateCampaignDialog({ open, onOpenChange, onCreate }: CreateCam
 
       if (keywordsError) throw keywordsError;
 
-      // Step 3: Get all keyword IDs (including existing ones)
       const { data: allKeywords, error: fetchError } = await supabase
         .from('keywords')
         .select('id, keyword')
-        .in('keyword', validKeywords.map(k => k.trim().toLowerCase()));
+        .in(
+          'keyword',
+          validKeywords.map((k) => k.trim().toLowerCase())
+        );
 
       if (fetchError) throw fetchError;
 
-      // Step 4: Create campaign_keywords junction entries
       const campaignKeywordInserts = allKeywords.map((kw) => ({
         campaign_id: campaign.id,
         keyword_id: kw.id,
@@ -108,21 +224,7 @@ export function CreateCampaignDialog({ open, onOpenChange, onCreate }: CreateCam
 
       if (junctionError) throw junctionError;
 
-      // Success! Call onCreate callback with the campaign data
-    //   onCreate({
-    //     ...campaign,
-    //     keywords: allKeywords,
-    //   });
-
-      // Reset form
-      setWebsiteName('');
-      setWebsiteDescription('');
-      setWebsiteUrl('');
-      setKeywords(['', '', '', '', '']);
-      setReplyTone('friendly');
-      setReplyLength('medium');
-      
-      toast.success('Campaign created successfully!');
+      toast.success('✅ Campaign created successfully!');
       onOpenChange(false);
     } catch (error) {
       console.error('Error creating campaign:', error);
@@ -153,6 +255,32 @@ export function CreateCampaignDialog({ open, onOpenChange, onCreate }: CreateCam
           <div className="flex-1 overflow-y-auto px-6 py-2 space-y-6">
             <div className="space-y-4">
               <div className="grid gap-2">
+                <Label htmlFor="websiteUrl" className="text-sm font-medium">
+                  Website URL (optional)
+                </Label>
+                <div className="relative">
+                    <Input
+                    id="websiteUrl"
+                    placeholder="https://example.com"
+                    type="url"
+                    value={websiteUrl}
+                    onChange={(e) => setWebsiteUrl(e.target.value)}
+                    className="bg-background/50 border-muted-foreground/20 focus-visible:ring-primary pr-10"
+                    disabled={isSubmitting}
+                    />
+                    {isScrapingMetadata && (
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                        <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                    </div>
+                    )}
+                </div>
+              </div>
+              {metadataError && <p className="text-xs text-orange-500">{metadataError}</p>}
+              {isScrapingMetadata && (
+                <p className="text-xs text-muted-foreground">Fetching website details...</p>
+              )}
+
+              <div className="grid gap-2">
                 <Label htmlFor="websiteName" className="text-sm font-medium">
                   Website Name
                 </Label>
@@ -160,25 +288,8 @@ export function CreateCampaignDialog({ open, onOpenChange, onCreate }: CreateCam
                   id="websiteName"
                   placeholder="e.g. My Awesome SaaS"
                   value={websiteName}
-                  onChange={(e) => setWebsiteName(e.target.value)}
+                  onChange={handleWebsiteNameChange}
                   className="bg-background/50 border-muted-foreground/20 focus-visible:ring-primary"
-                  required
-                  disabled={isSubmitting}
-                />
-              </div>
-
-              <div className="grid gap-2">
-                <Label htmlFor="websiteUrl" className="text-sm font-medium">
-                  Website URL (optional)
-                </Label>
-                <Input
-                  id="websiteUrl"
-                  placeholder="https://example.com"
-                  type="url"
-                  value={websiteUrl}
-                  onChange={(e) => setWebsiteUrl(e.target.value)}
-                  className="bg-background/50 border-muted-foreground/20 focus-visible:ring-primary"
-                  required
                   disabled={isSubmitting}
                 />
               </div>
@@ -191,7 +302,7 @@ export function CreateCampaignDialog({ open, onOpenChange, onCreate }: CreateCam
                   id="description"
                   placeholder="Briefly describe what your business does..."
                   value={websiteDescription}
-                  onChange={(e) => setWebsiteDescription(e.target.value)}
+                  onChange={handleWebsiteDescriptionChange}
                   className="bg-background/50 border-muted-foreground/20 focus-visible:ring-primary min-h-[100px] resize-none"
                   required
                   disabled={isSubmitting}
@@ -200,17 +311,25 @@ export function CreateCampaignDialog({ open, onOpenChange, onCreate }: CreateCam
             </div>
 
             <div className="space-y-3 pb-4">
-              <Label className="text-sm font-medium flex items-center justify-between">
-                Target Keywords
+              <div className="flex items-center justify-between">
+                <Label className="text-sm font-medium flex items-center gap-2">
+                  Target Keywords
+                  {isGeneratingKeywords && (
+                    <span className="flex items-center text-xs text-primary animate-pulse">
+                        <Sparkles className="w-3 h-3 mr-1" />
+                        Generating AI keywords...
+                    </span>
+                  )}
+                </Label>
                 <span className="text-[10px] text-muted-foreground uppercase tracking-wider">
                   Set up to 5
                 </span>
-              </Label>
+              </div>
               <div className="grid gap-2">
                 {keywords.map((keyword, index) => (
                   <div key={index} className="relative group">
                     <Input
-                      placeholder={`Keyword ${index + 1}`}
+                      placeholder={isGeneratingKeywords ? "Generating..." : `Keyword ${index + 1}`}
                       value={keyword}
                       onChange={(e) => handleKeywordChange(index, e.target.value)}
                       className="bg-background/50 border-muted-foreground/20 focus-visible:ring-primary pl-9"
@@ -222,46 +341,6 @@ export function CreateCampaignDialog({ open, onOpenChange, onCreate }: CreateCam
                     </div>
                   </div>
                 ))}
-              </div>
-            </div>
-            <div className="space-y-4 pt-4 border-t border-muted-foreground/10 pb-4">
-              <div className="flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-primary" />
-                <h3 className="text-sm font-semibold">AI Reply Settings</h3>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="replyTone" className="text-sm font-medium">
-                    AI Reply Tone
-                  </Label>
-                  <Select value={replyTone} onValueChange={setReplyTone} disabled={isSubmitting}>
-                    <SelectTrigger className="w-full bg-background/50 border-muted-foreground/20">
-                      <SelectValue placeholder="Select tone" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="friendly">Friendly</SelectItem>
-                      <SelectItem value="professional">Professional</SelectItem>
-                      <SelectItem value="casual">Casual</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="grid gap-2">
-                  <Label htmlFor="replyLength" className="text-sm font-medium">
-                    Reply Length
-                  </Label>
-                  <Select value={replyLength} onValueChange={setReplyLength} disabled={isSubmitting}>
-                    <SelectTrigger className="w-full bg-background/50 border-muted-foreground/20">
-                      <SelectValue placeholder="Select length" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="short">Short</SelectItem>
-                      <SelectItem value="medium">Medium</SelectItem>
-                      <SelectItem value="long">Long</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
               </div>
             </div>
           </div>
@@ -279,7 +358,7 @@ export function CreateCampaignDialog({ open, onOpenChange, onCreate }: CreateCam
             <Button
               type="submit"
               className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20"
-              disabled={isSubmitting}
+              disabled={isSubmitting || isGeneratingKeywords} 
             >
               {isSubmitting ? (
                 <>
