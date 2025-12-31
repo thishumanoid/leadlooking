@@ -178,10 +178,10 @@ const CampaignsPage = () => {
                     {/* Keywords */}
                     <div className="mb-4">
                       <p className="text-xs text-muted-foreground mb-2 font-medium">
-                        KEYWORDS ({campaign.keywords.length})
+                        KEYWORDS ({campaign?.keywords?.length})
                       </p>
                       <div className="flex flex-wrap gap-1.5">
-                        {campaign.keywords.slice(0, 3).map((keyword) => (
+                        {campaign?.keywords?.slice(0, 3).map((keyword) => (
                           <span
                             key={keyword.id}
                             className="px-2.5 py-1 text-xs rounded-md border font-medium"
