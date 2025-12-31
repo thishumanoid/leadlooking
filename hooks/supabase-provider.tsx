@@ -3,6 +3,7 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js'
 import { useSession } from '@clerk/nextjs'
 import { createContext, useContext, useEffect, useState } from 'react'
+import { Database } from '@/types/supabaseTypes';
 
 type SupabaseContext = {
   supabase: SupabaseClient
@@ -26,7 +27,7 @@ export default function SupabaseProvider({ children }: Props) {
   useEffect(() => {
     if(!session) return
 
-    const client = createClient(
+    const client = createClient<Database>(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!, {
       accessToken: () => session?.getToken()

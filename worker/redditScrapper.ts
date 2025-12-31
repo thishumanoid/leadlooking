@@ -3,20 +3,10 @@ import { cleanText, delay, truncateText } from '@/utils/functions/helpers';
 import { analysePost } from './ai/analysePost';
 import { sendLeadEmail } from './email/mailtrap';
 import { RedditLeadFilter } from './helpers';
-
-interface RedditPost {
-  id: string;
-  title: string;
-  selftext: string;
-  author: string;
-  subreddit: string;
-  created_utc: number;
-  url: string;
-  permalink: string;
-  score: number;
-  num_comments: number;
-  matchedKeyword: string;
-}
+import { fetchCampaignsWithKeywords } from './supabase/getSupabaseAdmin';
+import { upsertRedditPost } from './supabase/upsertSupabaseAdmin';
+// import type { RedditPost } from '@/types/globalTypes';
+import { createCampaignLead } from './supabase/upsertSupabaseAdmin';
 
 interface RedditSearchResponse {
   data: {
@@ -37,70 +27,63 @@ interface RedditSearchResponse {
   };
 }
 
-async function scanRedditForKeywords(keywords: string[], limit: number = 5): Promise<RedditPost[]> {
-  const allPosts: RedditPost[] = [];
-  const seenPostIds = new Set();
-
+async function scanRedditForKeyword(keyword: string): Promise<RedditPostInsert[]> {
+  const posts: RedditPostInsert[] = [];
+  const cutoffTime = Math.floor(Date.now() / 1000) - 1 * 3600;
   const baseUrl = 'https://www.reddit.com/search.json';
 
-  for (const keyword of keywords) {
-    try {
-      console.log(`Searching for keyword: "${keyword}"`);
+  try {
+    console.log(`Searching for keyword: "${keyword}"`);
 
-      /// figure out the final url and match it with reddit app's url
-      const response = await axios.get<RedditSearchResponse>(baseUrl, {
-        params: {
-          q: '"too expensive" AND Salesforce AND CRM',
-          sort: 'new',
-        },
-        headers: {
-          'User-Agent': 'RedditKeywordScanner/1.0',
-        },
+    /// figure out the final url and match it with reddit app's url
+    const response = await axios.get<RedditSearchResponse>(baseUrl, {
+      params: {
+        q: `${keyword}`,
+        sort: 'new',
+      },
+      headers: {
+        'User-Agent': 'RedditKeywordScanner/1.0',
+      },
+    });
+
+    console.log('✅ reddit call finished');
+
+    const children = response.data.data.children;
+
+    console.log('👉 children: ', children);
+
+    for (const post of children) {
+      const postData = post.data;
+
+      posts.push({
+        reddit_id: postData.id,
+        subreddit: postData.subreddit,
+        author: postData.author,
+        title: postData.title,
+        content: truncateText(cleanText(postData.selftext), 700),
+        url: `https://www.reddit.com${postData.permalink}`,
+        created_at_reddit: new Date(postData.created_utc * 1000).toISOString(),
       });
+    }
 
-      console.log('✅ reddit call finished');
+    // Sort all posts by newest
+    posts.sort(
+      (a, b) =>
+        new Date(b.created_at_reddit || 0).getTime() - new Date(a.created_at_reddit || 0).getTime()
+    );
 
-      const posts = response.data.data.children;
 
-      for (const post of posts) {
-        const postData = post.data;
-
-        if (seenPostIds.has(postData.id)) {
-          continue;
-        }
-
-        seenPostIds.add(postData.id);
-
-        allPosts.push({
-          id: postData.id,
-          title: postData.title,
-          selftext: truncateText(cleanText(postData.selftext), 700),
-          author: postData.author,
-          subreddit: postData.subreddit,
-          created_utc: postData.created_utc,
-          url: postData.url,
-          permalink: `https://www.reddit.com${postData.permalink}`,
-          score: postData.score,
-          num_comments: postData.num_comments,
-          matchedKeyword: keyword,
-        });
+    
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error(`Error searching for keyword "${keyword}":`, error.message);
+      if (error.response?.status === 429) {
+        console.error('Rate limit exceeded. Consider adding longer delays.');
       }
-
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.error(`Error searching for keyword "${keyword}":`, error.message);
-        if (error.response?.status === 429) {
-          console.error('Rate limit exceeded. Consider adding longer delays.');
-        }
-      } else {
-        console.error(`Unexpected error for keyword "${keyword}":`, error);
-      }
+    } else {
+      console.error(`Unexpected error for keyword "${keyword}":`, error);
     }
   }
-
-  // Sort all posts by creation time (newest first)
-  allPosts.sort((a, b) => b.created_utc - a.created_utc);
 
   // const filterEngine = new LeadFilterEngine();
 
@@ -126,22 +109,87 @@ async function scanRedditForKeywords(keywords: string[], limit: number = 5): Pro
   // );
 
   // console.log('👉👉Filterrrrrr: ', filteredPosts);
-  console.log('👉👉All Posts: ', allPosts);
-  console.log('All Posts length: ', allPosts.length);
-
-  return allPosts;
+  console.log('👉👉finnal Posts: ', posts);
+  return posts;
 }
 
 export const EXAMPLE = {
-  title: '',
-  content: ``,
   keywords: ['production boilerplate'],
 };
 
-export default async function runReddit() {
-  // const productDescription = EXAMPLE.productDescription;
+/**
+ * Processes posts for a specific campaign and keyword
+ */
+async function processKeywordForCampaign(campaign: Campaign, keyword: Keyword) {
+  console.log(`\n📍 Processing: Campaign "${campaign.name}" | Keyword "${keyword.keyword}"`);
 
-  const posts = await scanRedditForKeywords(EXAMPLE.keywords);
+  // Search Reddit
+  const posts = await scanRedditForKeyword(keyword.keyword);
+
+  if (posts.length === 0) {
+    console.log(`⚠️ No new posts found`);
+    return 0;
+  }
+
+  let newLeadsCount = 0;
+
+  // Process each post
+  for (const post of posts) {
+    // Upsert to global reddit_posts table
+    const postId = await upsertRedditPost(post);
+
+    if (!postId) {
+      continue;
+    }
+
+    // Create campaign lead connection
+    const created = await createCampaignLead(campaign.id, keyword.id, postId, campaign.user_id);
+
+    if (created) {
+      newLeadsCount++;
+      console.log(`    ✅ New lead: r/${post.subreddit} - ${post.title!.substring(0, 50)}...`);
+    }
+  }
+
+  console.log(`  📊 Results: ${newLeadsCount} new leads created from ${posts.length} posts`);
+  return newLeadsCount;
+}
+
+export default async function runReddit() {
+  try {
+    // Step 1: Fetch all campaigns with keywords
+    const campaignsWithKeywords = await fetchCampaignsWithKeywords();
+
+    if (campaignsWithKeywords.length === 0) {
+      console.log('⚠️ No campaigns with keywords found. Exiting.');
+      return;
+    }
+
+    let totalLeads = 0;
+    const totalKeywords = campaignsWithKeywords.reduce((sum, cwk) => sum + cwk.keywords.length, 0);
+
+    console.log(
+      `📊 Processing ${totalKeywords} keywords across ${campaignsWithKeywords.length} campaigns`
+    );
+
+    for (const { campaign, keywords } of campaignsWithKeywords) {
+      for (const keyword of keywords) {
+        const leadsCreated = await processKeywordForCampaign(campaign, keyword);
+        totalLeads += leadsCreated;
+
+        // Wait 2 seconds between requests
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+      }
+    }
+
+    console.log('\n═'.repeat(60));
+    console.log(`✅ Extraction Complete!`);
+    console.log(`📈 Total new leads created: ${totalLeads}`);
+    console.log(`🔍 Keywords processed: ${totalKeywords}`);
+  } catch (error) {
+    console.error('\n❌ Fatal error in runRedditLeadExtraction:', error);
+    throw error;
+  }
 
   // console.log('all posts', posts)
 

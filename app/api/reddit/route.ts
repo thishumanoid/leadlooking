@@ -6,9 +6,9 @@ import { sendLeadEmail } from '@/worker/email/mailtrap';
 export async function POST(request: Request) {
   console.log('🔥recived api request');
 
-  // await runReddit();
+  await runReddit();
 
-  await exampleKeywordGenerator()
+  // await exampleKeywordGenerator()
 
   return new Response();
 }

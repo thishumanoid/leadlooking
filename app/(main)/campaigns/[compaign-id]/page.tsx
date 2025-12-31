@@ -9,7 +9,6 @@ import {
   RefreshCw,
   Edit,
   Trash2,
-  CheckCircle2,
   Zap,
   Clock,
   CoffeeIcon
