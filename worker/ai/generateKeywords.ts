@@ -2,6 +2,9 @@ import { generateText, Output } from 'ai';
 import { groq } from '@ai-sdk/groq';
 import { z } from 'zod';
 
+import { createGoogleGenerativeAI } from '@ai-sdk/google';
+
+
 // System prompt for consistent behavior
 const SYSTEM_PROMPT = `You are a Reddit search optimization expert specializing in lead generation queries. Your role is to generate highly targeted search keywords that identify potential customers on Reddit who are actively seeking solutions.
 
@@ -59,6 +62,12 @@ Bad Examples (avoid these):
 
 Generate 5 distinct, high-quality keywords that will catch real Reddit users actively seeking this type of solution.`;
 
+
+const google = createGoogleGenerativeAI({
+  apiKey: process.env.GOOGLE_API_KEY,
+});
+
+
 // Zod schema for strict output
 const KeywordsArraySchema = z.object({
   keywords: z.array(z.string().min(5).max(50)).length(5),
@@ -70,7 +79,7 @@ export async function generateKeywords(
   const aiPrompt = generateUserPrompt(productDescription);
 
   const { output } = await generateText({
-    model: groq('openai/gpt-oss-120b'),
+    model: google('gemini-2.5-flash'),
     output: Output.object({
       schema: KeywordsArraySchema,
     }),

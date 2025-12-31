@@ -18,7 +18,6 @@ import { Loader2, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
 import { useSupabase } from '@/hooks/supabase-provider';
 import { scrapeMetadata } from '@/utils/functions/scrapeMetadata';
-// Make sure this path matches where you saved the helper above
 import { getKeywords } from '@/utils/functions/getKeywords'; 
 
 interface CreateCampaignDialogProps {
@@ -50,32 +49,12 @@ export function CreateCampaignDialog({ open, onOpenChange, onCreate }: CreateCam
 
   const debounceTimer = useRef<NodeJS.Timeout | null>(null);
 
-  const normalizeUrl = (url: string): string | null => {
-    const trimmed = url.trim();
-    if (!trimmed) return null;
-    let normalized = trimmed;
-    if (!/^https?:\/\//i.test(normalized)) {
-      normalized = 'https://' + normalized;
-    }
-    try {
-      new URL(normalized);
-      return normalized;
-    } catch {
-      return null;
-    }
-  };
+ 
 
   // Auto-scrape metadata and Generate Keywords
   useEffect(() => {
     if (debounceTimer.current) {
       clearTimeout(debounceTimer.current);
-    }
-
-    const normalizedUrl = normalizeUrl(websiteUrl);
-
-    if (!normalizedUrl) {
-      setMetadataError('');
-      return;
     }
 
     // Debounce for 800ms
@@ -85,7 +64,12 @@ export function CreateCampaignDialog({ open, onOpenChange, onCreate }: CreateCam
 
       try {
         // 1. Scrape Metadata
-        const metadata = await scrapeMetadata(normalizedUrl);
+        const metadata = await scrapeMetadata(websiteUrl);
+
+        if (!metadata) {
+          setMetadataError('');
+          return;
+        }
         
         let descriptionToUse = websiteDescription;
 
@@ -106,8 +90,10 @@ export function CreateCampaignDialog({ open, onOpenChange, onCreate }: CreateCam
           setIsGeneratingKeywords(true);
           try {
             console.log('Triggering keyword generation for:', descriptionToUse);
-            
-            const aiKeywords = await getKeywords(descriptionToUse);
+
+            const combinedDescription = `${websiteName}. ${descriptionToUse}`;
+            console.log('Combined description:', combinedDescription);
+            const aiKeywords = await getKeywords(combinedDescription);
             
             console.log('Received keywords in component:', aiKeywords);
 
@@ -139,7 +125,6 @@ export function CreateCampaignDialog({ open, onOpenChange, onCreate }: CreateCam
     };
   }, [websiteUrl, wasManuallyEdited]); 
 
-  // ... Rest of your component (Handlers, JSX) remains exactly the same as previous code
   
   const handleWebsiteNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setWebsiteName(e.target.value);
@@ -194,7 +179,7 @@ export function CreateCampaignDialog({ open, onOpenChange, onCreate }: CreateCam
 
       if (campaignError) throw campaignError;
 
-      const keywordInserts = validKeywords.map((kw) => ({ keyword: kw.trim().toLowerCase() }));
+      const keywordInserts = validKeywords.map((kw) => ({ keyword: kw.trim() }));
 
       const { data: insertedKeywords, error: keywordsError } = await supabase
         .from('keywords')
@@ -224,7 +209,7 @@ export function CreateCampaignDialog({ open, onOpenChange, onCreate }: CreateCam
 
       if (junctionError) throw junctionError;
 
-      toast.success('✅ Campaign created successfully!');
+      toast.success('Campaign created successfully!');
       onOpenChange(false);
     } catch (error) {
       console.error('Error creating campaign:', error);
@@ -262,7 +247,7 @@ export function CreateCampaignDialog({ open, onOpenChange, onCreate }: CreateCam
                     <Input
                     id="websiteUrl"
                     placeholder="https://example.com"
-                    type="url"
+                    type="text"
                     value={websiteUrl}
                     onChange={(e) => setWebsiteUrl(e.target.value)}
                     className="bg-background/50 border-muted-foreground/20 focus-visible:ring-primary pr-10"

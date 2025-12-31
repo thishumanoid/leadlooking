@@ -2,7 +2,6 @@ import axios from 'axios';
 import { cleanText, delay, truncateText } from '@/utils/functions/helpers';
 import { analysePost } from './ai/analysePost';
 import { sendLeadEmail } from './email/mailtrap';
-// import { LeadFilterEngine } from './ai/helpers';
 import { RedditLeadFilter } from './helpers';
 
 interface RedditPost {
@@ -10,7 +9,6 @@ interface RedditPost {
   title: string;
   selftext: string;
   author: string;
-  chatURL: string;
   subreddit: string;
   created_utc: number;
   url: string;
@@ -49,6 +47,7 @@ async function scanRedditForKeywords(keywords: string[], limit: number = 5): Pro
     try {
       console.log(`Searching for keyword: "${keyword}"`);
 
+      /// figure out the final url and match it with reddit app's url
       const response = await axios.get<RedditSearchResponse>(baseUrl, {
         params: {
           q: '"too expensive" AND Salesforce AND CRM',
@@ -66,18 +65,17 @@ async function scanRedditForKeywords(keywords: string[], limit: number = 5): Pro
       for (const post of posts) {
         const postData = post.data;
 
-        // if (seenPostIds.has(postData.id)) {
-        //   continue;
-        // }
+        if (seenPostIds.has(postData.id)) {
+          continue;
+        }
 
-        // seenPostIds.add(postData.id);
+        seenPostIds.add(postData.id);
 
         allPosts.push({
           id: postData.id,
           title: postData.title,
           selftext: truncateText(cleanText(postData.selftext), 700),
           author: postData.author,
-          chatURL: '',
           subreddit: postData.subreddit,
           created_utc: postData.created_utc,
           url: postData.url,
@@ -106,19 +104,19 @@ async function scanRedditForKeywords(keywords: string[], limit: number = 5): Pro
 
   // const filterEngine = new LeadFilterEngine();
 
-  const config = {
-    productDescription: 'a chrome browser extension',
-    weights: {
-      productDesc: 0.8, // Product relevance is most important
-      intent: 0.4, // Intent matters moderately
-      negative: 0.2, // Penalty for promotional/negative content
-    },
-    threshold: 0.5, // Minimum score to pass (adjust based on your needs)
-    debug: true, // Set to true to see scoring details
-  };
+  // const config = {
+  //   productDescription: 'a chrome browser extension',
+  //   weights: {
+  //     productDesc: 0.8, // Product relevance is most important
+  //     intent: 0.4, // Intent matters moderately
+  //     negative: 0.2, // Penalty for promotional/negative content
+  //   },
+  //   threshold: 0.5, // Minimum score to pass (adjust based on your needs)
+  //   debug: true, // Set to true to see scoring details
+  // };
 
   // Create filter instance
-  const filter = new RedditLeadFilter(config);
+  // const filter = new RedditLeadFilter(config);
 
   // Filter the posts
   // const filteredPosts = filter.filterPosts(allPosts);
@@ -138,8 +136,6 @@ export const EXAMPLE = {
   title: '',
   content: ``,
   keywords: ['production boilerplate'],
-  // productDescription:
-  //   'Jogy - A CRM that helps you manage customer relationships, track interactions, and organize sales in one place—so you can build stronger connections and grow your business.',
 };
 
 export default async function runReddit() {

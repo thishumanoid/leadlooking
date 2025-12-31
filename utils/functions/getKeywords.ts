@@ -18,8 +18,6 @@ export async function getKeywords(description: string): Promise<string[]> {
     // 🔍 Debug log to see the exact structure
     console.log('API Response:', responseData);
 
-    // ❌ OLD (Incorrect): return data.keywords || [];
-    // ✅ NEW (Correct): Access data.keywords inside the 'data' object
     const keywords = responseData.data?.keywords || [];
     
     console.log(`✓ Generated ${keywords.length} keywords`);

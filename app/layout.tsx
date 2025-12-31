@@ -4,6 +4,7 @@ import './globals.css';
 import config from '@/config';
 import { ClerkProvider } from '@clerk/nextjs';
 import { dark } from '@clerk/themes';
+import { Toaster } from 'sonner';
 
 const inter = Inter({
   variable: '--font-inter',
@@ -51,7 +52,8 @@ export default function RootLayout({
     >
       <html lang="en">
         <body className={`${inter.className} antialiased dark`}>
-         {children}
+          {children}
+          <Toaster />
         </body>
       </html>
     </ClerkProvider>

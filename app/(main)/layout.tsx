@@ -5,7 +5,6 @@ import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/s
 import { AppSidebar } from '@/components/app-sidebar';
 import { UserButton } from '@clerk/nextjs';
 import SupabaseProvider from '@/hooks/supabase-provider';
-import { Toaster } from '@/components/ui/sonner';
 // Map routes to titles
 const routeTitles: Record<string, string> = {
   '/dashboard': 'Dashboard',
@@ -32,7 +31,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             <UserButton />
           </header>
           <div className="flex flex-1 flex-col gap-4 p-4 pt-0">{children}</div>
-          <Toaster />
+          
         </SidebarInset>
       </SidebarProvider>
     </SupabaseProvider>
