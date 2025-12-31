@@ -10,29 +10,15 @@ import {
   ExternalLink,
   WandSparkles,
   Send,
-  ThumbsUp,
-  Calendar,
+  Box,
+  Clock,
   User,
   Zap,
   Coffee,
 } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
-// Type definition for lead data
-interface Lead {
-  id: string;
-  platform: string;
-  subreddit: string;
-  author: string;
-  title: string;
-  fullText?: string; // Add this field to your data
-  timestamp: Date;
-  matchStrength: 'strong' | 'partial';
-  isNew: boolean;
-  upvotes: number;
-  comments: number;
-  postUrl?: string; // Add this field to your data
-}
+import { Lead } from './leadList';
 
 interface LeadDetailDialogProps {
   lead: Lead | null;
@@ -106,7 +92,7 @@ export default function PostDialog({ lead, isOpen, onClose }: LeadDetailDialogPr
           <DialogHeader className="px-4 sm:px-6 pt-4 sm:pt-6 pb-3 border-b shrink-0">
             <div className="flex items-start gap-2 sm:gap-3">
               {/* Hide Reddit icon on very small screens */}
-              <div className="hidden xs:block shrink-0">
+              <div className=" xs:block shrink-0">
                 <RedditIcon size={32} />
               </div>
               <div className="flex-1 min-w-0 pr-8">
@@ -152,25 +138,20 @@ export default function PostDialog({ lead, isOpen, onClose }: LeadDetailDialogPr
               {/* Post Metadata */}
               <div className="flex flex-wrap gap-2 sm:gap-3 lg:gap-4 text-xs sm:text-sm">
                 <div className="flex items-center gap-1.5 sm:gap-2 text-muted-foreground">
-                  <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+                  <Box className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
                   <span className="font-medium text-foreground truncate max-w-[120px] sm:max-w-none">
                     r/{lead.subreddit}
                   </span>
                 </div>
                 <div className="flex items-center gap-1.5 sm:gap-2 text-muted-foreground">
-                  <Avatar className="w-4 h-4 sm:w-5 sm:h-5 shrink-0">
-                    <AvatarFallback className="text-[9px] sm:text-xs">
-                      {lead.author.substring(0, 2).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
+                  <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
                   <span className="truncate max-w-[120px] sm:max-w-none">u/{lead.author}</span>
                 </div>
                 <div className="flex items-center gap-1.5 sm:gap-2 text-muted-foreground">
-                  <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+                  <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
                   <span className="whitespace-nowrap">{formatTimeAgo(lead.timestamp)}</span>
                 </div>
               </div>
-
 
               {/* Full Post Content */}
               <Card className="bg-muted/30 border-muted">

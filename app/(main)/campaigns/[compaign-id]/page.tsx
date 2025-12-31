@@ -1,53 +1,124 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, use } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useSupabase } from '@/hooks/supabase-provider';
+import { useParams } from 'next/navigation';
 
-import {
-  RefreshCw,
-  Edit,
-  Trash2,
-  Zap,
-  Clock,
-  CoffeeIcon
-} from 'lucide-react';
-import LeadList from '@/components/leadList';
+import { RefreshCw, Edit, Trash2, Zap, Clock, CoffeeIcon } from 'lucide-react';
+import LeadList, { Lead } from '@/components/leadList';
+import { Badge } from '@/components/ui/badge';
 
 // Sample data for demonstration
-const SAMPLE_CAMPAIGN = {
-  id: '1',
-  name: 'SEO',
-  description:
-    "I'm an SEO specialist helping businesses improve their search rankings and website traffic",
-  platforms: ['Reddit', 'X'],
-  keywords: [
-    'need CRM software',
-    'looking for SEO help',
-    'SEO specialist needed',
-    'improve search rankings',
-    'website traffic',
-  ],
-  lastSync: new Date(),
-  nextSync: new Date(Date.now() + 23 * 60 * 60 * 1000 + 58 * 60 * 1000),
-  strongMatches: 52,
-  partialMatches: 47,
-  strongMatchesChange: 12,
-  partialMatchesChange: 7,
-};
-
 
 export default function CampaignsPage() {
+  const params = useParams();
+  const campaignId = params?.['compaign-id'] as string;
+  const { supabase, isLoaded } = useSupabase();
   const [activeTab, setActiveTab] = useState('leads');
+  const [campaign, setCampaign] = useState<any>(null);
+  const [keywords, setKeywords] = useState<any[]>([]);
+  const [leads, setLeads] = useState<Lead[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const formatNextSync = (date: Date) => {
+  useEffect(() => {
+    if (!isLoaded || !campaignId) return;
+
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        // Fetch campaign details
+        const { data: campaignData, error: campaignError } = await supabase
+          .from('campaigns')
+          .select('*')
+          .eq('id', campaignId)
+          .single();
+
+        if (campaignError) throw campaignError;
+        setCampaign(campaignData);
+
+        // Fetch keywords
+        const { data: keywordData, error: keywordError } = await supabase
+          .from('campaign_keywords')
+          .select(
+            `
+            keyword_id,
+            keywords (
+              id,
+              keyword
+            )
+          `
+          )
+          .eq('campaign_id', campaignId);
+
+        if (keywordError) throw keywordError;
+        setKeywords(keywordData.map((k: any) => k.keywords));
+
+        // Fetch leads (campaign_leads joined with reddit_posts)
+        const { data: leadData, error: leadError } = await supabase
+          .from('campaign_leads')
+          .select(
+            `
+            *,
+            reddit_posts (*),
+            keywords (keyword)
+          `
+          )
+          .eq('campaign_id', campaignId)
+          .order('discovered_at', { ascending: false });
+
+        if (leadError) throw leadError;
+
+        const transformedLeads: Lead[] = leadData.map((l: any) => ({
+          id: l.id,
+          platform: 'Reddit',
+          subreddit: l.reddit_posts?.subreddit || 'unknown',
+          author: l.reddit_posts?.author || 'anonymous',
+          title: l.reddit_posts?.title || 'No Title',
+          preview: (l.reddit_posts?.content || '').substring(0, 200) + '...',
+          fullText: l.reddit_posts?.content || '',
+          timestamp: new Date(l.discovered_at || l.reddit_posts?.created_at_reddit || new Date()),
+          matchStrength: (l.lead_score || 0) >= 70 ? 'strong' : 'partial',
+          isNew: new Date().getTime() - new Date(l.discovered_at).getTime() < 24 * 60 * 60 * 1000,
+          upvotes: 0, // Not currently in schema but expected by UI
+          comments: 0, // Not currently in schema but expected by UI
+          postUrl: l.reddit_posts?.url || '#',
+        }));
+
+        setLeads(transformedLeads);
+      } catch (error) {
+        console.error('Error fetching campaign data:', error);
+      } finally {
+        setIsLoading(true); // Wait, setting it to true? Oh, wait. I should set it to false.
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [campaignId]);
+
+  const formatNextSync = (date: string | null) => {
+    if (!date) return 'Not scheduled';
     const now = new Date();
-    const diffInMs = date.getTime() - now.getTime();
+    const diffInMs = new Date(date).getTime() - now.getTime();
+    if (diffInMs < 0) return 'Any moment now';
     const hours = Math.floor(diffInMs / (1000 * 60 * 60));
     const minutes = Math.floor((diffInMs % (1000 * 60 * 60)) / (1000 * 60));
     return `in ${hours} hours, ${minutes} minutes`;
   };
+
+  if (isLoading || !isLoaded) {
+    return <div className="p-8 text-center text-muted-foreground">Loading campaign...</div>;
+  }
+
+  if (!campaign) {
+    return <div className="p-8 text-center text-muted-foreground">Campaign not found.</div>;
+  }
+
+  const strongMatches = leads.filter((l) => l.matchStrength === 'strong').length;
+  const partialMatches = leads.filter((l) => l.matchStrength === 'partial').length;
 
   return (
     <div className="flex flex-col gap-6 p-4 lg:p-8 max-w-[1600px] mx-auto">
@@ -55,8 +126,8 @@ export default function CampaignsPage() {
       <div className="flex flex-col gap-4">
         <div className="flex items-start justify-between">
           <div className="flex flex-col gap-3">
-            <h1 className="text-4xl font-bold bg-clip-text ">{SAMPLE_CAMPAIGN.name}</h1>
-            <p className="text-muted-foreground max-w-2xl">{SAMPLE_CAMPAIGN.description}</p>
+            <h1 className="text-4xl font-bold bg-clip-text ">{campaign.name}</h1>
+            <p className="text-muted-foreground max-w-2xl">{campaign.description}</p>
           </div>
           <div className="flex items-center gap-2">
             <Button
@@ -84,7 +155,7 @@ export default function CampaignsPage() {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {/* Strong Matches */}
           <Card className="relative overflow-hidden border-green-500/20 bg-gradient-to-br from-green-500/5 to-transparent">
             <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-green-500/20 to-transparent rounded-full blur-3xl" />
@@ -97,7 +168,7 @@ export default function CampaignsPage() {
             <CardContent>
               <div className="flex items-end justify-between">
                 <div>
-                  <div className="text-4xl font-bold">{SAMPLE_CAMPAIGN.strongMatches}</div>
+                  <div className="text-4xl font-bold">{strongMatches}</div>
                 </div>
               </div>
             </CardContent>
@@ -115,14 +186,14 @@ export default function CampaignsPage() {
             <CardContent>
               <div className="flex items-end justify-between">
                 <div>
-                  <div className="text-4xl font-bold">{SAMPLE_CAMPAIGN.partialMatches}</div>
+                  <div className="text-4xl font-bold">{partialMatches}</div>
                 </div>
               </div>
             </CardContent>
           </Card>
 
           {/* Last Sync */}
-          <Card className="relative overflow-hidden border-blue-500/20 bg-gradient-to-br from-blue-500/5 to-transparent">
+          {/* <Card className="relative overflow-hidden border-blue-500/20 bg-gradient-to-br from-blue-500/5 to-transparent">
             <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-500/20 to-transparent rounded-full blur-3xl" />
             <CardHeader className="pb-3">
               <CardDescription className="flex items-center gap-2 text-blue-500">
@@ -137,7 +208,7 @@ export default function CampaignsPage() {
               </div>
               <div className="text-xs text-muted-foreground mt-2">Initial</div>
             </CardContent>
-          </Card>
+          </Card> */}
 
           {/* Next Sync */}
           <Card className="relative overflow-hidden border-purple-500/20 bg-gradient-to-br from-purple-500/5 to-transparent">
@@ -149,7 +220,7 @@ export default function CampaignsPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{formatNextSync(SAMPLE_CAMPAIGN.nextSync)}</div>
+              <div className="text-2xl font-bold">{formatNextSync(campaign.created_at)}</div>
               <div className="mt-2 w-full bg-secondary rounded-full h-1.5">
                 <div className="bg-gradient-to-r from-purple-500 to-pink-500 h-1.5 rounded-full w-[15%]" />
               </div>
@@ -167,9 +238,7 @@ export default function CampaignsPage() {
         </TabsList>
 
         <TabsContent value="leads" className="mt-6 space-y-4">
-          
-
-          <LeadList />
+          <LeadList leads={leads} />
         </TabsContent>
 
         <TabsContent value="keywords" className="mt-6">
@@ -179,12 +248,12 @@ export default function CampaignsPage() {
               <CardDescription>Manage the keywords this campaign is tracking</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
-              {SAMPLE_CAMPAIGN.keywords.map((keyword, idx) => (
+              {keywords.map((keyword, idx) => (
                 <div
                   key={idx}
                   className="flex items-center justify-between p-3 rounded-lg border border-border bg-card hover:border-primary/40 transition-colors"
                 >
-                  <span className="font-medium">{keyword}</span>
+                  <span className="font-medium">{keyword.keyword}</span>
                   <Button
                     size="sm"
                     variant="ghost"
