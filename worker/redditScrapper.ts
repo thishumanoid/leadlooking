@@ -29,7 +29,6 @@ interface RedditSearchResponse {
 
 async function scanRedditForKeyword(keyword: string): Promise<RedditPostInsert[]> {
   const posts: RedditPostInsert[] = [];
-  const cutoffTime = Math.floor(Date.now() / 1000) - 1 * 3600;
   const baseUrl = 'https://www.reddit.com/search.json';
 
   try {
@@ -40,6 +39,7 @@ async function scanRedditForKeyword(keyword: string): Promise<RedditPostInsert[]
       params: {
         q: `${keyword}`,
         sort: 'new',
+        limit: 50,
       },
       headers: {
         'User-Agent': 'RedditKeywordScanner/1.0',
@@ -50,7 +50,6 @@ async function scanRedditForKeyword(keyword: string): Promise<RedditPostInsert[]
 
     const children = response.data.data.children;
 
-    console.log('👉 children: ', children);
 
     for (const post of children) {
       const postData = post.data;
@@ -66,14 +65,12 @@ async function scanRedditForKeyword(keyword: string): Promise<RedditPostInsert[]
       });
     }
 
-    // Sort all posts by newest
     posts.sort(
       (a, b) =>
         new Date(b.created_at_reddit || 0).getTime() - new Date(a.created_at_reddit || 0).getTime()
     );
 
 
-    
   } catch (error) {
     if (axios.isAxiosError(error)) {
       console.error(`Error searching for keyword "${keyword}":`, error.message);
@@ -123,7 +120,6 @@ export const EXAMPLE = {
 async function processKeywordForCampaign(campaign: Campaign, keyword: Keyword) {
   console.log(`\n📍 Processing: Campaign "${campaign.name}" | Keyword "${keyword.keyword}"`);
 
-  // Search Reddit
   const posts = await scanRedditForKeyword(keyword.keyword);
 
   if (posts.length === 0) {
@@ -133,23 +129,20 @@ async function processKeywordForCampaign(campaign: Campaign, keyword: Keyword) {
 
   let newLeadsCount = 0;
 
-  // Process each post
-  for (const post of posts) {
-    // Upsert to global reddit_posts table
-    const postId = await upsertRedditPost(post);
+  // for (const post of posts) {
+  //   const postId = await upsertRedditPost(post);
 
-    if (!postId) {
-      continue;
-    }
+  //   if (!postId) {
+  //     continue;
+  //   }
 
-    // Create campaign lead connection
-    const created = await createCampaignLead(campaign.id, keyword.id, postId, campaign.user_id);
+  //   const created = await createCampaignLead(campaign.id, keyword.id, postId, campaign.user_id);
 
-    if (created) {
-      newLeadsCount++;
-      console.log(`    ✅ New lead: r/${post.subreddit} - ${post.title!.substring(0, 50)}...`);
-    }
-  }
+  //   if (created) {
+  //     newLeadsCount++;
+  //     console.log(`    ✅ New lead: r/${post.subreddit} - ${post.title!.substring(0, 50)}...`);
+  //   }
+  // }
 
   console.log(`  📊 Results: ${newLeadsCount} new leads created from ${posts.length} posts`);
   return newLeadsCount;

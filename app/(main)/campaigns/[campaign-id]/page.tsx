@@ -11,6 +11,19 @@ import { RefreshCw, Edit, Trash2, Zap, Clock, CoffeeIcon } from 'lucide-react';
 import LeadList, { Lead } from '@/components/leadList';
 import { Badge } from '@/components/ui/badge';
 import { CampaignDialog } from '@/components/campaignDialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 // Sample data for demonstration
 
@@ -24,6 +37,7 @@ export default function CampaignsPage() {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     if (!isLoaded || !campaignId) return;
@@ -102,6 +116,42 @@ export default function CampaignsPage() {
     setIsEditDialogOpen(false);
   };
 
+  const handleDeleteCampaign = async () => {
+    if (!campaignId) return;
+
+    try {
+      // 1. Delete associated leads (delink from campaign_leads)
+      const { error: leadsError } = await supabase
+        .from('campaign_leads')
+        .delete()
+        .eq('campaign_id', campaignId);
+
+      if (leadsError) throw leadsError;
+
+      // 2. Delete associated keywords
+      const { error: keywordsError } = await supabase
+        .from('keywords')
+        .delete()
+        .eq('campaign_id', campaignId);
+
+      if (keywordsError) throw keywordsError;
+
+      // 3. Delete the campaign itself
+      const { error: campaignError } = await supabase
+        .from('campaigns')
+        .delete()
+        .eq('id', campaignId);
+
+      if (campaignError) throw campaignError;
+
+      toast.success('Campaign deleted successfully');
+      router.push('/campaigns');
+    } catch (error) {
+      console.error('Error deleting campaign:', error);
+      toast.error('Failed to delete campaign');
+    }
+  };
+
   const formatNextSync = (date: string | null) => {
     if (!date) return 'Not scheduled';
     const now = new Date();
@@ -148,13 +198,35 @@ export default function CampaignsPage() {
               <Edit className="w-4 h-4" />
               Edit
             </Button>
-            <Button
-              variant="outline"
-              className="gap-2 border-destructive/20 hover:border-destructive/40 hover:bg-destructive/5 text-destructive"
-            >
-              <Trash2 className="w-4 h-4" />
-              Delete
-            </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="gap-2 border-destructive/20 hover:border-destructive/40 hover:bg-destructive/5 text-destructive"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  Delete
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This will permanently delete the campaign "{campaign.name}" and all its
+                    associated keywords. Reddit posts will NOT be deleted.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleDeleteCampaign}
+                    className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
+                  >
+                    Delete
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         </div>
 

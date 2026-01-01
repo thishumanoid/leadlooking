@@ -1,21 +1,21 @@
 import supabaseAdmin from '@/lib/supabase/supabaseAdmin';
 
-interface Keyword {
-  id: string;
-  keyword: string;
-  campaign_id?: string;
-  user_id?: string | null;
-}
+// interface Keyword {
+//   id: string;
+//   keyword: string;
+//   campaign_id?: string;
+//   user_id?: string | null;
+// }
 
-interface Campaign {
-  id: string;
-  name: string | null;
-  description: string | null;
-  website_url: string | null;
-  config?: any;
-  created_at?: string | null;
-  user_id?: string;
-}
+// interface Campaign {
+//   id: string;
+//   name: string | null;
+//   description: string | null;
+//   website_url: string | null;
+//   config?: any;
+//   created_at?: string | null;
+//   user_id?: string;
+// }
 
 interface CampaignWithKeywords {
   campaign: Campaign;
@@ -43,7 +43,7 @@ export async function fetchCampaignsWithKeywords(): Promise<CampaignWithKeywords
     console.log(`✅ Found ${campaigns.length} campaigns: `, campaigns);
 
     // Fetch keywords for all campaigns
-    const campaignsWithKeywords: CampaignWithKeywords[] = [];
+    const campaignsWithKeywords = [];
 
     for (const campaign of campaigns) {
       const { data: keywords, error: keywordsError } = await supabaseAdmin
@@ -64,7 +64,7 @@ export async function fetchCampaignsWithKeywords(): Promise<CampaignWithKeywords
       }
     }
 
-    return campaignsWithKeywords;
+    return campaignsWithKeywords as CampaignWithKeywords[];
   } catch (error) {
     console.error('❌ Fatal error in fetchCampaignsWithKeywords:', error);
     throw error;

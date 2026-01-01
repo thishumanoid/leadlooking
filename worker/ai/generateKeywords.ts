@@ -41,7 +41,7 @@ Product/Service Description:
 Generate exactly 5 optimized Reddit search keywords for finding potential customers interested in this product/service.
 
 Key Requirements:
-1. Each keyword: 2-4 words max (excluding operators like AND, OR, quotes)
+1. Each keyword: 1-4 words max (excluding operators like AND, OR, quotes)
 2. Must strategically use Reddit search operators (quotes, AND, OR, parentheses)
 3. Focus on high buying intent and pain points
 4. Use different operators across keywords for variety
@@ -50,15 +50,10 @@ Key Requirements:
 
 Good Examples:
 - "looking for" waitlist
-- need AND "waitlist"
-- "best waitlist" validate idea
-- waitlist OR "email collection"
-- "recommend a" waitlist
-
-Bad Examples (avoid these):
-- waitlist (too generic, no operator)
-- "enterprise email collection and lead generation platform solution" (too long)
-- collect emails (no operator used)
+- "need" AND "waitlist"
+- "no-code" waitlist
+- "waitlist" OR "validate idea"
+- "recommend" waitlist
 
 Generate 5 distinct, high-quality keywords that will catch real Reddit users actively seeking this type of solution.`;
 

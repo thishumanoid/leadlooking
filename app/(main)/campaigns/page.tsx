@@ -1,9 +1,20 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Plus, ArrowRight, Loader2 } from 'lucide-react';
+import { Plus, ArrowRight, Loader2, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { CampaignDialog } from '@/components/campaignDialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { useAuth } from '@clerk/nextjs';
 import { toast } from 'sonner';
 import { useSupabase } from '@/hooks/supabase-provider';
@@ -91,6 +102,41 @@ const CampaignsPage = () => {
     setCampaigns([newCampaign, ...campaigns]);
   };
 
+  const handleDeleteCampaign = async (campaignId: string) => {
+    try {
+      // 1. Delete associated leads (delink from campaign_leads)
+      const { error: leadsError } = await supabase
+        .from('campaign_leads')
+        .delete()
+        .eq('campaign_id', campaignId);
+
+      if (leadsError) throw leadsError;
+
+      // 2. Delete associated keywords
+      const { error: keywordsError } = await supabase
+        .from('keywords')
+        .delete()
+        .eq('campaign_id', campaignId);
+
+      if (keywordsError) throw keywordsError;
+
+      // 3. Delete the campaign itself
+      const { error: campaignError } = await supabase
+        .from('campaigns')
+        .delete()
+        .eq('id', campaignId);
+
+      if (campaignError) throw campaignError;
+
+      // Update local state
+      setCampaigns(campaigns.filter((c) => c.id !== campaignId));
+      toast.success('Campaign deleted successfully');
+    } catch (error) {
+      console.error('Error deleting campaign:', error);
+      toast.error('Failed to delete campaign');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Header */}
@@ -150,10 +196,40 @@ const CampaignsPage = () => {
                             Active
                           </span>
                         </div>
-                        <h3 className="text-lg font-semibold text-foreground transition-colors">
+                        <h3 className="text-lg font-semibold text-foreground transition-colors text-balance">
                           {campaign.name}
                         </h3>
                       </div>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="text-muted-foreground hover:text-destructive transition-colors shrink-0 -mt-1 -mr-1"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent onClick={(e) => e.stopPropagation()}>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              This will permanently delete the campaign "{campaign.name}" and all
+                              its associated keywords. Reddit posts will NOT be deleted.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => handleDeleteCampaign(campaign.id)}
+                              className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
+                            >
+                              Delete
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     </div>
 
                     {/* Product Description */}
