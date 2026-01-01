@@ -10,7 +10,6 @@ declare global {
 declare global {
   type Campaign = Database['public']['Tables']['campaigns']['Row']
   type Keyword = Database['public']['Tables']['keywords']['Row']
-  type Campaign_Keyword = Database['public']['Tables']['campaign_keywords']['Row']
   type Campaign_Lead = Database['public']['Tables']['campaign_leads']['Row']
   type RedditPost = Database['public']['Tables']['reddit_posts']['Row']
   type RedditPostInsert = Database['public']['Tables']['reddit_posts']['Insert']

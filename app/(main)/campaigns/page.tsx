@@ -3,21 +3,18 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Plus, ArrowRight, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { CreateCampaignDialog } from '@/components/createCampaignDialog';
+import { CampaignDialog } from '@/components/campaignDialog';
 import { useAuth } from '@clerk/nextjs';
 import { toast } from 'sonner';
 import { useSupabase } from '@/hooks/supabase-provider';
 
 interface Campaign {
   id: string;
-  name: string;
-  description: string;
-  website_url: string;
-  config: {
-    ai_tone: string;
-    message_length: string;
-  };
-  created_at: string;
+  name: string | null;
+  description: string | null;
+  website_url: string | null;
+  config: any;
+  created_at: string | null;
   keywords: Array<{
     id: string;
     keyword: string;
@@ -43,14 +40,16 @@ const CampaignsPage = () => {
       // Fetch campaigns with their keywords
       const { data: campaignsData, error: campaignsError } = await supabase
         .from('campaigns')
-        .select(`
+        .select(
+          `
           id,
           name,
           description,
           website_url,
           config,
           created_at
-        `)
+        `
+        )
         .order('created_at', { ascending: false });
 
       if (campaignsError) throw campaignsError;
@@ -61,24 +60,15 @@ const CampaignsPage = () => {
       const campaignsWithKeywords = await Promise.all(
         campaignsData.map(async (campaign) => {
           const { data: keywordsData, error: keywordsError } = await supabase
-            .from('campaign_keywords')
-            .select(`
-              keyword_id,
-              keywords (
-                id,
-                keyword
-              )
-            `)
+            .from('keywords')
+            .select('id, keyword')
             .eq('campaign_id', campaign.id);
 
           if (keywordsError) throw keywordsError;
 
           return {
             ...campaign,
-            keywords: keywordsData.map((kw: any) => ({
-              id: kw.keywords.id,
-              keyword: kw.keywords.keyword,
-            })),
+            keywords: keywordsData || [],
           };
         })
       );
@@ -130,9 +120,7 @@ const CampaignsPage = () => {
                 <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
                   <Plus className="w-8 h-8 text-muted-foreground" />
                 </div>
-                <h3 className="text-lg font-semibold text-foreground mb-2">
-                  No campaigns yet
-                </h3>
+                <h3 className="text-lg font-semibold text-foreground mb-2">No campaigns yet</h3>
                 <p className="text-sm text-muted-foreground mb-6">
                   Create your first campaign to start finding leads on Reddit
                 </p>
@@ -219,12 +207,8 @@ const CampaignsPage = () => {
                   <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center mb-3">
                     <Plus className="w-6 h-6 text-muted-foreground" />
                   </div>
-                  <h3 className="text-sm font-medium text-foreground mb-1">
-                    Create New Campaign
-                  </h3>
-                  <p className="text-xs text-muted-foreground">
-                    Start monitoring Reddit for leads
-                  </p>
+                  <h3 className="text-sm font-medium text-foreground mb-1">Create New Campaign</h3>
+                  <p className="text-xs text-muted-foreground">Start monitoring Reddit for leads</p>
                 </div>
               </div>
             )}
@@ -232,10 +216,10 @@ const CampaignsPage = () => {
         )}
       </div>
 
-      <CreateCampaignDialog
+      <CampaignDialog
         open={showCreateModal}
         onOpenChange={setShowCreateModal}
-        onCreate={handleCreateCampaign}
+        onSuccess={handleCreateCampaign}
       />
     </div>
   );

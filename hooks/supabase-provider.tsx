@@ -6,7 +6,7 @@ import { createContext, useContext, useEffect, useState } from 'react'
 import { Database } from '@/types/supabaseTypes';
 
 type SupabaseContext = {
-  supabase: SupabaseClient
+  supabase: SupabaseClient<Database>
   isLoaded: boolean
 }
 
@@ -21,7 +21,7 @@ type Props = {
 
 export default function SupabaseProvider({ children }: Props) {
   const { session } = useSession()
-  const [supabase, setSupabase] = useState<SupabaseClient | null>(null)
+  const [supabase, setSupabase] = useState<SupabaseClient<Database> | null>(null)
   const [isLoaded, setIsLoaded] = useState(false)
 
   useEffect(() => {

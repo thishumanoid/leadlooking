@@ -1,5 +1,21 @@
 import supabaseAdmin from '@/lib/supabase/supabaseAdmin';
 
+interface Keyword {
+  id: string;
+  keyword: string;
+  campaign_id?: string;
+  user_id?: string | null;
+}
+
+interface Campaign {
+  id: string;
+  name: string | null;
+  description: string | null;
+  website_url: string | null;
+  config?: any;
+  created_at?: string | null;
+  user_id?: string;
+}
 
 interface CampaignWithKeywords {
   campaign: Campaign;
@@ -30,17 +46,9 @@ export async function fetchCampaignsWithKeywords(): Promise<CampaignWithKeywords
     const campaignsWithKeywords: CampaignWithKeywords[] = [];
 
     for (const campaign of campaigns) {
-      const { data: keywordLinks, error: keywordsError } = await supabaseAdmin
-        .from('campaign_keywords')
-        .select(
-          `
-          keyword_id,
-          keywords (
-            id,
-            keyword
-          )
-        `
-        )
+      const { data: keywords, error: keywordsError } = await supabaseAdmin
+        .from('keywords')
+        .select('id, keyword')
         .eq('campaign_id', campaign.id);
 
       if (keywordsError) {
@@ -48,16 +56,13 @@ export async function fetchCampaignsWithKeywords(): Promise<CampaignWithKeywords
         continue;
       }
 
-      const keywords = keywordLinks?.map((link: any) => link.keywords).filter(Boolean) || [];
-
-      if (keywords.length > 0) {
+      if (keywords && keywords.length > 0) {
         campaignsWithKeywords.push({
           campaign,
           keywords,
         });
       }
     }
-
 
     return campaignsWithKeywords;
   } catch (error) {

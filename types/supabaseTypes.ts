@@ -39,45 +39,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      campaign_keywords: {
-        Row: {
-          campaign_id: string
-          created_at: string | null
-          id: string
-          keyword_id: string
-          user_id: string
-        }
-        Insert: {
-          campaign_id: string
-          created_at?: string | null
-          id?: string
-          keyword_id: string
-          user_id?: string
-        }
-        Update: {
-          campaign_id?: string
-          created_at?: string | null
-          id?: string
-          keyword_id?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "campaign_keywords_campaign_id_fkey"
-            columns: ["campaign_id"]
-            isOneToOne: false
-            referencedRelation: "campaigns"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "campaign_keywords_keyword_id_fkey"
-            columns: ["keyword_id"]
-            isOneToOne: false
-            referencedRelation: "keywords"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       campaign_leads: {
         Row: {
           campaign_id: string
@@ -168,21 +129,35 @@ export type Database = {
       }
       keywords: {
         Row: {
-          created_at: string | null
+          campaign_id: string
           id: string
           keyword: string
+          last_scanned: string | null
+          user_id: string | null
         }
         Insert: {
-          created_at?: string | null
+          campaign_id: string
           id?: string
           keyword: string
+          last_scanned?: string | null
+          user_id?: string | null
         }
         Update: {
-          created_at?: string | null
+          campaign_id?: string
           id?: string
           keyword?: string
+          last_scanned?: string | null
+          user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "keywords_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {

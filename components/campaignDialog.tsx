@@ -18,13 +18,21 @@ import { useSupabase } from '@/hooks/supabase-provider';
 import { scrapeMetadata } from '@/utils/functions/scrapeMetadata';
 import { getKeywords } from '@/utils/functions/getKeywords';
 
-interface CreateCampaignDialogProps {
+interface CampaignDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onCreate: (campaign: any) => void;
+  onSuccess: (campaign: any) => void;
+  campaign?: any;
+  existingKeywords?: string[];
 }
 
-export function CreateCampaignDialog({ open, onOpenChange, onCreate }: CreateCampaignDialogProps) {
+export function CampaignDialog({
+  open,
+  onOpenChange,
+  onSuccess,
+  campaign,
+  existingKeywords,
+}: CampaignDialogProps) {
   const [websiteUrl, setWebsiteUrl] = useState('');
   const [websiteName, setWebsiteName] = useState('');
   const [websiteDescription, setWebsiteDescription] = useState('');
@@ -45,7 +53,6 @@ export function CreateCampaignDialog({ open, onOpenChange, onCreate }: CreateCam
   const abortController = useRef<AbortController | null>(null);
 
   useEffect(() => {
-
     if (debounceTimer.current) {
       clearTimeout(debounceTimer.current);
     }
@@ -60,19 +67,23 @@ export function CreateCampaignDialog({ open, onOpenChange, onCreate }: CreateCam
       return;
     }
 
-    // Skip if manually edited
-    if (wasManuallyEdited.name || wasManuallyEdited.description || wasManuallyEdited.keywords) {
+    // Skip if manually edited or in edit mode
+    if (
+      campaign ||
+      wasManuallyEdited.name ||
+      wasManuallyEdited.description ||
+      wasManuallyEdited.keywords
+    ) {
       return;
     }
 
     debounceTimer.current = setTimeout(async () => {
-      
       setIsScrapingMetadata(true);
       setMetadataError('');
 
       try {
         const metadata = await scrapeMetadata(websiteUrl);
-        
+
         if (!metadata) {
           setMetadataError('');
           return;
@@ -92,11 +103,12 @@ export function CreateCampaignDialog({ open, onOpenChange, onCreate }: CreateCam
         // Generate keywords if we have a description
         if (descriptionToUse && !wasManuallyEdited.keywords) {
           setIsGeneratingKeywords(true);
-          
-          try {
-            const combinedDescription = `${websiteName || metadata.name || ''}. ${descriptionToUse}`;
-            const aiKeywords = await getKeywords(combinedDescription);
 
+          try {
+            const combinedDescription = `${
+              websiteName || metadata.name || ''
+            }. ${descriptionToUse}`;
+            const aiKeywords = await getKeywords(combinedDescription);
 
             if (aiKeywords && aiKeywords.length > 0) {
               const newKeywords = [...aiKeywords.slice(0, 5)];
@@ -108,17 +120,17 @@ export function CreateCampaignDialog({ open, onOpenChange, onCreate }: CreateCam
               toast.success('Keywords generated successfully!');
             }
           } catch (kwError) {
-              console.error('Keyword generation failed:', kwError);
-              toast.error('Failed to generate keywords');
+            console.error('Keyword generation failed:', kwError);
+            toast.error('Failed to generate keywords');
           } finally {
             setIsGeneratingKeywords(false);
           }
         }
       } catch (error) {
-          console.error('Failed to scrape metadata:', error);
-          setMetadataError('Could not fetch website details. Please enter manually.');
+        console.error('Failed to scrape metadata:', error);
+        setMetadataError('Could not fetch website details. Please enter manually.');
       } finally {
-          setIsScrapingMetadata(false);
+        setIsScrapingMetadata(false);
       }
     }, 800);
 
@@ -133,6 +145,30 @@ export function CreateCampaignDialog({ open, onOpenChange, onCreate }: CreateCam
     setWebsiteName(e.target.value);
     setWasManuallyEdited((prev) => ({ ...prev, name: true }));
   };
+
+  useEffect(() => {
+    if (campaign && open) {
+      setWebsiteUrl(campaign.website_url || '');
+      setWebsiteName(campaign.name || '');
+      setWebsiteDescription(campaign.description || '');
+
+      if (existingKeywords && existingKeywords.length > 0) {
+        const paddedKeywords = [...existingKeywords];
+        while (paddedKeywords.length < 5) {
+          paddedKeywords.push('');
+        }
+        setKeywords(paddedKeywords.slice(0, 5));
+      } else {
+        setKeywords(['', '', '', '', '']);
+      }
+
+      setWasManuallyEdited({
+        name: true,
+        description: true,
+        keywords: true,
+      });
+    }
+  }, [campaign, open, existingKeywords]);
 
   const handleWebsiteDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setWebsiteDescription(e.target.value);
@@ -149,7 +185,7 @@ export function CreateCampaignDialog({ open, onOpenChange, onCreate }: CreateCam
       setMetadataError('');
       setIsScrapingMetadata(false);
       setIsGeneratingKeywords(false);
-      
+
       if (abortController.current) {
         abortController.current.abort();
       }
@@ -169,9 +205,7 @@ export function CreateCampaignDialog({ open, onOpenChange, onCreate }: CreateCam
 
     try {
       // Validate and prepare keywords
-      const validKeywords = keywords
-        .map(k => k.trim())
-        .filter(k => k !== '');
+      const validKeywords = keywords.map((k) => k.trim()).filter((k) => k !== '');
 
       if (validKeywords.length === 0) {
         toast.error('Please add at least one keyword');
@@ -184,129 +218,100 @@ export function CreateCampaignDialog({ open, onOpenChange, onCreate }: CreateCam
 
       console.log('Starting campaign creation with keywords:', uniqueKeywords);
 
-      // Step 1: Create the campaign
-      const { data: campaign, error: campaignError } = await supabase
-        .from('campaigns')
-        .insert({
-          name: websiteName,
-          description: websiteDescription,
-          website_url: websiteUrl || null,
-        })
-        .select()
-        .single();
+      // Step 1: Create or Update the campaign
+      let campaignData;
 
-      if (campaignError) {
-        console.error('Campaign creation error:', campaignError);
-        throw new Error(`Failed to create campaign: ${campaignError.message}`);
+      if (campaign?.id) {
+        // Update existing campaign
+        const { data: updatedCampaign, error: updateError } = await supabase
+          .from('campaigns')
+          .update({
+            name: websiteName,
+            description: websiteDescription,
+            website_url: websiteUrl || null,
+          })
+          .eq('id', campaign.id)
+          .select()
+          .single();
+
+        if (updateError) {
+          console.error('Campaign update error:', updateError);
+          throw new Error(`Failed to update campaign: ${updateError.message}`);
+        }
+        campaignData = updatedCampaign;
+      } else {
+        // Create new campaign
+        const { data: newCampaign, error: createError } = await supabase
+          .from('campaigns')
+          .insert({
+            name: websiteName,
+            description: websiteDescription,
+            website_url: websiteUrl || null,
+          })
+          .select()
+          .single();
+
+        if (createError) {
+          console.error('Campaign creation error:', createError);
+          throw new Error(`Failed to create campaign: ${createError.message}`);
+        }
+        campaignData = newCampaign;
       }
 
-      if (!campaign) {
-        throw new Error('Campaign was not created');
+      if (!campaignData) {
+        throw new Error('Campaign operation failed');
       }
 
-      console.log('Campaign created:', campaign.id);
+      console.log('Campaign processed:', campaignData.id);
 
-      // Step 2: Insert or get existing keywords one by one to ensure they all exist
-      const keywordIds: { id: string; keyword: string }[] = [];
+      // Step 2: Insert keywords linked to campaign
+      // validKeywords is already defined above from uniqueKeywords
 
-      for (const kw of uniqueKeywords) {
-        try {
-          // Try to insert the keyword
-          const { data: insertedKeyword, error: insertError } = await supabase
-            .from('keywords')
-            .upsert({ keyword: kw }, {
-              onConflict: 'keyword',
-            })
-            .select('id, keyword')
-            .single();
+      // If updating, remove old keywords first
+      if (campaign?.id) {
+        const { error: deleteError } = await supabase
+          .from('keywords')
+          .delete()
+          .eq('campaign_id', campaign.id);
 
-          if (insertError) {
-            // If it's a unique constraint violation, fetch the existing keyword
-            if (insertError.code === '23505') {
-              const { data: existingKeyword, error: fetchError } = await supabase
-                .from('keywords')
-                .select('id, keyword')
-                .eq('keyword', kw)
-                .single();
-
-              if (fetchError || !existingKeyword) {
-                console.error(`Failed to get existing keyword "${kw}":`, fetchError);
-                throw new Error(`Failed to process keyword: ${kw}`);
-              }
-
-              keywordIds.push(existingKeyword);
-            } else {
-              throw insertError;
-            }
-          } else if (insertedKeyword) {
-            keywordIds.push(insertedKeyword);
-          }
-        } catch (keywordError) {
-          console.error(`Error processing keyword "${kw}":`, keywordError);
-          // Continue with other keywords but log the error
+        if (deleteError) {
+          console.error('Error removing old keywords:', deleteError);
+          throw new Error(`Failed to update keywords: ${deleteError.message}`);
         }
       }
 
-      console.log('Keywords processed:', keywordIds.length, 'out of', uniqueKeywords.length);
-
-      if (keywordIds.length === 0) {
-        // Rollback: delete the campaign
-        await supabase.from('campaigns').delete().eq('id', campaign.id);
-        throw new Error('Failed to process any keywords');
-      }
-
-      // Step 3: Link keywords to campaign
-      const campaignKeywordInserts = keywordIds.map((kw) => ({
-        campaign_id: campaign.id,
-        keyword_id: kw.id,
-        user_id: campaign.user_id,
+      const keywordInserts = validKeywords.map((kw) => ({
+        campaign_id: campaignData.id,
+        keyword: kw,
+        user_id: campaignData.user_id || campaign?.user_id,
       }));
 
-      console.log('Linking keywords to campaign:', campaignKeywordInserts.length);
+      console.log('Inserting keywords:', keywordInserts.length);
 
-      const { data: linkedKeywords, error: junctionError } = await supabase
-        .from('campaign_keywords')
-        .insert(campaignKeywordInserts)
-        .select();
+      const { data: insertedKeywords, error: keywordsError } = await supabase
+        .from('keywords')
+        .insert(keywordInserts)
+        .select('id, keyword');
 
-      if (junctionError) {
-        console.error('Junction table error:', junctionError);
-        // Rollback: delete the campaign
-        await supabase.from('campaigns').delete().eq('id', campaign.id);
-        throw new Error(`Failed to link keywords: ${junctionError.message}`);
+      if (keywordsError) {
+        console.error('Keywords insertion error:', keywordsError);
+        // Rollback: if new campaign, delete it
+        if (!campaign?.id) {
+          await supabase.from('campaigns').delete().eq('id', campaignData.id);
+        }
+        throw new Error(`Failed to save keywords: ${keywordsError.message}`);
       }
 
-      console.log('Keywords linked successfully:', linkedKeywords?.length);
+      console.log('Keywords saved successfully:', insertedKeywords?.length);
 
-      // Verify the linkage
-      const { data: verifyLinks, error: verifyError } = await supabase
-        .from('campaign_keywords')
-        .select('keyword_id')
-        .eq('campaign_id', campaign.id);
-
-      console.log('Verification - Keywords linked in database:', verifyLinks?.length);
-
-      if (verifyError) {
-        console.error('Verification error:', verifyError);
-      }
-
-      if (keywordIds.length !== uniqueKeywords.length) {
-        toast.warning(
-          `Campaign created with ${keywordIds.length} out of ${uniqueKeywords.length} keywords`
-        );
-      } else {
-        toast.success('Campaign created successfully!');
-      }
+      toast.success(`Campaign ${campaign?.id ? 'updated' : 'created'} successfully!`);
 
       const campaignWithKeywords = {
-        ...campaign,
-        keywords: keywordIds.map(k => ({ 
-          id: k.id, 
-          keyword: k.keyword 
-        }))
+        ...campaignData,
+        keywords: insertedKeywords || [],
       };
 
-      onCreate(campaignWithKeywords);
+      onSuccess(campaignWithKeywords);
       onOpenChange(false);
     } catch (error) {
       console.error('Error creating campaign:', error);
@@ -320,12 +325,12 @@ export function CreateCampaignDialog({ open, onOpenChange, onCreate }: CreateCam
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[525px] max-h-[90vh] flex flex-col bg-card border-none shadow-2xl overflow-hidden p-0">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5 pointer-events-none" />
-        <DialogHeader className="relative z-10 px-6 pt-6 pb-4">
+        <DialogHeader className="relative z-10 px-6 pt-6">
           <DialogTitle className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
-            Create New Campaign
+            {campaign?.id ? 'Edit Campaign' : "Let's Find Leads"}
           </DialogTitle>
           <DialogDescription className="text-muted-foreground">
-            Fill in your business details and set keywords to start finding leads on Reddit.
+            Enter your campaign details and keywords to start finding leads on Reddit
           </DialogDescription>
         </DialogHeader>
         <form
@@ -410,7 +415,7 @@ export function CreateCampaignDialog({ open, onOpenChange, onCreate }: CreateCam
                       placeholder={isGeneratingKeywords ? 'Generating...' : `Keyword ${index + 1}`}
                       value={keyword}
                       onChange={(e) => handleKeywordChange(index, e.target.value)}
-                      className="bg-background/50 border-muted-foreground/20 focus-visible:ring-primary pl-9"
+                      className="bg-background/50 border-muted-foreground/20 focus-visible:ring-1 focus-visible:ring-primary pl-9"
                       required={index === 0}
                       disabled={isSubmitting}
                     />
@@ -440,8 +445,10 @@ export function CreateCampaignDialog({ open, onOpenChange, onCreate }: CreateCam
               {isSubmitting ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Creating...
+                  {campaign?.id ? 'Updating...' : 'Creating...'}
                 </>
+              ) : campaign?.id ? (
+                'Update Campaign'
               ) : (
                 'Create Campaign'
               )}

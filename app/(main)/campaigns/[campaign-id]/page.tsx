@@ -10,18 +10,20 @@ import { useParams } from 'next/navigation';
 import { RefreshCw, Edit, Trash2, Zap, Clock, CoffeeIcon } from 'lucide-react';
 import LeadList, { Lead } from '@/components/leadList';
 import { Badge } from '@/components/ui/badge';
+import { CampaignDialog } from '@/components/campaignDialog';
 
 // Sample data for demonstration
 
 export default function CampaignsPage() {
   const params = useParams();
-  const campaignId = params?.['compaign-id'] as string;
+  const campaignId = params?.['campaign-id'] as string;
   const { supabase, isLoaded } = useSupabase();
   const [activeTab, setActiveTab] = useState('leads');
   const [campaign, setCampaign] = useState<any>(null);
   const [keywords, setKeywords] = useState<any[]>([]);
   const [leads, setLeads] = useState<Lead[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   useEffect(() => {
     if (!isLoaded || !campaignId) return;
@@ -39,22 +41,14 @@ export default function CampaignsPage() {
         if (campaignError) throw campaignError;
         setCampaign(campaignData);
 
-        // Fetch keywords
+        // Fetch keywords directly from keywords table
         const { data: keywordData, error: keywordError } = await supabase
-          .from('campaign_keywords')
-          .select(
-            `
-            keyword_id,
-            keywords (
-              id,
-              keyword
-            )
-          `
-          )
+          .from('keywords')
+          .select('id, keyword')
           .eq('campaign_id', campaignId);
 
         if (keywordError) throw keywordError;
-        setKeywords(keywordData.map((k: any) => k.keywords));
+        setKeywords(keywordData || []);
 
         // Fetch leads (campaign_leads joined with reddit_posts)
         const { data: leadData, error: leadError } = await supabase
@@ -81,7 +75,9 @@ export default function CampaignsPage() {
           fullText: l.reddit_posts?.content || '',
           timestamp: new Date(l.discovered_at || l.reddit_posts?.created_at_reddit || new Date()),
           matchStrength: (l.lead_score || 0) >= 70 ? 'strong' : 'partial',
-          isNew: new Date().getTime() - new Date(l.discovered_at).getTime() < 24 * 60 * 60 * 1000,
+          isNew: l.discovered_at
+            ? new Date().getTime() - new Date(l.discovered_at).getTime() < 24 * 60 * 60 * 1000
+            : false,
           upvotes: 0, // Not currently in schema but expected by UI
           comments: 0, // Not currently in schema but expected by UI
           postUrl: l.reddit_posts?.url || '#',
@@ -91,13 +87,20 @@ export default function CampaignsPage() {
       } catch (error) {
         console.error('Error fetching campaign data:', error);
       } finally {
-        setIsLoading(true); // Wait, setting it to true? Oh, wait. I should set it to false.
         setIsLoading(false);
       }
     };
 
     fetchData();
-  }, [campaignId]);
+  }, [campaignId, isLoaded]);
+
+  const handleEditSuccess = (updatedCampaign: any) => {
+    setCampaign(updatedCampaign);
+    if (updatedCampaign.keywords) {
+      setKeywords(updatedCampaign.keywords);
+    }
+    setIsEditDialogOpen(false);
+  };
 
   const formatNextSync = (date: string | null) => {
     if (!date) return 'Not scheduled';
@@ -140,6 +143,7 @@ export default function CampaignsPage() {
             <Button
               variant="outline"
               className="gap-2 border-primary/20 hover:border-primary/40 hover:bg-primary/5"
+              onClick={() => setIsEditDialogOpen(true)}
             >
               <Edit className="w-4 h-4" />
               Edit
@@ -254,13 +258,6 @@ export default function CampaignsPage() {
                   className="flex items-center justify-between p-3 rounded-lg border border-border bg-card hover:border-primary/40 transition-colors"
                 >
                   <span className="font-medium">{keyword.keyword}</span>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    className="text-destructive hover:text-destructive"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
                 </div>
               ))}
               <Button className="w-full mt-4" variant="outline">
@@ -284,6 +281,14 @@ export default function CampaignsPage() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      <CampaignDialog
+        open={isEditDialogOpen}
+        onOpenChange={setIsEditDialogOpen}
+        onSuccess={handleEditSuccess}
+        campaign={campaign}
+        existingKeywords={keywords.map((k) => k.keyword)}
+      />
     </div>
   );
 }
