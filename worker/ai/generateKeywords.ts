@@ -20,6 +20,8 @@ You must generate search strings based on these three intent levels:
 1. You MUST use Reddit Boolean operators: AND, OR, NOT, ( ).
 2. You MUST use quotes "" for exact phrases (e.g., "best CRM").
 3. You MUST combine "Intent Phrases" with "Niche Keywords" using parentheses.
+4. Aim for 2-5 terms per keyword.
+
 
 ### EXAMPLES
 Input: "Emailify is a tool that automates cold emails for agencies."

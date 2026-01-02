@@ -2,11 +2,12 @@ import axios from 'axios';
 import { cleanText, delay, truncateText } from '@/utils/functions/helpers';
 import { analysePost } from './ai/analysePost';
 import { sendLeadEmail } from './email/mailtrap';
-import { RedditLeadFilter } from './filters';
+import { RedditLeadFilter, filterDublicates } from './filters';
 import { fetchCampaignsWithKeywords } from './supabase/getSupabaseAdmin';
 import { upsertRedditPost, updateCampaignLastScanned } from './supabase/upsertSupabaseAdmin';
-// import type { RedditPost } from '@/types/globalTypes';
 import { createCampaignLead } from './supabase/upsertSupabaseAdmin';
+
+let filter: RedditLeadFilter;
 
 interface RedditSearchResponse {
   data: {
@@ -39,16 +40,16 @@ async function scanRedditForKeyword(keyword: string): Promise<RedditPostInsert[]
       params: {
         q: `${keyword}`,
         sort: 'new',
-        limit: 50,
+        limit: 159,
       },
       headers: {
         'User-Agent': 'RedditKeywordScanner/1.0',
       },
     });
 
-    console.log('✅ reddit call finished');
-
+    
     const children = response.data.data.children;
+    console.log('✅ posts fetched: ', children.length);
 
     for (const post of children) {
       const postData = post.data;
@@ -58,7 +59,7 @@ async function scanRedditForKeyword(keyword: string): Promise<RedditPostInsert[]
         subreddit: postData.subreddit,
         author: postData.author,
         title: postData.title,
-        content: truncateText(cleanText(postData.selftext), 700),
+        content: cleanText(postData.selftext),
         url: `https://www.reddit.com${postData.permalink}`,
         created_at_reddit: new Date(postData.created_utc * 1000).toISOString(),
       });
@@ -79,36 +80,21 @@ async function scanRedditForKeyword(keyword: string): Promise<RedditPostInsert[]
     }
   }
 
-  // const filterEngine = new LeadFilterEngine();
-
-  // const config = {
-  //   productDescription: 'a chrome browser extension',
-  //   weights: {
-  //     productDesc: 0.8, // Product relevance is most important
-  //     intent: 0.4, // Intent matters moderately
-  //     negative: 0.2, // Penalty for promotional/negative content
-  //   },
-  //   threshold: 0.5, // Minimum score to pass (adjust based on your needs)
-  //   debug: true, // Set to true to see scoring details
-  // };
-
-  // Create filter instance
-  // const filter = new RedditLeadFilter(config);
+  // Filter the duplicates
+  const cleanPosts = filterDublicates(posts);
 
   // Filter the posts
-  // const filteredPosts = filter.filterPosts(allPosts);
+  const potentialPosts = filter.filterPosts(cleanPosts);
 
-  // console.log(
-  //   `\n📊 Results: ${filteredPosts.length} out of ${allPosts.length} posts passed the filter\n`
-  // );
+  console.log(
+    `\n📊 Results: ${potentialPosts.length} out of ${cleanPosts.length} posts passed the filter\n`
+  );
 
-  // console.log('👉👉Filterrrrrr: ', filteredPosts);
-  console.log('👉👉finnal Posts: ', posts);
-  return posts;
+  return potentialPosts;
 }
 
 async function processKeywordForCampaign(campaign: Campaign, keyword: Keyword) {
-  console.log(`\n📍 Processing: Campaign "${campaign.name}" | Keyword "${keyword.keyword}"`);
+  console.log(`📍 Processing: Campaign "${campaign.name}" | Keyword "${keyword.keyword}"`);
 
   const posts = await scanRedditForKeyword(keyword.keyword);
 
@@ -119,25 +105,25 @@ async function processKeywordForCampaign(campaign: Campaign, keyword: Keyword) {
 
   let newLeadsCount = 0;
 
-  for (const post of posts) {
-    const postId = await upsertRedditPost(post);
+  // for (const post of posts) {
+  //   const postId = await upsertRedditPost(post);
 
-    if (!postId) {
-      continue;
-    }
+  //   if (!postId) {
+  //     continue;
+  //   }
 
-    const created = await createCampaignLead(
-      campaign.id,
-      keyword.keyword,
-      postId,
-      campaign.user_id
-    );
+  //   const created = await createCampaignLead(
+  //     campaign.id,
+  //     keyword.keyword,
+  //     postId,
+  //     campaign.user_id
+  //   );
 
-    if (created) {
-      newLeadsCount++;
-      console.log(`✅ New lead: r/${post.subreddit} - ${post.title!.substring(0, 50)}...`);
-    }
-  }
+  //   if (created) {
+  //     newLeadsCount++;
+  //     console.log(`✅ New lead: r/${post.subreddit} - ${post.title!.substring(0, 50)}...`);
+  //   }
+  // }
 
   console.log(`  📊 Results: ${newLeadsCount} new leads created from ${posts.length} posts`);
   return newLeadsCount;
@@ -161,6 +147,8 @@ export default async function runReddit() {
     );
 
     for (const { campaign, keywords } of campaignsWithKeywords) {
+      filter = new RedditLeadFilter(campaign.description ?? '');
+
       for (const keyword of keywords) {
         const leadsCreated = await processKeywordForCampaign(campaign, keyword);
         totalLeads += leadsCreated;

@@ -51,8 +51,4 @@ export interface ConfigProps {
   colors: {
     theme: Theme;
   };
-  auth: {
-    loginUrl: string;
-    callbackUrl: string;
-  };
 }
