@@ -20,8 +20,6 @@ export interface Lead {
   timestamp: Date;
   matchStrength: 'strong' | 'partial';
   isNew: boolean;
-  upvotes: number;
-  comments: number;
   postUrl?: string;
 }
 
@@ -185,10 +183,10 @@ function LeadList({ leads }: LeadListProps) {
                       className={`px-2.5 py-0.5 text-xs font-medium ${
                         lead.matchStrength === 'strong'
                           ? 'border-emerald-500/50 text-emerald-600 bg-emerald-500/10 dark:text-emerald-400'
-                          : 'border-amber-500/50 text-amber-600 bg-amber-500/10 dark:text-amber-400'
+                          : 'border-orange-500/50 bg-orange-500/10 text-foreground'
                       }`}
                     >
-                      {lead.matchStrength === 'strong' ? '⚡ Strong Match' : '☕ Partial Match'}
+                      {lead.matchStrength === 'strong' ? '⚡ Strong Match' : 'Partial Match'}
                     </Badge>
                   </div>
                 </div>

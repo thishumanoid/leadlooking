@@ -28,7 +28,6 @@ export async function fetchCampaignsWithKeywords(): Promise<CampaignWithKeywords
     const { data: campaigns, error: campaignsError } = await supabaseAdmin
       .from('campaigns')
       .select('*')
-      .order('created_at', { ascending: false });
 
     if (campaignsError) {
       console.error('❌ Error fetching campaigns:', campaignsError);

@@ -1,6 +1,6 @@
 'use client';
 
-import { LayoutDashboard, Megaphone, Settings, Users, HelpCircle, Crown } from 'lucide-react';
+import { LayoutDashboard, Megaphone, Settings, Users, HelpCircle, CircleCheck } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import Logo from '@/components/global/YourLogo';
@@ -84,7 +84,7 @@ export function AppSidebar() {
           <CardHeader className="pb-0">
             <CardTitle className="flex items-center justify-between text-sm">
               <div className="flex items-center gap-2">
-                <Crown className="h-4 w-4 text-yellow-500" />
+                <CircleCheck className="h-4 w-4 text-yellow-500" />
                 <span>{userPlan} Plan</span>
               </div>
             </CardTitle>

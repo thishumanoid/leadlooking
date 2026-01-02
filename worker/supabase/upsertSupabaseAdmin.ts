@@ -40,20 +40,22 @@ export async function upsertRedditPost(post: RedditPostInsert) {
  */
 export async function createCampaignLead(
   campaignId: string,
-  keywordId: string,
+  keywordText: string,
   redditPostId: string,
-  userId: string
+  userId: string,
+  leadScore: number = 0,
+  intent: string = 'pending'
 ): Promise<boolean> {
   try {
     const { error } = await supabaseAdmin
       .from('campaign_leads')
       .insert({
         campaign_id: campaignId,
-        keyword_id: keywordId,
+        keyword: keywordText,
         reddit_post_id: redditPostId,
         user_id: userId,
-        lead_score: 0,
-        intent: 'pending',
+        lead_score: leadScore,
+        intent: intent,
         status: 'new',
       })
       .select()
@@ -67,6 +69,30 @@ export async function createCampaignLead(
     return true;
   } catch (error) {
     console.error(`    ❌ Fatal error creating campaign lead:`, error);
+    return false;
+  }
+}
+
+/**
+ * Updates only the last_scanned column for a campaign
+ */
+export async function updateCampaignLastScanned(campaignId: string): Promise<boolean> {
+  try {
+    const { error } = await supabaseAdmin
+      .from('campaigns')
+      .update({
+        last_scanned: new Date().toISOString(),
+      })
+      .eq('id', campaignId);
+
+    if (error) {
+      console.error(`    ❌ Error updating last_scanned for campaign ${campaignId}:`, error);
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error(`    ❌ Fatal error updating last_scanned for campaign ${campaignId}:`, error);
     return false;
   }
 }

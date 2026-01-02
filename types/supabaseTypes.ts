@@ -42,34 +42,31 @@ export type Database = {
       campaign_leads: {
         Row: {
           campaign_id: string
-          discovered_at: string | null
           id: string
           intent: string | null
-          keyword_id: string
+          keyword: string | null
           lead_score: number | null
-          reddit_post_id: string | null
+          reddit_post_id: string
           status: string | null
           user_id: string
         }
         Insert: {
           campaign_id: string
-          discovered_at?: string | null
           id?: string
           intent?: string | null
-          keyword_id: string
+          keyword?: string | null
           lead_score?: number | null
-          reddit_post_id?: string | null
+          reddit_post_id: string
           status?: string | null
           user_id: string
         }
         Update: {
           campaign_id?: string
-          discovered_at?: string | null
           id?: string
           intent?: string | null
-          keyword_id?: string
+          keyword?: string | null
           lead_score?: number | null
-          reddit_post_id?: string | null
+          reddit_post_id?: string
           status?: string | null
           user_id?: string
         }
@@ -79,13 +76,6 @@ export type Database = {
             columns: ["campaign_id"]
             isOneToOne: false
             referencedRelation: "campaigns"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "campaign_leads_keyword_id_fkey"
-            columns: ["keyword_id"]
-            isOneToOne: false
-            referencedRelation: "keywords"
             referencedColumns: ["id"]
           },
           {
@@ -103,6 +93,7 @@ export type Database = {
           created_at: string | null
           description: string | null
           id: string
+          last_scanned: string | null
           name: string | null
           user_id: string
           website_url: string | null
@@ -112,6 +103,7 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           id?: string
+          last_scanned?: string | null
           name?: string | null
           user_id?: string
           website_url?: string | null
@@ -121,6 +113,7 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           id?: string
+          last_scanned?: string | null
           name?: string | null
           user_id?: string
           website_url?: string | null

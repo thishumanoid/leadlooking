@@ -2,9 +2,9 @@ import axios from 'axios';
 import { cleanText, delay, truncateText } from '@/utils/functions/helpers';
 import { analysePost } from './ai/analysePost';
 import { sendLeadEmail } from './email/mailtrap';
-import { RedditLeadFilter } from './helpers';
+import { RedditLeadFilter } from './filters';
 import { fetchCampaignsWithKeywords } from './supabase/getSupabaseAdmin';
-import { upsertRedditPost } from './supabase/upsertSupabaseAdmin';
+import { upsertRedditPost, updateCampaignLastScanned } from './supabase/upsertSupabaseAdmin';
 // import type { RedditPost } from '@/types/globalTypes';
 import { createCampaignLead } from './supabase/upsertSupabaseAdmin';
 
@@ -50,7 +50,6 @@ async function scanRedditForKeyword(keyword: string): Promise<RedditPostInsert[]
 
     const children = response.data.data.children;
 
-
     for (const post of children) {
       const postData = post.data;
 
@@ -69,8 +68,6 @@ async function scanRedditForKeyword(keyword: string): Promise<RedditPostInsert[]
       (a, b) =>
         new Date(b.created_at_reddit || 0).getTime() - new Date(a.created_at_reddit || 0).getTime()
     );
-
-
   } catch (error) {
     if (axios.isAxiosError(error)) {
       console.error(`Error searching for keyword "${keyword}":`, error.message);
@@ -110,13 +107,6 @@ async function scanRedditForKeyword(keyword: string): Promise<RedditPostInsert[]
   return posts;
 }
 
-export const EXAMPLE = {
-  keywords: ['production boilerplate'],
-};
-
-/**
- * Processes posts for a specific campaign and keyword
- */
 async function processKeywordForCampaign(campaign: Campaign, keyword: Keyword) {
   console.log(`\n📍 Processing: Campaign "${campaign.name}" | Keyword "${keyword.keyword}"`);
 
@@ -129,20 +119,25 @@ async function processKeywordForCampaign(campaign: Campaign, keyword: Keyword) {
 
   let newLeadsCount = 0;
 
-  // for (const post of posts) {
-  //   const postId = await upsertRedditPost(post);
+  for (const post of posts) {
+    const postId = await upsertRedditPost(post);
 
-  //   if (!postId) {
-  //     continue;
-  //   }
+    if (!postId) {
+      continue;
+    }
 
-  //   const created = await createCampaignLead(campaign.id, keyword.id, postId, campaign.user_id);
+    const created = await createCampaignLead(
+      campaign.id,
+      keyword.keyword,
+      postId,
+      campaign.user_id
+    );
 
-  //   if (created) {
-  //     newLeadsCount++;
-  //     console.log(`    ✅ New lead: r/${post.subreddit} - ${post.title!.substring(0, 50)}...`);
-  //   }
-  // }
+    if (created) {
+      newLeadsCount++;
+      console.log(`✅ New lead: r/${post.subreddit} - ${post.title!.substring(0, 50)}...`);
+    }
+  }
 
   console.log(`  📊 Results: ${newLeadsCount} new leads created from ${posts.length} posts`);
   return newLeadsCount;
@@ -173,9 +168,12 @@ export default async function runReddit() {
         // Wait 2 seconds between requests
         await new Promise((resolve) => setTimeout(resolve, 2000));
       }
+
+      // Update last_scanned for the campaign
+      await updateCampaignLastScanned(campaign.id);
+      console.log(`✅ Updated last_scanned for campaign: "${campaign.name}"`);
     }
 
-    console.log('\n═'.repeat(60));
     console.log(`✅ Extraction Complete!`);
     console.log(`📈 Total new leads created: ${totalLeads}`);
     console.log(`🔍 Keywords processed: ${totalKeywords}`);
@@ -213,16 +211,4 @@ export default async function runReddit() {
   //   await delay(10000);
   //   console.log('delllayyyy end');
   // }
-}
-
-async function getUserChatURL(username: string): Promise<string> {
-  try {
-    const response = await fetch(`https://www.reddit.com/user/${username}/about.json`);
-    const data = await response.json();
-    const userId = data.data.id;
-    return `https://chat.reddit.com/user/t2_${userId}`;
-  } catch (error) {
-    console.error(`Failed to fetch user ID for ${username}:`, error);
-    return '';
-  }
 }

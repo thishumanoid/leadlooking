@@ -9,7 +9,6 @@ import { useParams } from 'next/navigation';
 
 import { RefreshCw, Edit, Trash2, Zap, Clock, CoffeeIcon } from 'lucide-react';
 import LeadList, { Lead } from '@/components/leadList';
-import { Badge } from '@/components/ui/badge';
 import { CampaignDialog } from '@/components/campaignDialog';
 import {
   AlertDialog,
@@ -69,33 +68,39 @@ export default function CampaignsPage() {
           .from('campaign_leads')
           .select(
             `
-            *,
-            reddit_posts (*),
-            keywords (keyword)
+            id,
+            lead_score,
+            reddit_post_id,
+            reddit_posts (*)
           `
           )
-          .eq('campaign_id', campaignId)
-          .order('discovered_at', { ascending: false });
+          .eq('campaign_id', campaignId);
 
         if (leadError) throw leadError;
 
-        const transformedLeads: Lead[] = leadData.map((l: any) => ({
-          id: l.id,
-          platform: 'Reddit',
-          subreddit: l.reddit_posts?.subreddit || 'unknown',
-          author: l.reddit_posts?.author || 'anonymous',
-          title: l.reddit_posts?.title || 'No Title',
-          preview: (l.reddit_posts?.content || '').substring(0, 200) + '...',
-          fullText: l.reddit_posts?.content || '',
-          timestamp: new Date(l.discovered_at || l.reddit_posts?.created_at_reddit || new Date()),
-          matchStrength: (l.lead_score || 0) >= 70 ? 'strong' : 'partial',
-          isNew: l.discovered_at
-            ? new Date().getTime() - new Date(l.discovered_at).getTime() < 24 * 60 * 60 * 1000
-            : false,
-          upvotes: 0, // Not currently in schema but expected by UI
-          comments: 0, // Not currently in schema but expected by UI
-          postUrl: l.reddit_posts?.url || '#',
-        }));
+        const transformedLeads: Lead[] = (leadData || [])
+          .map((item: any) => {
+            const post = item.reddit_posts;
+            if (!post) return null;
+
+            return {
+              id: post.id,
+              platform: 'Reddit',
+              subreddit: post.subreddit || 'unknown',
+              author: post.author || 'anonymous',
+              title: post.title || 'No Title',
+              preview: (post.content || '').substring(0, 200) + '...',
+              fullText: post.content || '',
+              timestamp: post.created_at_reddit ? new Date(post.created_at_reddit) : new Date(),
+              matchStrength: (item.lead_score || 0) >= 70 ? 'strong' : 'partial',
+              isNew: post.created_at_reddit
+                ? new Date().getTime() - new Date(post.created_at_reddit).getTime() <
+                  24 * 60 * 60 * 1000
+                : false,
+              postUrl: post.url || '#',
+            } as Lead;
+          })
+          .filter((l): l is Lead => l !== null);
 
         setLeads(transformedLeads);
       } catch (error) {
@@ -160,6 +165,24 @@ export default function CampaignsPage() {
     const hours = Math.floor(diffInMs / (1000 * 60 * 60));
     const minutes = Math.floor((diffInMs % (1000 * 60 * 60)) / (1000 * 60));
     return `in ${hours} hours, ${minutes} minutes`;
+  };
+
+  const formatLastScanned = (date: string | null) => {
+    if (!date) return 'Never';
+    const d = new Date(date);
+    const now = new Date();
+    const diffInSeconds = Math.floor((now.getTime() - d.getTime()) / 1000);
+
+    if (diffInSeconds < 60) return 'Just now';
+    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
+    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
+
+    return d.toLocaleDateString([], {
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
   };
 
   if (isLoading || !isLoaded) {
@@ -231,7 +254,7 @@ export default function CampaignsPage() {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
           {/* Strong Matches */}
           <Card className="relative overflow-hidden border-green-500/20 bg-gradient-to-br from-green-500/5 to-transparent">
             <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-green-500/20 to-transparent rounded-full blur-3xl" />
@@ -251,10 +274,10 @@ export default function CampaignsPage() {
           </Card>
 
           {/* Partial Matches */}
-          <Card className="relative overflow-hidden border-yellow-500/20 bg-gradient-to-br from-yellow-500/5 to-transparent">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-yellow-500/20 to-transparent rounded-full blur-3xl" />
+          <Card className="relative overflow-hidden border-orange-500/20 bg-gradient-to-br from-orange-500/5 to-transparent">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-orange-500/20 to-transparent rounded-full blur-3xl" />
             <CardHeader className="pb-3">
-              <CardDescription className="flex items-center gap-2 text-yellow-500">
+              <CardDescription className="flex items-center gap-2 text-orange-500">
                 <CoffeeIcon className="w-4 h-4" />
                 Partial Matches
               </CardDescription>
@@ -269,22 +292,28 @@ export default function CampaignsPage() {
           </Card>
 
           {/* Last Sync */}
-          {/* <Card className="relative overflow-hidden border-blue-500/20 bg-gradient-to-br from-blue-500/5 to-transparent">
+          <Card className="relative overflow-hidden border-blue-500/20 bg-gradient-to-br from-blue-500/5 to-transparent">
             <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-500/20 to-transparent rounded-full blur-3xl" />
             <CardHeader className="pb-3">
               <CardDescription className="flex items-center gap-2 text-blue-500">
                 <RefreshCw className="w-4 h-4" />
-                Last Sync
+                Last Scan
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                <div className="text-2xl font-bold">Right now</div>
+                <div
+                  className={`w-2 h-2 rounded-full ${
+                    campaign.last_scanned ? 'bg-green-500 animate-pulse' : 'bg-muted-foreground'
+                  }`}
+                />
+                <div className="text-2xl font-bold">{formatLastScanned(campaign.last_scanned)}</div>
               </div>
-              <div className="text-xs text-muted-foreground mt-2">Initial</div>
+              <div className="text-xs text-muted-foreground mt-2">
+                {campaign.last_scanned ? 'Scan completed' : 'Initial scan pending'}
+              </div>
             </CardContent>
-          </Card> */}
+          </Card>
 
           {/* Next Sync */}
           <Card className="relative overflow-hidden border-purple-500/20 bg-gradient-to-br from-purple-500/5 to-transparent">
@@ -292,7 +321,7 @@ export default function CampaignsPage() {
             <CardHeader className="pb-3">
               <CardDescription className="flex items-center gap-2 text-purple-500">
                 <Clock className="w-4 h-4" />
-                Next Sync
+                Next Scan
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -332,7 +361,11 @@ export default function CampaignsPage() {
                   <span className="font-medium">{keyword.keyword}</span>
                 </div>
               ))}
-              <Button onClick={() => setIsEditDialogOpen(true)} className="w-full mt-4" variant="outline">
+              <Button
+                onClick={() => setIsEditDialogOpen(true)}
+                className="w-full mt-4"
+                variant="outline"
+              >
                 <Edit size={15} className="mr-2" />
                 Edit Keyword
               </Button>
