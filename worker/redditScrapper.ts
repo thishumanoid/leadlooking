@@ -2,7 +2,7 @@ import axios from 'axios';
 import { cleanText, delay, truncateText } from '@/utils/functions/helpers';
 import { analysePost } from './ai/analysePost';
 import { sendLeadEmail } from './email/mailtrap';
-import { RedditLeadFilter, filterDublicates } from './filters';
+import { RedditLeadFilter, filterDublicates, filterOldPosts } from './filters';
 import { fetchCampaignsWithKeywords } from './supabase/getSupabaseAdmin';
 import { upsertRedditPost, updateCampaignLastScanned } from './supabase/upsertSupabaseAdmin';
 import { createCampaignLead } from './supabase/upsertSupabaseAdmin';
@@ -38,7 +38,7 @@ async function scanRedditForKeyword(keyword: string): Promise<RedditPostInsert[]
     /// figure out the final url and match it with reddit app's url
     const response = await axios.get<RedditSearchResponse>(baseUrl, {
       params: {
-        q: `${keyword}`,
+        q: `"autocorrect extension"`,
         sort: 'new',
         limit: 159,
       },
@@ -47,7 +47,6 @@ async function scanRedditForKeyword(keyword: string): Promise<RedditPostInsert[]
       },
     });
 
-    
     const children = response.data.data.children;
     console.log('✅ posts fetched: ', children.length);
 
@@ -83,8 +82,11 @@ async function scanRedditForKeyword(keyword: string): Promise<RedditPostInsert[]
   // Filter the duplicates
   const cleanPosts = filterDublicates(posts);
 
-  // Filter the posts
-  const potentialPosts = filter.filterPosts(cleanPosts);
+  // Filter old posts (older than 6 months)
+  const recentPosts = filterOldPosts(cleanPosts);
+
+  // Filter the posts based on content/sentiment
+  const potentialPosts = filter.filterPosts(recentPosts);
 
   console.log(
     `\n📊 Results: ${potentialPosts.length} out of ${cleanPosts.length} posts passed the filter\n`

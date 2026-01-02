@@ -56,7 +56,7 @@ class RedditLeadFilter {
     'which',
     'what',
     'what is',
-    'what\'s',
+    "what's",
     'best',
     '?',
     'anyone know',
@@ -588,6 +588,36 @@ function filterDublicates(posts: RedditPostInsert[]) {
     } posts remaining.\n`
   );
   return cleanedPosts;
+}
+
+export function filterOldPosts(posts: RedditPostInsert[]) {
+  console.log(`\n📅 Checking for old posts in ${posts.length} posts...`);
+
+  const fourMonthsAgo = new Date();
+  fourMonthsAgo.setMonth(fourMonthsAgo.getMonth() - 4);
+
+  const filteredPosts = posts.filter((post) => {
+    if (!post.created_at_reddit) return false;
+
+    const postDate = new Date(post.created_at_reddit);
+    const isOld = postDate < fourMonthsAgo;
+
+    if (isOld) {
+      console.log(
+        `❌ Removing old post: "${post.url}" (Created: ${postDate.toLocaleDateString()})`
+      );
+    }
+
+    return !isOld;
+  });
+
+  console.log(
+    `📊 Age filtering complete: ${posts.length - filteredPosts.length} old posts removed, ${
+      filteredPosts.length
+    } posts remaining.\n`
+  );
+
+  return filteredPosts;
 }
 
 export { RedditLeadFilter, filterDublicates, type FilterConfig, type RedditPost, type PostScore };

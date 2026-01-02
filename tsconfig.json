@@ -30,6 +30,6 @@
     "**/*.mts",
     "worker/redditScrapperGemini.ts",
     "worker/email/mailtrap.ts"
-  ],
+, "worker/d.js"  ],
   "exclude": ["node_modules"]
 }
