@@ -323,9 +323,9 @@ export function CampaignDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[525px] max-h-[90vh] flex flex-col bg-card border-none shadow-2xl overflow-hidden p-0">
+      <DialogContent className="max-w-[95vw] sm:max-w-[800px] max-h-[90vh] flex flex-col bg-card border-none shadow-2xl overflow-hidden p-0">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5 pointer-events-none" />
-        <DialogHeader className="relative z-10 px-6 pt-6">
+        <DialogHeader className="relative px-6 pt-6">
           <DialogTitle className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
             {campaign?.id ? 'Edit Campaign' : "Let's Find Leads"}
           </DialogTitle>
@@ -333,10 +333,7 @@ export function CampaignDialog({
             Enter your campaign details and keywords to start finding leads on Reddit
           </DialogDescription>
         </DialogHeader>
-        <form
-          onSubmit={handleSubmit}
-          className="flex flex-col flex-1 overflow-hidden relative z-10"
-        >
+        <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden relative">
           <div className="flex-1 overflow-y-auto px-6 py-2 space-y-6">
             <div className="space-y-4">
               <div className="grid gap-2">
@@ -350,7 +347,7 @@ export function CampaignDialog({
                     type="text"
                     value={websiteUrl}
                     onChange={(e) => setWebsiteUrl(e.target.value)}
-                    className="bg-background/50 border-muted-foreground/20 focus-visible:ring-primary pr-10"
+                    className="bg-background/50 border-muted-foreground/20 focus-visible:ring-1 focus-visible:ring-primary pr-10"
                     disabled={isSubmitting}
                   />
                   {isScrapingMetadata && (
@@ -373,7 +370,7 @@ export function CampaignDialog({
                   placeholder="e.g. My Awesome SaaS"
                   value={websiteName}
                   onChange={handleWebsiteNameChange}
-                  className="bg-background/50 border-muted-foreground/20 focus-visible:ring-primary"
+                  className="bg-background/50 border-muted-foreground/20 focus-visible:ring-1 focus-visible:ring-primary"
                   disabled={isSubmitting}
                   required
                 />
@@ -387,7 +384,7 @@ export function CampaignDialog({
                   placeholder="Briefly describe what your business does..."
                   value={websiteDescription}
                   onChange={handleWebsiteDescriptionChange}
-                  className="bg-background/50 border-muted-foreground/20 focus-visible:ring-primary min-h-[100px] resize-none"
+                  className="bg-background/50 border-muted-foreground/20 focus-visible:ring-1 focus-visible:ring-primary min-h-[80px] sm:min-h-[100px] resize-none"
                   required
                   disabled={isSubmitting}
                 />
@@ -408,18 +405,24 @@ export function CampaignDialog({
                   Set up to 5
                 </span>
               </div>
-              <div className="grid gap-2">
+              <div className="grid gap-3">
                 {keywords.map((keyword, index) => (
                   <div key={index} className="relative group">
-                    <Input
+                    <Textarea
                       placeholder={isGeneratingKeywords ? 'Generating...' : `Keyword ${index + 1}`}
                       value={keyword}
                       onChange={(e) => handleKeywordChange(index, e.target.value)}
-                      className="bg-background/50 border-muted-foreground/20 focus-visible:ring-1 focus-visible:ring-primary pl-9"
+                      className="bg-background/50 border-muted-foreground/20 focus-visible:ring-1 focus-visible:ring-primary pl-9 min-h-[42px] py-2 resize-none overflow-hidden"
                       required={index === 0}
                       disabled={isSubmitting}
+                      rows={1}
+                      onInput={(e) => {
+                        const target = e.target as HTMLTextAreaElement;
+                        target.style.height = 'auto';
+                        target.style.height = `${target.scrollHeight}px`;
+                      }}
                     />
-                    <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground/50 group-focus-within:text-primary transition-colors">
+                    <div className="absolute left-3 top-2 text-muted-foreground/50 group-focus-within:text-primary transition-colors">
                       <span className="text-xs font-bold">{index + 1}</span>
                     </div>
                   </div>

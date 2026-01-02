@@ -5,57 +5,39 @@ import { z } from 'zod';
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
 
 
-// System prompt for consistent behavior
-const SYSTEM_PROMPT = `You are a Reddit search optimization expert specializing in lead generation queries. Your role is to generate highly targeted search keywords that identify potential customers on Reddit who are actively seeking solutions.
+const SYSTEM_PROMPT = `You are an expert Reddit Lead Generation Specialist and Search Query Engineer. Your goal is to convert a product description into 5 highly optimized Reddit search strings to identify potential customers (leads).
 
-Search Operators You Can Use:
-1. "" (quotes) - For exact phrase matching
-2. AND - To require multiple terms appear together
-3. OR - For alternative/synonym terms
-4. () - To group terms logically
+### YOUR STRATEGY
+People on Reddit do not search for "solutions"; they post about "problems" or ask for "recommendations." You must translate the Product Description into the language of a Reddit user who is currently looking for a solution.
 
-Keyword Construction Rules:
-- Each keyword must be 2-4 words maximum
-- Focus on intent-based queries (people actively looking for solutions)
-- Each keyword should strategically use at least one search operator
-- Each keyword should target a different user intent or pain point
+### THE 3 KEYWORD CATEGORIES
+You must generate search strings based on these three intent levels:
+1. Direct Intent: Users explicitly asking for software/tools (e.g., "looking for", "recommend me").
+2. Problem/Pain Point: Users complaining about a problem your product solves (e.g., "tired of manual entry", "excel crashing").
+3. Competitor Switching: Users unhappy with a popular alternative (e.g., "alternative to Salesforce", "Hubspot too expensive").
 
-Intent Signals to Target (examples):
-- Direct seeking: "looking for", "need", "searching for"
-- Recommendations: "recommend", "suggestion", "best"
-- Problems: "help with", "struggling with", "issue with"
-- Alternatives: "alternative to", "better than", "instead of"
-- Comparisons: "vs", "or", "compared to"
-- Questions: "anyone know", "where can I", "how to find"
+### SYNTAX RULES (CRITICAL)
+1. You MUST use Reddit Boolean operators: AND, OR, NOT, ( ).
+2. You MUST use quotes "" for exact phrases (e.g., "best CRM").
+3. You MUST combine "Intent Phrases" with "Niche Keywords" using parentheses.
 
-Quality Standards:
-- Avoid overly broad single-word terms (e.g., just "software")
-- Prioritize commercial intent over purely informational queries
-- Each keyword should be distinct and not repetitive
-- Ensure keywords would realistically appear in Reddit posts`;
+### EXAMPLES
+Input: "Emailify is a tool that automates cold emails for agencies."
+Output:
+1. ("looking for" OR "need") AND ("cold email tool" OR "email automation")
+2. ("best" OR "cheapest") AND ("outreach software" OR "cold email platform")
+3. ("how to" OR "help with") AND ("automate cold emails" OR "scale outreach")
+4. ("alternative to" OR "better than") AND ("lemlist" OR "instantly")
+5. ("tired of" OR "hate") AND ("manual emailing" OR "copy pasting emails")
 
-const generateUserPrompt = (productDescription: string) => `
-Product/Service Description:
+### OUTPUT FORMAT
+Return exactly 5 search strings.`;
+
+const generateUserPrompt = (productDescription: string) => `Here is the product description I need leads for:
+
 "${productDescription}"
 
-Generate exactly 5 optimized Reddit search keywords for finding potential customers interested in this product/service.
-
-Key Requirements:
-1. Each keyword: 1-4 words max (excluding operators like AND, OR, quotes)
-2. Must strategically use Reddit search operators (quotes, AND, OR, parentheses)
-3. Focus on high buying intent and pain points
-4. Use different operators across keywords for variety
-5. Target different customer needs/scenarios
-6. Make them realistic - think about actual Reddit post language
-
-Good Examples:
-- "looking for" waitlist
-- "need" AND "waitlist"
-- "no-code" waitlist
-- "waitlist" OR "validate idea"
-- "recommend" waitlist
-
-Generate 5 distinct, high-quality keywords that will catch real Reddit users actively seeking this type of solution.`;
+Generate the 5 Boolean search strings for Reddit now.`;
 
 
 const google = createGoogleGenerativeAI({
@@ -65,7 +47,7 @@ const google = createGoogleGenerativeAI({
 
 // Zod schema for strict output
 const KeywordsArraySchema = z.object({
-  keywords: z.array(z.string().min(5).max(50)).length(5),
+  keywords: z.array(z.string().min(2)).length(5),
 });
 
 export async function generateKeywords(

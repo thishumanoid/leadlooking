@@ -332,8 +332,9 @@ export default function CampaignsPage() {
                   <span className="font-medium">{keyword.keyword}</span>
                 </div>
               ))}
-              <Button className="w-full mt-4" variant="outline">
-                + Add Keyword
+              <Button onClick={() => setIsEditDialogOpen(true)} className="w-full mt-4" variant="outline">
+                <Edit size={15} className="mr-2" />
+                Edit Keyword
               </Button>
             </CardContent>
           </Card>
