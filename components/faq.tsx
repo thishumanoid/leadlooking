@@ -9,45 +9,26 @@ import Link from 'next/link';
 
 const faqs = [
   {
-    question: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit?',
+    question: 'Which social media channels can I monitor with your tool?',
     answer:
-      'sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
+      "Currently, our tool focuses exclusively on Reddit. We're actively considering additional platforms based on what our users request most.",
   },
   {
-    question: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit?',
+    question: 'How does the keyword scanning process work?',
     answer:
-      'sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
+      'Our system analyzes thousands of Reddit posts everyday. We use AI to filter posts and surface only the conversations that align with your product and specified keywords - ensuring you see prospects who are actively seeking solutions like yours.',
   },
   {
-    question: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
-    answer:
-      "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+    question: 'Can I have a custom plan tailored to my needs?',
+    answer: `Yes! If our existing pricing tiers don't match your use case, we're open to creating a customized package. 
+    Just contact us at neuhiman@gmail.com to discuss options.`,
   },
   {
-    question: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit?',
+    question: 'Is there any risk of my Reddit account getting suspended?',
     answer:
-      'sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
+      "Not at all - our tool doesn't require you to link or authenticate your Reddit account. We retrieve all data through Reddit's official public API, which keeps your account completely safe and separate from the scanning process.",
   },
-  {
-    question: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit?',
-    answer:
-      "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
-  },
-  {
-    question: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit?',
-    answer:
-      'sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
-  },
-  {
-    question: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit?',
-    answer:
-      "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
-  },
-  {
-    question: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit?',
-    answer:
-      "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
-  },
+ 
 ];
 
 const FAQ = () => (
@@ -57,11 +38,15 @@ const FAQ = () => (
         <div className="flex gap-10 flex-col">
           <div className="flex gap-4 flex-col">
             <div className="flex gap-2 flex-col">
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground">
+              <h2 className="text-4xl md:text-2xl lg:text-3xl font-bold text-foreground">
                 Frequently Asked Questions
               </h2>
               <p className="text-lg max-w-xl lg:max-w-lg leading-relaxed tracking-tight text-muted-foreground text-left">
-                Have another question? Send me an <Link className='underline' href={'/feedback'}>email</Link>.
+                Have another question? Send me an{' '}
+                <Link className="underline" href={'/feedback'}>
+                  email
+                </Link>
+                .
               </p>
             </div>
           </div>
@@ -69,9 +54,7 @@ const FAQ = () => (
         <Accordion type="single" collapsible className="w-full">
           {faqs.map((faq, index) => (
             <AccordionItem key={index} value={'index-' + index}>
-              <AccordionTrigger
-                className="text-lg  no-underline hover:no-underline data-[state=open]:font-extrabold"
-              >
+              <AccordionTrigger className="text-lg  no-underline hover:no-underline data-[state=open]:font-extrabold">
                 {faq.question}
               </AccordionTrigger>
               <AccordionContent className="text-base">{faq.answer}</AccordionContent>

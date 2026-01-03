@@ -10,7 +10,7 @@ export default function GetStartedBtn({ className, onClick }: BtnProps) {
   return (
     <div className={`flex flex-row gap-4 ${className || ''}`}>
       <Button onClick={onClick} size="lg" className="w-full gap-4">
-        Find My Lead
+        Find My Leads
         <Zap size={20} fill="white" className="-ml-2" />
       </Button>
     </div>

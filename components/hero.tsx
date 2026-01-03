@@ -56,9 +56,8 @@ function Hero() {
               </h1>
               <div className="absolute -right-12 sm:-right-14 md:-right-16 top-0 sm:top-1/2 sm:-translate-y-1/2 hidden sm:block rotate-12 animate-subtle-float"></div>
             </div>
-            <p className="mt-6 xs:text-lg">
-              We scan thousands of reddit posts every day to surface people {<br />} actively
-              asking for tools, services, or skills like yours.
+            <p className="mt-6 text-muted-foreground text-lg xs:text-lg">
+              We track Reddit conversations daily to identify users actively {<br />} asking for products and services like yours.
             </p>
             <div className="mt-8 flex flex-col items-center justify-center gap-4 w-full max-w-xs mx-auto">
               <div className="relative w-full group">

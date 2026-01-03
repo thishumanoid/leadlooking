@@ -22,13 +22,13 @@ export default function CtaCard() {
 
               {/* Subheading */}
               <p className="mx-auto mt-4 max-w-[700px] text-muted-foreground md:text-xl">
-                Thousands of buying intent posts are created every day on reddit, {<br />}Catch them
+                Every day, potential customers ask for solutions on Reddit. {<br />}We monitor conversations so you never miss a lead.
               </p>
 
               {/* Button Group */}
               <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
                 <Button size="lg" className="group">
-                  Find My Lead
+                  Find My Leads
                   <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Button>
               </div>
