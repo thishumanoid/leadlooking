@@ -21,11 +21,11 @@ import { Button } from '@/components/ui/button';
 
 // Menu items.
 const items = [
-  {
-    title: 'Dashboard',
-    url: '/dashboard',
-    icon: LayoutDashboard,
-  },
+  // {
+  //   title: 'Dashboard',
+  //   url: '/dashboard',
+  //   icon: LayoutDashboard,
+  // },
   {
     title: 'Campaigns',
     url: '/campaigns',
@@ -84,7 +84,7 @@ export function AppSidebar() {
           <CardHeader className="pb-0">
             <CardTitle className="flex items-center justify-between text-sm">
               <div className="flex items-center gap-2">
-                <CircleCheck className="h-4 w-4 text-yellow-500" />
+                <CircleCheck className="h-4 w-4 text-green-500" />
                 <span>{userPlan} Plan</span>
               </div>
             </CardTitle>

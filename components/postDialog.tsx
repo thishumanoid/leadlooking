@@ -6,19 +6,11 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import RedditIcon from '@/components/global/RedditIcon';
-import {
-  ExternalLink,
-  WandSparkles,
-  Send,
-  Box,
-  Clock,
-  User,
-  Zap,
-  Coffee,
-} from 'lucide-react';
+import { ExternalLink, ArrowRight, Send, Box, Clock, User, Zap, Coffee } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
 import { Lead } from './leadList';
+import Link from 'next/link';
 
 interface LeadDetailDialogProps {
   lead: Lead | null;
@@ -75,12 +67,6 @@ export default function PostDialog({ lead, isOpen, onClose }: LeadDetailDialogPr
       console.error('Error generating DM:', error);
     } finally {
       setIsGeneratingDM(false);
-    }
-  };
-
-  const handleOpenPost = () => {
-    if (lead.postUrl) {
-      window.open(lead.postUrl, '_blank');
     }
   };
 
@@ -171,57 +157,27 @@ export default function PostDialog({ lead, isOpen, onClose }: LeadDetailDialogPr
 
           {/* Action Buttons - Fixed at bottom */}
           <div className="px-4 sm:px-6 pb-4 sm:pb-6 pt-3 sm:pt-4 border-t shrink-0 bg-background">
-            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-              <Button
-                onClick={handleOpenPost}
-                variant="outline"
-                className="w-full sm:flex-1 h-10 sm:h-12 text-xs sm:text-sm"
-              >
-                <ExternalLink className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2 shrink-0" />
-                <span className="hidden sm:inline">Open Post</span>
-                <span className="sm:hidden">Open</span>
-              </Button>
-              <Button
-                onClick={handleGenerateComment}
-                disabled={isGeneratingComment}
-                className="w-full sm:flex-1 h-10 sm:h-12 text-xs sm:text-sm"
-              >
-                {isGeneratingComment ? (
-                  <>
-                    <WandSparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2 animate-spin shrink-0" />
-                    <span className="hidden sm:inline">Generating...</span>
-                    <span className="sm:hidden">Generating...</span>
-                  </>
-                ) : (
-                  <>
-                    <WandSparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2 shrink-0" />
-                    <span className="hidden lg:inline">Generate Comment & Open</span>
-                    <span className="hidden sm:inline lg:hidden">Generate Comment</span>
-                    <span className="sm:hidden">Comment</span>
-                  </>
-                )}
-              </Button>
-              <Button
-                onClick={handleGenerateDM}
-                disabled={isGeneratingDM}
-                variant="outline"
-                className="w-full sm:flex-1 h-10 sm:h-12 text-xs sm:text-sm"
-              >
-                {isGeneratingDM ? (
-                  <>
-                    <Send className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2 animate-spin shrink-0" />
-                    <span className="hidden sm:inline">Generating...</span>
-                    <span className="sm:hidden">Generating...</span>
-                  </>
-                ) : (
-                  <>
-                    <Send className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2 shrink-0" />
-                    <span className="hidden lg:inline">Generate DM & Open</span>
-                    <span className="hidden sm:inline lg:hidden">Generate DM</span>
-                    <span className="sm:hidden">DM</span>
-                  </>
-                )}
-              </Button>
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 sm:justify-end">
+              <Link href={lead.postUrl ?? '#'} target="_blank" className="w-full sm:w-48">
+                <Button variant="outline" className="w-full h-10 sm:h-12 text-xs sm:text-sm">
+                  <ExternalLink className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2 shrink-0" />
+                  <span className="hidden sm:inline">Open Post</span>
+                  <span className="sm:hidden">Open</span>
+                </Button>
+              </Link>
+
+              <Link href={lead.chatUrl ?? '#'} target="_blank" className="w-full sm:w-48">
+                <Button
+                  onClick={handleGenerateComment}
+                  disabled={isGeneratingComment}
+                  className="w-full h-10 sm:h-12 text-xs sm:text-sm"
+                >
+                  <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2 shrink-0" />
+                  <span className="hidden lg:inline">Send DM</span>
+                  <span className="hidden sm:inline lg:hidden">Send DM</span>
+                  <span className="sm:hidden">Send DM</span>
+                </Button>
+              </Link>
             </div>
           </div>
         </div>

@@ -19,23 +19,19 @@ const LeadAnalysisSchema = z.object({
     .min(0)
     .max(100)
     .describe(
-      'Value (0-100) as a potential customer. CRITICAL: If intent is "promoting" or "discussing", this MUST be under 30. Only "seeking" posts with high fit get 70+.'
+      'Value (0-100) as a potential customer. CRITICAL: If intent is "promoting" or "discussing", this MUST be under 30. Only "seeking" posts with high fit get 50+.'
     ),
   isBuying: z
     .boolean()
     .describe('Does the author show active buying signals or intent to purchase?'),
-  urgencyLevel: z
-    .enum(['low', 'medium', 'high'])
-    .describe('How urgently does the author need a solution?'),
 });
 
 export async function analysePost(
-  title: string,
-  content: string,
+  post: RedditPostInsert,
   productDescription: string,
-  keywords: string[]
+  keyword: string
 ) {
-  const aiPrompt = createPrompt(title, content, productDescription, keywords);
+  const aiPrompt = createPrompt(post, productDescription, keyword);
 
   // console.log('💸 running AI for:', aiPrompt);
 
@@ -53,12 +49,12 @@ export async function analysePost(
 }
 
 // PROMPT CREATION
-export const SYSTEM_PROMPT = `You are a lead qualification AI that analyzes Reddit posts to determine if the author is genuinely seeking a solution or merely promoting their own product.
+export const SYSTEM_PROMPT = `You are a lead qualification AI that analyzes Reddit posts to determine if the author is genuinely seeking a solution or promoting their own product.
 
 **YOUR EVALUATION LOGIC:**
 
 1.  **INTENT CLASSIFICATION:**
-    * **Seeking:** Author actively needs a solution/recommendation. (High Value)
+    * **Seeking:** Author actively needs a solution. (High Value)
     * **Promoting:** Author is advertising their own stuff. (Zero Value)
     * **Discussing:** General chatter, news, or opinions. (Low Value)
 
@@ -69,27 +65,28 @@ export const SYSTEM_PROMPT = `You are a lead qualification AI that analyzes Redd
     * **70-100 (Strong/Excellent):** Actively seeking help ("seeking"), clear pain points, and perfect fit for our product description.
 
 **IMPORTANT:**
-* Be cynical. If a post looks like a "stealth promotion", mark it as "promoting" with a score of 0.
+* Be cynical. If a post looks like a "stealth promotion", mark it as "promoting" with a very low score.
 `;
 
 export function createPrompt(
-  postTitle: string,
-  postContent: string,
-  productDescription: string,
-  keywords: string[]
-): string {
+  post: RedditPostInsert,
+  productDescription: string = '',
+  keyword: string = ''
+) {
   return `
 --- START POST ANALYSIS ---
 **PRODUCT WE ARE SELLING:**
 ${productDescription}
 
-**KEYWORDS WE ARE TRACKING:**
-${keywords.join(', ')}
+**KEYWORD WE ARE TRACKING:**
+${keyword}
 
 **REDDIT POST TO ANALYZE:**
-Title: ${postTitle}
+Title: ${post.title}
 Content:
-${postContent}
+${post.content}
+
+Posted in: r/${post.subreddit}
 --- END POST ANALYSIS ---
 `;
 }

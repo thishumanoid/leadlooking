@@ -185,7 +185,7 @@ const CampaignsPage = () => {
                   <div
                     key={campaign.id}
                     onClick={() => handleViewCampaign(campaign.id)}
-                    className="group bg-card border rounded-xl p-6 hover:border-primary/50 transition-all duration-300 cursor-pointer"
+                    className="group bg-card border rounded-xl p-6 hover:border-primary/50 transition-all duration-300 cursor-pointer hover:shadow-lg hover:-translate-y-1"
                   >
                     {/* Campaign Header */}
                     <div className="flex items-start justify-between mb-4">

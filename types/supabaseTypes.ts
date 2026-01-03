@@ -194,6 +194,7 @@ export type Database = {
       reddit_posts: {
         Row: {
           author: string | null
+          chat_url: string | null
           content: string | null
           created_at_reddit: string | null
           id: string
@@ -204,6 +205,7 @@ export type Database = {
         }
         Insert: {
           author?: string | null
+          chat_url?: string | null
           content?: string | null
           created_at_reddit?: string | null
           id?: string
@@ -214,6 +216,7 @@ export type Database = {
         }
         Update: {
           author?: string | null
+          chat_url?: string | null
           content?: string | null
           created_at_reddit?: string | null
           id?: string

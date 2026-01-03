@@ -1,7 +1,9 @@
 import supabaseAdmin from '@/lib/supabase/supabaseAdmin';
 // import type { RedditPost } from '@/types/globalTypes';
+import type { postLabels } from '@/types/globalTypes';
 
-export async function upsertRedditPost(post: RedditPostInsert) {
+
+export async function upsertRedditPost(post: RedditPostInsert, chatURL: string | null = null) {
   try {
     const { data, error } = await supabaseAdmin
       .from('reddit_posts')
@@ -13,6 +15,7 @@ export async function upsertRedditPost(post: RedditPostInsert) {
           title: post.title,
           content: post.content,
           url: post.url,
+          chat_url: chatURL,
           created_at_reddit: post.created_at_reddit,
         },
         {
@@ -43,9 +46,8 @@ export async function createCampaignLead(
   keywordText: string,
   redditPostId: string,
   userId: string,
-  leadScore: number = 0,
-  intent: string = 'pending'
-): Promise<boolean> {
+  postLabels: postLabels
+) {
   try {
     const { error } = await supabaseAdmin
       .from('campaign_leads')
@@ -54,8 +56,8 @@ export async function createCampaignLead(
         keyword: keywordText,
         reddit_post_id: redditPostId,
         user_id: userId,
-        lead_score: leadScore,
-        intent: intent,
+        lead_score: postLabels.leadScore,
+        intent: postLabels.intent,
         status: 'new',
       })
       .select()
@@ -76,7 +78,7 @@ export async function createCampaignLead(
 /**
  * Updates only the last_scanned column for a campaign
  */
-export async function updateCampaignLastScanned(campaignId: string): Promise<boolean> {
+export async function updateCampaignLastScanned(campaignId: string) {
   try {
     const { error } = await supabaseAdmin
       .from('campaigns')

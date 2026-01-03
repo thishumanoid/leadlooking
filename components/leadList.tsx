@@ -5,8 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import RedditIcon from '@/components/global/RedditIcon';
-import { Search, Filter, X, Zap, CoffeeIcon, ExternalLink, WandSparkles } from 'lucide-react';
+import { Search, Filter, X, Zap, CoffeeIcon, ExternalLink, ArrowRight } from 'lucide-react';
 import PostDialog from '@/components/postDialog';
+import Link from 'next/link';
 
 // Type definition for lead data
 export interface Lead {
@@ -21,6 +22,7 @@ export interface Lead {
   matchStrength: 'strong' | 'partial';
   isNew: boolean;
   postUrl?: string;
+  chatUrl?: string;
 }
 
 interface LeadListProps {
@@ -155,7 +157,7 @@ function LeadList({ leads }: LeadListProps) {
           filteredLeads.map((lead) => (
             <Card
               key={lead.id}
-              className="group hover:border-primary/50 transition-all duration-300 overflow-hidden hover:shadow-md"
+              className="group hover:border-primary/50 transition-all duration-300 overflow-hidden hover:-translate-y-0.5"
             >
               {/* Card Header - Metadata */}
               <div className="px-6">
@@ -194,7 +196,7 @@ function LeadList({ leads }: LeadListProps) {
 
               {/* Card Body - Content */}
               <div className="px-6 cursor-pointer" onClick={() => handleLeadClick(lead)}>
-                <h3 className="text-lg font-semibold mb-3 group-hover:text-primary transition-colors leading-snug">
+                <h3 className="text-lg font-semibold mb-3 transition-colors leading-snug">
                   {lead.title}
                 </h3>
 
@@ -218,28 +220,12 @@ function LeadList({ leads }: LeadListProps) {
                     View Post
                     <ExternalLink className="w-3.5 h-3.5" />
                   </Button>
-                  <Button
-                    size="sm"
-                    className="h-9 gap-2 bg-primary hover:bg-primary/90"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      // Handle generate reply
-                    }}
-                  >
-                    Generate Reply
-                    <WandSparkles className="w-3.5 h-3.5" />
-                  </Button>
-                  <Button
-                    size="sm"
-                    className="h-9 gap-2 bg-primary hover:bg-primary/90"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      // Handle generate reply
-                    }}
-                  >
-                    Generate Comment
-                    <WandSparkles className="w-3.5 h-3.5" />
-                  </Button>
+                  <Link target="_blank" href={lead.chatUrl ?? ''}>
+                    <Button size="sm" className="h-9 gap-2 bg-primary hover:bg-primary/90">
+                      Send DM
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </Button>
+                  </Link>
                 </div>
               </div>
             </Card>

@@ -28,3 +28,9 @@
 //   id: string;
 //   keyword: string;
 // }
+
+
+export type postLabels = {
+    intent: "seeking" | "promoting" | "discussing" | "unclear";
+    leadScore: number;
+}
