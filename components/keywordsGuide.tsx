@@ -5,19 +5,19 @@ const KeywordsGuide = () => {
     {
       label: 'AND',
       example: '"waitlist builder" AND "validate idea"',
-      description: 'Finds posts with both terms',
+      description: 'Both terms must appear in posts',
       color: 'blue',
     },
     {
       label: 'OR',
       example: '"no-code waitlist" OR "waitlist"',
-      description: 'Finds posts with either term',
+      description: 'Either term can appear in posts',
       color: 'purple',
     },
     {
       label: '" "',
       example: '"waitlist builder"',
-      description: 'Finds exact phrase matches',
+      description: 'Finds exact phrase matches in posts',
       color: 'green',
     },
     {

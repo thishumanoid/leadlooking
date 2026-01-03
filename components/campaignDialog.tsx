@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Loader2, Sparkles } from 'lucide-react';
+import { Loader2, Sparkles, WandSparkles } from 'lucide-react';
 import { toast } from 'sonner';
 import { useSupabase } from '@/hooks/supabase-provider';
 import { scrapeMetadata } from '@/utils/functions/scrapeMetadata';
@@ -26,8 +26,6 @@ interface CampaignDialogProps {
   campaign?: any;
   existingKeywords?: string[];
 }
-
-
 
 export function CampaignDialog({
   open,
@@ -43,6 +41,7 @@ export function CampaignDialog({
   const [isGeneratingKeywords, setIsGeneratingKeywords] = useState(false);
   const [metadataError, setMetadataError] = useState('');
   const [keywords, setKeywords] = useState(['', '', '', '', '']);
+  const [hasGeneratedKeywords, setHasGeneratedKeywords] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { supabase } = useSupabase();
 
@@ -120,6 +119,7 @@ export function CampaignDialog({
                 newKeywords.push('');
               }
               setKeywords(newKeywords);
+              setHasGeneratedKeywords(true);
               toast.success('Keywords generated successfully!');
             }
           } catch (kwError) {
@@ -143,6 +143,35 @@ export function CampaignDialog({
       }
     };
   }, [websiteUrl]);
+
+  const handleManualGenerateKeywords = async () => {
+    if (!websiteDescription.trim() || isGeneratingKeywords || hasGeneratedKeywords) {
+      return;
+    }
+
+    setIsGeneratingKeywords(true);
+    try {
+      const combinedDescription = `${websiteName ? websiteName + '. ' : ''}${websiteDescription}`;
+      const aiKeywords = await getKeywords(combinedDescription);
+
+      if (aiKeywords && aiKeywords.length > 0) {
+        const newKeywords = [...aiKeywords.slice(0, 5)];
+        while (newKeywords.length < 5) {
+          newKeywords.push('');
+        }
+        setKeywords(newKeywords);
+        setHasGeneratedKeywords(true);
+        toast.success('Keywords generated successfully!');
+      } else {
+        toast.error('Could not generate keywords. Please try again or enter manually.');
+      }
+    } catch (error) {
+      console.error('Manual keyword generation failed:', error);
+      toast.error('Failed to generate keywords');
+    } finally {
+      setIsGeneratingKeywords(false);
+    }
+  };
 
   const handleWebsiteNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setWebsiteName(e.target.value);
@@ -188,6 +217,7 @@ export function CampaignDialog({
       setMetadataError('');
       setIsScrapingMetadata(false);
       setIsGeneratingKeywords(false);
+      setHasGeneratedKeywords(false);
 
       if (abortController.current) {
         abortController.current.abort();
@@ -404,9 +434,32 @@ export function CampaignDialog({
                     </span>
                   )}
                 </Label>
-                <span className="text-[10px] text-muted-foreground uppercase tracking-wider">
-                  Set up to 5
-                </span>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleManualGenerateKeywords}
+                  disabled={
+                    !!campaign ||
+                    isGeneratingKeywords ||
+                    hasGeneratedKeywords ||
+                    !websiteDescription.trim() ||
+                    isSubmitting
+                  }
+                  className="h-8 bg-primary hover:bg-primary/80  text-xs font-semibold"
+                >
+                  {isGeneratingKeywords ? (
+                    <>
+                      <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+                      Generating...
+                    </>
+                  ) : (
+                    <>
+                      <WandSparkles className="w-3 h-3 mr-1" />
+                      {hasGeneratedKeywords ? 'Keywords Generated' : 'Generate Keywords'}
+                    </>
+                  )}
+                </Button>
               </div>
 
               <div className="grid gap-3">
