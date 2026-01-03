@@ -17,6 +17,7 @@ import { toast } from 'sonner';
 import { useSupabase } from '@/hooks/supabase-provider';
 import { scrapeMetadata } from '@/utils/functions/scrapeMetadata';
 import { getKeywords } from '@/utils/functions/getKeywords';
+import KeywordsGuide from './keywordsGuide';
 
 interface CampaignDialogProps {
   open: boolean;
@@ -25,6 +26,8 @@ interface CampaignDialogProps {
   campaign?: any;
   existingKeywords?: string[];
 }
+
+
 
 export function CampaignDialog({
   open,
@@ -330,7 +333,7 @@ export function CampaignDialog({
             {campaign?.id ? 'Edit Campaign' : "Let's Find Leads"}
           </DialogTitle>
           <DialogDescription className="text-muted-foreground">
-            Enter your campaign details and keywords to start finding leads on Reddit
+            Enter your product or service details and keywords to start finding leads on Reddit
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden relative">
@@ -405,6 +408,7 @@ export function CampaignDialog({
                   Set up to 5
                 </span>
               </div>
+
               <div className="grid gap-3">
                 {keywords.map((keyword, index) => (
                   <div key={index} className="relative group">
@@ -412,7 +416,7 @@ export function CampaignDialog({
                       placeholder={isGeneratingKeywords ? 'Generating...' : `Keyword ${index + 1}`}
                       value={keyword}
                       onChange={(e) => handleKeywordChange(index, e.target.value)}
-                      className="bg-background/50 border-muted-foreground/20 focus-visible:ring-1 focus-visible:ring-primary pl-9 min-h-[42px] py-2 resize-none overflow-hidden"
+                      className="bg-background/50 border-muted-foreground/20 focus-visible:ring-1 focus-visible:ring-primary pl-10 min-h-[52px] py-[15px] resize-none overflow-hidden"
                       required={index === 0}
                       disabled={isSubmitting}
                       rows={1}
@@ -422,12 +426,13 @@ export function CampaignDialog({
                         target.style.height = `${target.scrollHeight}px`;
                       }}
                     />
-                    <div className="absolute left-3 top-2 text-muted-foreground/50 group-focus-within:text-primary transition-colors">
+                    <div className="absolute left-4 top-[14px] text-muted-foreground/50 group-focus-within:text-primary transition-colors">
                       <span className="text-xs font-bold">{index + 1}</span>
                     </div>
                   </div>
                 ))}
               </div>
+              <KeywordsGuide />
             </div>
           </div>
           <DialogFooter className="px-6 py-4 border-t border-muted-foreground/10 bg-card">

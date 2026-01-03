@@ -175,20 +175,15 @@ function LeadList({ leads }: LeadListProps) {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    {lead.isNew && (
-                      <Badge className="bg-emerald-600 hover:bg-emerald-700 text-white border-0 px-2.5 py-0.5 text-xs font-medium">
-                        New
-                      </Badge>
-                    )}
                     <Badge
                       variant="outline"
                       className={`px-2.5 py-0.5 text-xs font-medium ${
                         lead.matchStrength === 'strong'
-                          ? 'border-emerald-500/50 text-emerald-600 bg-emerald-500/10 dark:text-emerald-400'
-                          : 'border-orange-500/50 bg-orange-500/10 text-foreground'
+                          ? 'text-primary bg-primary dark:text-foreground'
+                          : 'border-primary/50 bg-primary/10 text-foreground'
                       }`}
                     >
-                      {lead.matchStrength === 'strong' ? '⚡ Strong Match' : 'Partial Match'}
+                      {lead.matchStrength === 'strong' ? 'Strong Match' : 'Partial Match'}
                     </Badge>
                   </div>
                 </div>

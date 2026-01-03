@@ -82,7 +82,7 @@ function Hero() {
                 freelancers
               </p>
               <div className="flex -space-x-4">
-                {[21, 22, 23, 24].map((i) => (
+                {[45, 46, 47, 48].map((i) => (
                   <Avatar key={i} className="border-2 border-background w-10 h-10">
                     <AvatarImage src={`https://i.pravatar.cc/100?img=${i + 10}`} />
                     <AvatarFallback>U{i}</AvatarFallback>

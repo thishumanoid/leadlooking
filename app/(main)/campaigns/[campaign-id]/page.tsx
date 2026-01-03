@@ -24,6 +24,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
+import KeywordsGuide from '@/components/keywordsGuide';
 
 // Sample data for demonstration
 
@@ -255,14 +256,16 @@ export default function CampaignsPage() {
               ))}
               <Button
                 onClick={() => setIsEditDialogOpen(true)}
-                className="w-full mt-4"
-                variant="outline"
+                className=" mt-4"
+                variant="primary"
               >
                 <Edit size={15} className="mr-2" />
                 Edit Keyword
               </Button>
             </CardContent>
           </Card>
+          <br />
+          <KeywordsGuide />
         </TabsContent>
 
       </Tabs>
