@@ -1,11 +1,9 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { FaReddit } from 'react-icons/fa';
 import RedditIcon from './global/RedditIcon';
-import { Bell, Check, Search, Plus, X, Mail, WandSparkles } from 'lucide-react';
+import { Bell, Check, Plus, X, Mail, WandSparkles } from 'lucide-react';
 import MaxWidthWrapper from '@/components/global/MaxWidthWrapper';
-import React from 'react';
 
 const steps = [
   {

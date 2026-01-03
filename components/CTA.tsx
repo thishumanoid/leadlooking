@@ -17,12 +17,12 @@ export default function CtaCard() {
 
               {/* Heading */}
               <h2 className="text-3xl font-bold sm:text-4xl md:text-5xl lg:text-6xl">
-                Warm Conversations, {<br />} Delivered Daily
+                Never Miss Your{<br />} Leads Again
               </h2>
 
               {/* Subheading */}
               <p className="mx-auto mt-4 max-w-[700px] text-muted-foreground md:text-xl">
-                Thousands of buying intent posts are created every day. Don't miss tomorrow's customers.
+                Thousands of buying intent posts are created every day on reddit, {<br />}Catch them
               </p>
 
               {/* Button Group */}

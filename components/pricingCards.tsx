@@ -28,29 +28,12 @@ interface PlanConfig {
 
 const planConfig: PlanConfig[] = [
   {
-    level: 'free',
-    name: 'Starter',
-    description: 'Perfect for side projects and hobbyists.',
-    price: '$0',
-    isSubscription: false,
-    period: '/month',
-    buttonText: 'Get Started',
-    features: [
-      { text: 'Up to 2 projects', included: true },
-      { text: 'Basic analytics', included: true },
-      { text: 'Community support', included: true },
-      { text: 'Custom domains', included: false },
-      { text: 'Team collaboration', included: false },
-      { text: '24/7 Support', included: false },
-    ],
-  },
-  {
     level: 'pro',
     name: 'Pro',
     id: getProductId('pro'),
 
     description: 'For growing teams and startups.',
-    price: '$9',
+    price: '$14',
     isSubscription: true,
     period: '/month',
     isPopular: true,
@@ -61,26 +44,7 @@ const planConfig: PlanConfig[] = [
       { text: 'Priority email support', included: true },
       { text: 'Custom domains', included: true },
       { text: 'Team collaboration', included: true },
-      { text: '24/7 Support', included: false },
-    ],
-  },
-  {
-    level: 'enterprise',
-    name: 'Enterprise',
-    id: getProductId('enterprise'),
-
-    description: 'For large organizations with specific needs.',
-    price: '$19',
-    isSubscription: true,
-    period: '/month',
-    buttonText: 'Get Premium',
-    features: [
-      { text: 'Unlimited projects', included: true },
-      { text: 'Custom reporting', included: true },
-      { text: 'Dedicated account manager', included: true },
-      { text: 'Custom domains', included: true },
-      { text: 'SSO & Advanced Security', included: true },
-      { text: '24/7 Phone Support', included: true },
+      { text: '24/7 Support', included: true },
     ],
   },
 ];
@@ -145,7 +109,7 @@ export default function PricingCards() {
           Simple, transparent pricing
         </h2>
         <p className="mt-4 text-lg text-muted-foreground">
-          Choose the perfect plan for your needs.
+          Never miss your potential leads on reddit.
         </p>
       </div>
 
@@ -182,7 +146,7 @@ export default function PricingCards() {
             {/* Header */}
             <div className="mb-5">
               <h3 className="text-xl font-bold text-foreground">{plan.name}</h3>
-              <p className="mt-2 text-sm text-muted-foreground">{plan.description}</p>
+              {/* <p className="mt-2 text-sm text-muted-foreground">{plan.description}</p> */}
             </div>
 
             {/* Price */}
