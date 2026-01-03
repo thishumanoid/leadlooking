@@ -9,7 +9,7 @@ export default function Page() {
         <LoadingWidget />
       </ClerkLoading>
       <ClerkLoaded>
-        <SignIn fallbackRedirectUrl="/dashboard" />
+        <SignIn fallbackRedirectUrl="/campaigns" />
       </ClerkLoaded>
     </MaxWidthWrapper>
   );
