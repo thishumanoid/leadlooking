@@ -18,14 +18,12 @@ import React from 'react';
 import MaxWidthWrapper from '../global/MaxWidthWrapper';
 import MobileNavbar from './mobile-navbar';
 import AnimationContainer from '../global/animation-container';
-// import { useAuth } from '@/context/AuthContext';
 import { usePathname } from 'next/navigation';
 import Logo from '../global/YourLogo';
-// import { appName } from '@/config';
-import config from '@/config';
+import { useUser } from '@clerk/nextjs'
 
 const Navbar = () => {
-  const user = false;
+  const { isSignedIn } = useUser()
   const pathname = usePathname();
   const isAuthPage = pathname.includes('auth');
 
@@ -36,8 +34,10 @@ const Navbar = () => {
           {/* Logo Section */}
           <div className="flex items-center space-x-12">
             <Link href="/" className="flex items-center gap-2">
-              <Logo height="32" width="32" />
-              <span className="text-lg font-normal font-heading">{config.appName ?? ''}</span>
+              <Logo height="28" width="28" />
+              <span className="text-lg font-normal font-heading">Lead
+                <span className="text-lg font-bold font-heading">Looking</span>
+              </span>
             </Link>
 
             {/* Desktop Navigation */}
@@ -113,8 +113,8 @@ const Navbar = () => {
           {/* Auth Actions */}
           {!isAuthPage && (
             <div className="hidden lg:flex items-center">
-              {user ? (
-                <Link href="/dashboard" className={buttonVariants({ size: 'sm' })}>
+              {isSignedIn ? (
+                <Link href="/campaigns" className={buttonVariants({ size: 'sm' })}>
                   Dashboard
                 </Link>
               ) : (

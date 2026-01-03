@@ -12,7 +12,7 @@ const steps = [
     id: 1,
     title: 'Create a Campaign',
     description:
-      "Describe what you're offering, your target audience, and select the keywords you want to monitor.",
+      "Describe what you're offering and select the keywords you want to monitor.",
     content: <Step1Content />,
   },
   {

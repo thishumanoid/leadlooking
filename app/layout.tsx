@@ -51,6 +51,9 @@ export default function RootLayout({
       }}
     >
       <html lang="en">
+        <head>
+          <meta name="apple-mobile-web-app-title" content="LeadLooking" />
+        </head>
         <body className={`${inter.className} antialiased dark`}>
           {children}
           <Toaster />

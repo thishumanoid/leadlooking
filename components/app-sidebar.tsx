@@ -79,61 +79,7 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="p-4">
-        <Card className="border-border/50 shadow-lg">
-          <CardHeader className="pb-0">
-            <CardTitle className="flex items-center justify-between text-sm">
-              <div className="flex items-center gap-2">
-                <CircleCheck className="h-4 w-4 text-green-500" />
-                <span>{userPlan} Plan</span>
-              </div>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4 pb-4">
-            <div className="space-y-2">
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-muted-foreground">Campaigns</span>
-                <span className="font-medium">
-                  {campaignsUsed}/{campaignsLimit}
-                </span>
-              </div>
-              <div className="h-2 w-full overflow-hidden rounded-full bg-secondary">
-                <div
-                  className="h-full bg-primary transition-all duration-300"
-                  style={{ width: `${(campaignsUsed / campaignsLimit) * 100}%` }}
-                />
-              </div>
-            </div>
-
-            {/* Keywords Usage */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-muted-foreground">Keywords</span>
-                <span className="font-medium">
-                  {keywordsUsed}/{keywordsLimit}
-                </span>
-              </div>
-              <div className="h-2 w-full overflow-hidden rounded-full bg-secondary">
-                <div
-                  className="h-full bg-primary transition-all duration-300"
-                  style={{ width: `${(keywordsUsed / keywordsLimit) * 100}%` }}
-                />
-              </div>
-            </div>
-
-            <Link href="/feedback">
-              <Button
-                variant="outline"
-                size="sm"
-                className="w-full mt-2 flex items-center justify-center"
-              >
-                <HelpCircle className="h-4 w-4 mr-2" />
-                Need Help?
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
-      </SidebarFooter>
+      
     </Sidebar>
   );
 }

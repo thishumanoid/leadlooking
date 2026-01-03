@@ -1,6 +1,6 @@
 {
-  "name": "extFast-Demo",
-  "short_name": "extFast-Demo",
+  "name": "LeadLooking",
+  "short_name": "LeadLooking",
   "icons": [
     {
       "src": "/web-app-manifest-192x192.png",

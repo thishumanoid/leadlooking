@@ -260,7 +260,7 @@ export default function CampaignsPage() {
                 variant="primary"
               >
                 <Edit size={15} className="mr-2" />
-                Edit Keyword
+                Edit Keywords
               </Button>
             </CardContent>
           </Card>

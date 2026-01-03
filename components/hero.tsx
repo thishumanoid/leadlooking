@@ -35,9 +35,9 @@ function Hero() {
             {/* <Badge className="bg-primary rounded-full py-1 border-primary">v2.0.0 is live!</Badge> */}
             <div className="relative mx-auto mt-6 max-w-fit flex items-center justify-center">
               <h1 className="text-3xl xs:text-4xl sm:text-5xl md:text-6xl font-semibold !leading-[1.2] tracking-tight">
-                Find People Looking for What{' '}
+                Find Customers From Reddit While{' '}
                 <span className="relative text-primary whitespace-nowrap">
-                  You Offer
+                  You Sleep
                   <svg
                     className="absolute -bottom-2 sm:-bottom-3 md:-bottom-4 left-0 w-full h-3 sm:h-4 md:h-5 text-primary/70 rotate-1"
                     viewBox="0 0 200 9"
@@ -57,7 +57,7 @@ function Hero() {
               <div className="absolute -right-12 sm:-right-14 md:-right-16 top-0 sm:top-1/2 sm:-translate-y-1/2 hidden sm:block rotate-12 animate-subtle-float"></div>
             </div>
             <p className="mt-6 xs:text-lg">
-              We scan thousands of social media posts every day to surface people {<br />} actively
+              We scan thousands of reddit posts every day to surface people {<br />} actively
               asking for tools, services, or skills like yours.
             </p>
             <div className="mt-8 flex flex-col items-center justify-center gap-4 w-full max-w-xs mx-auto">
