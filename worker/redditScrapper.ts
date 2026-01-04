@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { cleanText, delay, truncateText } from '@/utils/functions/helpers';
+import { cleanText } from '@/utils/functions/helpers';
 import { analysePost } from './ai/analysePost';
 import { sendLeadEmail } from './email/mailtrap';
 import { RedditLeadFilter, filterDublicates, filterOldPosts } from './filters';
@@ -7,6 +7,7 @@ import { fetchCampaignsWithKeywords } from './supabase/getSupabaseAdmin';
 import { upsertRedditPost, updateCampaignLastScanned } from './supabase/upsertSupabaseAdmin';
 import { createCampaignLead } from './supabase/upsertSupabaseAdmin';
 import { getUserChatURL } from './helpers';
+import { wait } from '@trigger.dev/sdk';
 
 let filter: RedditLeadFilter;
 
@@ -41,7 +42,7 @@ async function scanRedditForKeyword(keyword: string): Promise<RedditPostInsert[]
       params: {
         q: `${keyword}`,
         sort: 'new',
-        limit: 100,
+        limit: 10,
       },
       headers: {
         'User-Agent': 'RedditKeywordScanner/1.0',
@@ -108,16 +109,16 @@ async function processKeywordForCampaign(campaign: Campaign, keyword: Keyword) {
   for (const post of posts) {
     try {
       const postLabels = await analysePost(post, fullDescription, keyword.keyword);
-      await delay(1000);
 
       if (postLabels.leadScore > 50) {
         console.log(`✨Found High Score Post: ${post.url}`);
         console.log(`✨Score: ${postLabels.leadScore}`);
         console.log(`✨Intent: ${postLabels.intent}`);
 
-        const chatURL = await getUserChatURL(post.author!);
-        // sendLeadEmail(post.permalink, chatURL);
-        const postId = await upsertRedditPost(post, chatURL);
+        // const chatURL = await getUserChatURL(post.author!);
+        sendLeadEmail(post.url, '');
+
+        const postId = await upsertRedditPost(post, '');
 
         if (!postId) {
           console.log(`❌ Failed to upsert post: ${post.url}`);
@@ -136,17 +137,14 @@ async function processKeywordForCampaign(campaign: Campaign, keyword: Keyword) {
           newLeadsCount++;
           console.log(`✅ New lead: r/${post.subreddit} - ${post.title!.substring(0, 50)}...`);
         }
-      }
-
-      else {
+      } else {
         console.log(`❌ Skipping low score post: ${post.url}`);
         console.log(`❌ Score: ${postLabels.leadScore}`);
         console.log(`❌ Intent: ${postLabels.intent}`);
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-
   }
 
   console.log(`  📊 Results: ${newLeadsCount} new leads created from ${posts.length} posts`);
@@ -177,7 +175,7 @@ export default async function runReddit() {
         const leadsCreated = await processKeywordForCampaign(campaign, keyword);
         totalLeads += leadsCreated;
 
-        await delay(10000);
+        await wait.for({ minutes: 10 });
       }
 
       // Update last_scanned for the campaign

@@ -1,7 +1,7 @@
 import { createGroq } from '@ai-sdk/groq';
 import { generateText, Output } from 'ai';
 import { z } from 'zod';
-
+import { truncateText } from '@/utils/functions/helpers';
 
 
 const groq = createGroq({
@@ -73,6 +73,7 @@ export function createPrompt(
   productDescription: string = '',
   keyword: string = ''
 ) {
+  const truncatedContent = truncateText(post.content, 700);
   return `
 --- START POST ANALYSIS ---
 **PRODUCT WE ARE SELLING:**
@@ -84,7 +85,7 @@ ${keyword}
 **REDDIT POST TO ANALYZE:**
 Title: ${post.title}
 Content:
-${post.content}
+${truncatedContent}
 
 Posted in: r/${post.subreddit}
 --- END POST ANALYSIS ---

@@ -1,6 +1,6 @@
 
-export function truncateText(text: string, maxLength: number = 500): string {
-  if (!text || text.length <= maxLength) return text;
+export function truncateText(text: string | null | undefined, maxLength: number = 500): string {
+  if (!text || text.length <= maxLength) return text ?? ''
   
   // Truncate and add ellipsis
   return text.substring(0, maxLength).trim() + '...';

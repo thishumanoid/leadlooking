@@ -25,8 +25,7 @@ const config = {
   // REQUIRED: to recive email notification from contact form page
   contactEmail: 'support@yoursaas.com',
 
-  // REQUIRED: chose either 'stripe' or 'polar' or 'lemonSqueezy'
-  paymentProvider: 'stripe',
+  paymentProvider: 'polar',
 
   colors: {
     // REQUIRED — choose either light/dark.
