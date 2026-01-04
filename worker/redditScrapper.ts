@@ -125,7 +125,7 @@ async function processKeywordForCampaign(
         // const chatURL = await getUserChatURL(post.author!);
 
         // EMAIL
-        await sendLeadEmail(post.url, '', keyword.keyword);
+        // await sendLeadEmail(post.url, '', keyword.keyword);
 
         // SUPABASE
         const postId = await upsertRedditPost(post, '');

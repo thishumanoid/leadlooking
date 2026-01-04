@@ -23,7 +23,7 @@ const config = {
   extensionDemoVideo: '/',
 
   // REQUIRED: to recive email notification from contact form page
-  contactEmail: 'support@yoursaas.com',
+  contactEmail: 'neuhiman@gmail.com',
 
   paymentProvider: 'polar',
 

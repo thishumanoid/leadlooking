@@ -5,9 +5,20 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import RedditIcon from '@/components/global/RedditIcon';
-import { Search, Filter, X, Zap, CoffeeIcon, ExternalLink, ArrowRight } from 'lucide-react';
+import {
+  Search,
+  Filter,
+  X,
+  Zap,
+  CoffeeIcon,
+  ExternalLink,
+  ArrowRight,
+  Loader2,
+} from 'lucide-react';
 import PostDialog from '@/components/postDialog';
 import Link from 'next/link';
+import { getUserChatURL } from '@/utils/functions/helpers';
+import { useRouter } from 'next/navigation';
 
 // Type definition for lead data
 export interface Lead {
@@ -35,10 +46,28 @@ function LeadList({ leads }: LeadListProps) {
   const [matchFilter, setMatchFilter] = useState<'all' | 'strong' | 'partial'>('all');
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [loadingLeadId, setLoadingLeadId] = useState<string | null>(null);
+  const router = useRouter();
 
   const handleLeadClick = (lead: Lead) => {
+    console.log(lead);
     setSelectedLead(lead);
     setIsDialogOpen(true);
+  };
+
+  const handleChatClick = async (lead: Lead) => {
+    try {
+      setLoadingLeadId(lead.id);
+      console.log('selected auther', lead.author);
+      const chatURL = await getUserChatURL(lead.author || '');
+      if (chatURL) {
+        router.push(chatURL);
+      }
+    } catch (error) {
+      console.error('Error in handleChatClick:', error);
+    } finally {
+      setLoadingLeadId(null);
+    }
   };
 
   const handleCloseDialog = () => {
@@ -157,7 +186,7 @@ function LeadList({ leads }: LeadListProps) {
           filteredLeads.map((lead) => (
             <Card
               key={lead.id}
-              className="group hover:border-primary/50 transition-all duration-300 overflow-hidden hover:-translate-y-0.5"
+              className="group hover:bg-card/80 hover:border-primary/50 transition-all duration-300 overflow-hidden hover:-translate-y-0.5"
             >
               {/* Card Header - Metadata */}
               <div className="px-6">
@@ -215,12 +244,24 @@ function LeadList({ leads }: LeadListProps) {
                     View Post
                     <ExternalLink className="w-3.5 h-3.5" />
                   </Button>
-                  <Link target="_blank" href={lead.chatUrl ?? ''}>
-                    <Button size="sm" className="h-9 gap-2 bg-primary hover:bg-primary/90">
-                      Send DM
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </Button>
-                  </Link>
+                  <Button
+                    onClick={() => handleChatClick(lead)}
+                    size="sm"
+                    className="h-9 gap-2 bg-primary hover:bg-primary/90"
+                    disabled={loadingLeadId === lead.id}
+                  >
+                    {loadingLeadId === lead.id ? (
+                      <>
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        Connecting...
+                      </>
+                    ) : (
+                      <>
+                        Send DM
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </>
+                    )}
+                  </Button>
                 </div>
               </div>
             </Card>

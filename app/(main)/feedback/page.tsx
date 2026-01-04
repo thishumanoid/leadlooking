@@ -49,7 +49,7 @@ export default function ContactForm() {
 
   return (
     <MaxWidthWrapper>
-      <div className="flex items-center justify-center min-h-screen w-full p-6">
+      <div className="flex items-center justify-center  w-full p-6">
         <div className="w-full max-w-lg mx-auto p-6">
           <div className="space-y-2 text-center">
             <h2 className="text-3xl font-bold tracking-tight">Any Feedback?</h2>

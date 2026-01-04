@@ -1,6 +1,6 @@
 'use client';
 
-import { LayoutDashboard, Megaphone, Settings, Users, HelpCircle, CircleCheck } from 'lucide-react';
+import { Megaphone, Settings, Users, HelpCircle, MessageCircleHeart } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import Logo from '@/components/global/YourLogo';
@@ -31,15 +31,15 @@ const items = [
     url: '/campaigns',
     icon: Megaphone,
   },
-  // {
-  //   title: 'Leads',
-  //   url: '/leads',
-  //   icon: Users,
-  // },
   {
     title: 'Settings',
     url: '/settings',
     icon: Settings,
+  },
+  {
+    title: 'Any Feedback',
+    url: '/feedback',
+    icon: MessageCircleHeart,
   },
 ];
 
@@ -78,8 +78,6 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-
-      
     </Sidebar>
   );
 }
