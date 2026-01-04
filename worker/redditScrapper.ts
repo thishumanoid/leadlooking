@@ -3,12 +3,15 @@ import { cleanText } from '@/utils/functions/helpers';
 import { analysePost } from './ai/analysePost';
 import { sendLeadEmail } from './email/mailtrap';
 import { RedditLeadFilter, filterDublicates, filterOldPosts } from './filters';
-import { fetchCampaignsWithKeywords } from './supabase/getSupabaseAdmin';
+import {
+  fetchCampaignsWithKeywords,
+  fetchSingleCampaignWithKeywords,
+} from './supabase/getSupabaseAdmin';
 import { upsertRedditPost, updateCampaignLastScanned } from './supabase/upsertSupabaseAdmin';
 import { createCampaignLead } from './supabase/upsertSupabaseAdmin';
 import { wait } from '@trigger.dev/sdk';
 
-let filter: RedditLeadFilter;
+// let filter: RedditLeadFilter;
 
 interface RedditSearchResponse {
   data: {
@@ -29,10 +32,12 @@ interface RedditSearchResponse {
   };
 }
 
-async function scanRedditForKeyword(keyword: string): Promise<RedditPostInsert[]> {
+async function scanRedditForKeyword(
+  keyword: string,
+  filter: RedditLeadFilter
+): Promise<RedditPostInsert[]> {
   const posts: RedditPostInsert[] = [];
   const baseUrl = 'https://www.reddit.com/search.json';
-
   try {
     console.log(`Searching for keyword: "${keyword}"`);
 
@@ -91,17 +96,21 @@ async function scanRedditForKeyword(keyword: string): Promise<RedditPostInsert[]
   return potentialPosts;
 }
 
-async function processKeywordForCampaign(campaign: Campaign, keyword: Keyword) {
+async function processKeywordForCampaign(
+  campaign: Campaign,
+  keyword: Keyword,
+  filter: RedditLeadFilter
+) {
   console.log(`📍 Processing: Campaign "${campaign.name}" | Keyword "${keyword.keyword}"`);
 
-  const posts = await scanRedditForKeyword(keyword.keyword);
+  const posts = await scanRedditForKeyword(keyword.keyword, filter);
 
   if (posts.length === 0) {
     console.log(`⚠️ No new posts found`);
-    return 0;
+    return [];
   }
 
-  let newLeadsCount = 0;
+  const foundLeads: any[] = [];
 
   const fullDescription = `${campaign.name} | ${campaign.description}`;
 
@@ -135,7 +144,12 @@ async function processKeywordForCampaign(campaign: Campaign, keyword: Keyword) {
         );
 
         if (created) {
-          newLeadsCount++;
+          foundLeads.push({
+            ...post,
+            leadScore: postLabels.leadScore,
+            intent: postLabels.intent,
+            keyword: keyword.keyword,
+          });
           console.log(`✅ ADDED IN DB: r/${post.subreddit} - ${post.title!.substring(0, 50)}...`);
         }
       } else {
@@ -146,8 +160,8 @@ async function processKeywordForCampaign(campaign: Campaign, keyword: Keyword) {
     }
   }
 
-  console.log(`  📊 Results: ${newLeadsCount} new leads created from ${posts.length} posts`);
-  return newLeadsCount;
+  console.log(`  📊 Results: ${foundLeads.length} new leads created from ${posts.length} posts`);
+  return foundLeads;
 }
 
 export default async function runReddit() {
@@ -168,23 +182,55 @@ export default async function runReddit() {
     );
 
     for (const { campaign, keywords } of campaignsWithKeywords) {
-      filter = new RedditLeadFilter(campaign.description ?? '');
+      const filter = new RedditLeadFilter(campaign.description ?? '');
 
       for (const keyword of keywords) {
-        const leadsCreated = await processKeywordForCampaign(campaign, keyword);
-        totalLeads += leadsCreated;
+        const leads = await processKeywordForCampaign(campaign, keyword, filter);
+        totalLeads += leads.length;
       }
 
-      await wait.for({ minutes: 11 });
       await updateCampaignLastScanned(campaign.id);
       console.log(`✅ Updated last_scanned for campaign: "${campaign.name}"`);
+      await wait.for({ minutes: 11 });
     }
 
     console.log(`✅ Extraction Complete!`);
     console.log(`📈 Total new leads created: ${totalLeads}`);
     console.log(`🔍 Keywords processed: ${totalKeywords}`);
+    return;
   } catch (error) {
     console.error('\n❌ Fatal error in runRedditLeadExtraction:', error);
+    throw error;
+  }
+}
+
+
+
+export async function runRedditScanForCampaign(campaignId: string) {
+  try {
+    const data = await fetchSingleCampaignWithKeywords(campaignId);
+
+    if (!data) {
+      console.log(`⚠️ Campaign ${campaignId} not found or has no keywords.`);
+      return [];
+    }
+
+    const { campaign, keywords } = data;
+    const filter = new RedditLeadFilter(campaign.description ?? '');
+    // const allFoundLeads: any[] = [];
+
+    console.log(`Scanning campaign: ${campaign.name} with ${keywords.length} keywords`);
+
+    for (const keyword of keywords) {
+      const leads = await processKeywordForCampaign(campaign, keyword, filter);
+      // allFoundLeads.push(...leads);
+    }
+
+    await updateCampaignLastScanned(campaign.id);
+
+    return true;
+  } catch (error) {
+    console.error(`❌ Error in runRedditScanForCampaign for ${campaignId}:`, error);
     throw error;
   }
 }

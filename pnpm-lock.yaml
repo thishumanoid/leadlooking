@@ -71,6 +71,9 @@ importers:
       '@supabase/supabase-js':
         specifier: ^2.86.0
         version: 2.87.3
+      '@trigger.dev/react-hooks':
+        specifier: 4.3.1
+        version: 4.3.1(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.9.3)
       '@trigger.dev/sdk':
         specifier: 4.3.1
         version: 4.3.1(ai@6.0.3(zod@4.2.1))(typescript@5.9.3)(zod@4.2.1)
@@ -1551,6 +1554,13 @@ packages:
   '@trigger.dev/core@4.3.1':
     resolution: {integrity: sha512-qsFlEJtW1dBjiokUr/3/toghRe48orBK9voPjJAPLPKe0yA7HykqZuUWYGOIbrLUHrjxEPRWfegOCwdmPvxEfQ==}
     engines: {node: '>=18.20.0'}
+
+  '@trigger.dev/react-hooks@4.3.1':
+    resolution: {integrity: sha512-UHcT105NSI9iGBOi2rF9Eqvlyw40AnV4NgIhDplCtulUygJvTV81cK/ptW7IdVsaftXVwbGh3enei3NXabkMww==}
+    engines: {node: '>=18.20.0'}
+    peerDependencies:
+      react: ^18.0 || ^19.0 || ^19.0.0-rc
+      react-dom: ^18.0 || ^19.0 || ^19.0.0-rc
 
   '@trigger.dev/sdk@4.3.1':
     resolution: {integrity: sha512-q/gah1kpz5MgFk4KfBkysbmTXkbYcyDR9LelWZdkM9TD7q3C7DnVYTiplv3lka1jiWxyVdRmRv8jDEFTCEEHZg==}
@@ -5365,6 +5375,18 @@ snapshots:
       zod: 3.25.76
       zod-error: 1.5.0
       zod-validation-error: 1.5.0(zod@3.25.76)
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - typescript
+      - utf-8-validate
+
+  '@trigger.dev/react-hooks@4.3.1(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.9.3)':
+    dependencies:
+      '@trigger.dev/core': 4.3.1(typescript@5.9.3)
+      react: 19.2.3
+      react-dom: 19.2.3(react@19.2.3)
+      swr: 2.3.8(react@19.2.3)
     transitivePeerDependencies:
       - bufferutil
       - supports-color

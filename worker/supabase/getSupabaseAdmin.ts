@@ -27,7 +27,7 @@ export async function fetchCampaignsWithKeywords(): Promise<CampaignWithKeywords
     // Fetch all campaigns
     const { data: campaigns, error: campaignsError } = await supabaseAdmin
       .from('campaigns')
-      .select('*')
+      .select('*');
 
     if (campaignsError) {
       console.error('❌ Error fetching campaigns:', campaignsError);
@@ -66,6 +66,46 @@ export async function fetchCampaignsWithKeywords(): Promise<CampaignWithKeywords
     return campaignsWithKeywords as CampaignWithKeywords[];
   } catch (error) {
     console.error('❌ Fatal error in fetchCampaignsWithKeywords:', error);
+    throw error;
+  }
+}
+
+export async function fetchSingleCampaignWithKeywords(
+  campaignId: string
+): Promise<CampaignWithKeywords | null> {
+  try {
+    const { data: campaign, error: campaignError } = await supabaseAdmin
+      .from('campaigns')
+      .select('*')
+      .eq('id', campaignId)
+      .single();
+
+    if (campaignError) {
+      console.error(`❌ Error fetching campaign ${campaignId}:`, campaignError);
+      return null;
+    }
+
+    if (!campaign) {
+      console.log(`⚠️ Campaign ${campaignId} not found`);
+      return null;
+    }
+
+    const { data: keywords, error: keywordsError } = await supabaseAdmin
+      .from('keywords')
+      .select('id, keyword')
+      .eq('campaign_id', campaign.id);
+
+    if (keywordsError) {
+      console.error(`❌ Error fetching keywords for campaign ${campaignId}:`, keywordsError);
+      return { campaign, keywords: [] };
+    }
+
+    return {
+      campaign,
+      keywords: keywords || [],
+    } as CampaignWithKeywords;
+  } catch (error) {
+    console.error(`❌ Fatal error in fetchSingleCampaignWithKeywords for ${campaignId}:`, error);
     throw error;
   }
 }

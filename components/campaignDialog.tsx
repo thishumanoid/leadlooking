@@ -9,6 +9,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { useRouter } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -43,7 +44,9 @@ export function CampaignDialog({
   const [keywords, setKeywords] = useState(['', '', '', '', '']);
   const [hasGeneratedKeywords, setHasGeneratedKeywords] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
   const { supabase } = useSupabase();
+  const router = useRouter();
 
   const [wasManuallyEdited, setWasManuallyEdited] = useState({
     name: false,
@@ -339,13 +342,42 @@ export function CampaignDialog({
 
       toast.success(`Campaign ${campaign?.id ? 'updated' : 'created'} successfully!`);
 
-      const campaignWithKeywords = {
-        ...campaignData,
-        keywords: insertedKeywords || [],
-      };
+      // Trigger scan if it's a new campaign
+      if (!campaign?.id) {
+        try {
+          // toast.info('Starting initial scan...');
+          const scanResponse = await fetch('/api/campaign/scan-this', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ campaignId: campaignData.id }),
+          });
 
-      onSuccess(campaignWithKeywords);
-      onOpenChange(false);
+          const scanData = await scanResponse.json();
+
+          if (scanData.runId) {
+            router.push(
+              `/campaigns/${campaignData.id}?runId=${scanData.runId}&token=${scanData.publicAccessToken}`
+            );
+          } else {
+            // If no runId, just go to the page
+            router.push(`/campaigns/${campaignData.id}`);
+          }
+        } catch (scanError) {
+          console.error('Failed to trigger scan:', scanError);
+          // specific error toast?
+          router.push(`/campaigns/${campaignData.id}`);
+        }
+      } else {
+        const campaignWithKeywords = {
+          ...campaignData,
+          keywords: insertedKeywords || [],
+        };
+
+        onSuccess(campaignWithKeywords);
+        onOpenChange(false);
+      }
     } catch (error) {
       console.error('Error creating campaign:', error);
       toast.error(error instanceof Error ? error.message : 'Failed to create campaign');

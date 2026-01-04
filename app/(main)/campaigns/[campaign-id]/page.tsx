@@ -7,10 +7,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useSupabase } from '@/hooks/supabase-provider';
 import { useParams } from 'next/navigation';
 
-import { RefreshCw, Edit, Trash2 } from 'lucide-react';
+import { RefreshCw, Edit, Trash2, Loader2 } from 'lucide-react';
 import LeadList, { Lead } from '@/components/leadList';
 import { CampaignDialog } from '@/components/campaignDialog';
 import { CampaignStats } from '@/components/campaign-stats';
+import { useSearchParams } from 'next/navigation';
+import { useRealtimeRun } from '@trigger.dev/react-hooks';
+import type { campaignScanTask } from '@/trigger/campaignScanTask';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -114,7 +117,83 @@ export default function CampaignsPage() {
     };
 
     fetchData();
+    fetchData();
   }, [campaignId]);
+
+  // Trigger.dev hook implementation
+  const searchParams = useSearchParams();
+  const runId = searchParams?.get('runId');
+  const accessToken = searchParams?.get('token');
+
+  const { run } = useRealtimeRun(runId ?? undefined, {
+    accessToken: accessToken ?? '',
+    enabled: !!runId,
+  });
+
+  // Watch for run completion to refetch leads
+  useEffect(() => {
+    if (run?.status === 'COMPLETED') {
+      // Refetch leads logic
+      const refetchLeads = async () => {
+        setIsLoading(true); // Maybe not full page load, but update leads
+        try {
+          const { data: leadData, error: leadError } = await supabase
+            .from('campaign_leads')
+            .select(
+              `
+              id,
+              lead_score,
+              reddit_post_id,
+              reddit_posts (*)
+            `
+            )
+            .eq('campaign_id', campaignId);
+
+          if (leadError) throw leadError;
+
+          const transformedLeads: Lead[] = (leadData || [])
+            .map((item: any) => {
+              const post = item.reddit_posts;
+              if (!post) return null;
+
+              return {
+                id: post.id,
+                platform: 'Reddit',
+                subreddit: post.subreddit || 'unknown',
+                author: post.author || 'anonymous',
+                title: post.title || 'No Title',
+                preview: (post.content || '').substring(0, 200) + '...',
+                fullText: post.content || '',
+                timestamp: post.created_at_reddit ? new Date(post.created_at_reddit) : new Date(),
+                matchStrength: (item.lead_score || 0) >= 70 ? 'strong' : 'partial',
+                isNew: post.created_at_reddit
+                  ? new Date().getTime() - new Date(post.created_at_reddit).getTime() <
+                    24 * 60 * 60 * 1000
+                  : false,
+                postUrl: post.url || '#',
+                chatUrl: post.chat_url || '#',
+              } as Lead;
+            })
+            .filter((l): l is Lead => l !== null);
+
+          setLeads(transformedLeads);
+          toast.success('Scan completed! New leads found.');
+
+          // Clear URL param?
+          router.replace(`/campaigns/${campaignId}`);
+        } catch (error) {
+          console.error('Refetch error', error);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+
+      refetchLeads();
+    }
+  }, [run?.status, campaignId]);
+
+  const isScanning =
+    run?.status === 'EXECUTING' || run?.status === 'WAITING' || run?.status === 'QUEUED';
 
   const handleEditSuccess = (updatedCampaign: any) => {
     setCampaign(updatedCampaign);
@@ -160,8 +239,15 @@ export default function CampaignsPage() {
     }
   };
 
-  if (isLoading || !isLoaded) {
-    return <div className="p-8 text-center text-muted-foreground">Loading campaign...</div>;
+  if (isLoading || !isLoaded || isScanning) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        <p className="text-muted-foreground animate-pulse">
+          {isScanning ? 'Scanning Reddit for leads...' : 'Loading campaign...'}
+        </p>
+      </div>
+    );
   }
 
   if (!campaign) {
@@ -254,11 +340,7 @@ export default function CampaignsPage() {
                   <span className="font-medium">{keyword.keyword}</span>
                 </div>
               ))}
-              <Button
-                onClick={() => setIsEditDialogOpen(true)}
-                className=" mt-4"
-                variant="primary"
-              >
+              <Button onClick={() => setIsEditDialogOpen(true)} className=" mt-4" variant="primary">
                 <Edit size={15} className="mr-2" />
                 Edit Keywords
               </Button>
@@ -267,7 +349,6 @@ export default function CampaignsPage() {
           <br />
           <KeywordsGuide />
         </TabsContent>
-
       </Tabs>
 
       <CampaignDialog
