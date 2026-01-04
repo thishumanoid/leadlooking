@@ -212,7 +212,7 @@ export default function PostDialog({ lead, isOpen, onClose }: LeadDetailDialogPr
 
               <div className="flex flex-col items-end text-right">
                 <span className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1 flex items-center gap-1 justify-end">
-                  <Brain className="w-3 h-3 text-primary" /> Author Intent
+                  <Brain className="w-3 h-3 text-primary" /> Author Intent:
                 </span>
                 <Badge
                   variant="outline"

@@ -15,9 +15,9 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { useAuth } from '@clerk/nextjs';
 import { toast } from 'sonner';
 import { useSupabase } from '@/hooks/supabase-provider';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface Campaign {
   id: string;
@@ -142,13 +142,29 @@ const CampaignsPage = () => {
       {/* Header */}
       <header className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <button
-            onClick={() => setShowCreateModal(true)}
-            className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-5 py-2.5 rounded-lg font-medium transition-colors"
-          >
-            <Plus className="w-4 h-4" />
-            New Campaign
-          </button>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="w-fit">
+                  <button
+                    onClick={() => setShowCreateModal(true)}
+                    disabled={campaigns.length >= 1}
+                    className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-5 py-2.5 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <Plus className="w-4 h-4" />
+                    New Campaign
+                  </button>
+                </div>
+              </TooltipTrigger>
+              {campaigns.length >= 1 && (
+                <TooltipContent side="bottom" align="start" className="max-w-xs">
+                  <p>
+                    Currently your plan only allows one campaign. Delete your existing campaign to create a new one
+                  </p>
+                </TooltipContent>
+              )}
+            </Tooltip>
+          </TooltipProvider>
         </div>
       </header>
 
@@ -275,17 +291,23 @@ const CampaignsPage = () => {
                   </div>
                 ))}
 
-                {/* Empty State Card - Add New Campaign */}
-                <div
-                  className="border-2 border-dashed rounded-xl p-8 flex flex-col items-center justify-center text-center hover:border-primary/50 transition-colors cursor-pointer"
-                  onClick={() => setShowCreateModal(true)}
-                >
-                  <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center mb-3">
-                    <Plus className="w-6 h-6 text-muted-foreground" />
+                {/* Empty State Card - Add New Campaign - Only show if no campaigns */}
+                {campaigns.length === 0 && (
+                  <div
+                    className="border-2 border-dashed rounded-xl p-8 flex flex-col items-center justify-center text-center hover:border-primary/50 transition-colors cursor-pointer"
+                    onClick={() => setShowCreateModal(true)}
+                  >
+                    <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center mb-3">
+                      <Plus className="w-6 h-6 text-muted-foreground" />
+                    </div>
+                    <h3 className="text-sm font-medium text-foreground mb-1">
+                      Create New Campaign
+                    </h3>
+                    <p className="text-xs text-muted-foreground">
+                      Start monitoring Reddit for leads
+                    </p>
                   </div>
-                  <h3 className="text-sm font-medium text-foreground mb-1">Create New Campaign</h3>
-                  <p className="text-xs text-muted-foreground">Start monitoring Reddit for leads</p>
-                </div>
+                )}
               </div>
             )}
           </>

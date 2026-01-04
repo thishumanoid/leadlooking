@@ -389,7 +389,7 @@ export function CampaignDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-[95vw] sm:max-w-[800px] max-h-[90vh] flex flex-col bg-card border-none shadow-2xl overflow-hidden p-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5 pointer-events-none" />
+        <div className="absolute inset-0  pointer-events-none" />
         <DialogHeader className="relative px-6 pt-6">
           <DialogTitle className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
             {campaign?.id ? 'Edit Campaign' : "Let's Find Leads"}

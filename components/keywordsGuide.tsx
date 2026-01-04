@@ -1,4 +1,4 @@
-import { CircleQuestionMark } from "lucide-react";
+import { CircleQuestionMark } from 'lucide-react';
 
 const KeywordsGuide = () => {
   const operators = [
@@ -19,7 +19,7 @@ const KeywordsGuide = () => {
       example: '"no-code waitlist" OR "waitlist"',
       description: 'Either term can appear in posts',
       color: 'purple',
-    },    
+    },
     {
       label: '( )',
       example: '("looking for" OR "need") AND "waitlist"',
@@ -41,6 +41,37 @@ const KeywordsGuide = () => {
       default:
         return 'bg-primary/10 text-primary border-primary/20';
     }
+  };
+
+  const renderHighlightedExample = (example: string) => {
+    const parts = example.split(/(\bAND\b|\bOR\b|[()"])/g);
+    return parts.map((part, i) => {
+      if (part === 'AND')
+        return (
+          <span key={i} className="text-blue-400 font-bold mx-0.5">
+            {part}
+          </span>
+        );
+      if (part === 'OR')
+        return (
+          <span key={i} className="text-purple-400 font-bold mx-0.5">
+            {part}
+          </span>
+        );
+      if (part === '"')
+        return (
+          <span key={i} className="text-emerald-400 font-bold">
+            {part}
+          </span>
+        );
+      if (part === '(' || part === ')')
+        return (
+          <span key={i} className="text-orange-400 font-bold">
+            {part}
+          </span>
+        );
+      return part;
+    });
   };
 
   return (
@@ -75,7 +106,7 @@ const KeywordsGuide = () => {
             </div>
             <div className="relative">
               <code className="block text-sm sm:text-sm font-mono bg-background/60 p-2.5 rounded-lg border border-primary/5 text-foreground/90 transition-colors break-all sm:break-normal">
-                {op.example}
+                {renderHighlightedExample(op.example)}
               </code>
             </div>
           </div>
