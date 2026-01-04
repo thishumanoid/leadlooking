@@ -34,6 +34,8 @@ export interface Lead {
   isNew: boolean;
   postUrl?: string;
   chatUrl?: string;
+  leadScore?: number;
+  leadIntent?: string;
 }
 
 interface LeadListProps {

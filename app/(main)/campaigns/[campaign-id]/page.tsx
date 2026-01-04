@@ -75,6 +75,7 @@ export default function CampaignsPage() {
             `
             id,
             lead_score,
+            intent,
             reddit_post_id,
             reddit_posts (*)
           `
@@ -104,6 +105,8 @@ export default function CampaignsPage() {
                 : false,
               postUrl: post.url || '#',
               chatUrl: post.chat_url || '#',
+              leadScore: Number(item.lead_score || 0),
+              leadIntent: String(item.intent || 'unclear'),
             } as Lead;
           })
           .filter((l): l is Lead => l !== null);
@@ -116,7 +119,6 @@ export default function CampaignsPage() {
       }
     };
 
-    fetchData();
     fetchData();
   }, [campaignId]);
 
@@ -143,6 +145,7 @@ export default function CampaignsPage() {
               `
               id,
               lead_score,
+              intent,
               reddit_post_id,
               reddit_posts (*)
             `
@@ -172,6 +175,8 @@ export default function CampaignsPage() {
                   : false,
                 postUrl: post.url || '#',
                 chatUrl: post.chat_url || '#',
+                leadScore: Number(item.lead_score || 0),
+                leadIntent: String(item.intent || 'unclear'),
               } as Lead;
             })
             .filter((l): l is Lead => l !== null);
