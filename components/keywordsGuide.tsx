@@ -3,6 +3,12 @@ import { CircleQuestionMark } from "lucide-react";
 const KeywordsGuide = () => {
   const operators = [
     {
+      label: '" "',
+      example: '"waitlist builder"',
+      description: 'Finds exact phrase matches in posts',
+      color: 'green',
+    },
+    {
       label: 'AND',
       example: '"waitlist builder" AND "validate idea"',
       description: 'Both terms must appear in posts',
@@ -13,13 +19,7 @@ const KeywordsGuide = () => {
       example: '"no-code waitlist" OR "waitlist"',
       description: 'Either term can appear in posts',
       color: 'purple',
-    },
-    {
-      label: '" "',
-      example: '"waitlist builder"',
-      description: 'Finds exact phrase matches in posts',
-      color: 'green',
-    },
+    },    
     {
       label: '( )',
       example: '("looking for" OR "need") AND "waitlist"',

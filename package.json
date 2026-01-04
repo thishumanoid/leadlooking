@@ -8,7 +8,7 @@
     "postbuild": "next-sitemap",
     "start": "next start",
     "lint": "eslint",
-    "t": "pnpm dlx trigger.dev@latest dev"
+    "trigger": "pnpm dlx trigger.dev@latest dev"
   },
   "dependencies": {
     "@ai-sdk/google": "^3.0.1",

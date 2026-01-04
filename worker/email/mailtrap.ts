@@ -15,8 +15,8 @@ const recipients = [
   },
 ];
 
-export async function sendLeadEmail(redditPostURL: string, chatURL: string) {
-  const emailContent = createEmail(redditPostURL, chatURL);
+export async function sendLeadEmail(redditPostURL: string, chatURL: string, keyword: string) {
+  const emailContent = createEmail(redditPostURL, chatURL, keyword);
 
   try {
     const result = await mailtrap.send({
@@ -31,7 +31,7 @@ export async function sendLeadEmail(redditPostURL: string, chatURL: string) {
   }
 }
 
-export function createEmail(redditPostURL: string = '', chatURL: string = '') {
+export function createEmail(redditPostURL: string = '', chatURL: string = '', keyword: string = '') {
   const EMAIL_TEMPLATE = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -68,7 +68,7 @@ export function createEmail(redditPostURL: string = '', chatURL: string = '') {
                     
                     <div style="background-color:#f8f9fa; border-left:4px solid #4a90e2; padding-top:16px; padding-bottom:16px; padding-left:20px; padding-right:20px; border-radius:4px; margin-top:0; margin-bottom:32px; margin-left:0; margin-right:0;">
                         <span style="font-size:12px; font-weight:600; color:#666666; text-transform:uppercase; display: block; letter-spacing: 0.5px;">Keyword</span>
-                        <div style="font-size:18px; font-weight:600; color:#1a1a1a; margin-top:4px; margin-bottom:0; margin-left:0; margin-right:0;">Looking for SEO expert</div>
+                        <div style="font-size:18px; font-weight:600; color:#1a1a1a; margin-top:4px; margin-bottom:0; margin-left:0; margin-right:0;">${keyword}</div>
                     </div>
                     
                     <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
