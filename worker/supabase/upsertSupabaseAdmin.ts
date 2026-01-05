@@ -103,16 +103,18 @@ export async function updateCampaignLastScanned(campaignId: string) {
  */
 export async function markPostAsAnalyzed(campaignId: string, redditId: string) {
   try {
-    const { error } = await supabaseAdmin.from('analyzed_posts').insert({
-      campaign_id: campaignId,
-      reddit_id: redditId,
-    });
+    const { error } = await supabaseAdmin.from('analyzed_posts').upsert(
+      {
+        campaign_id: campaignId,
+        reddit_id: redditId,
+      },
+      {
+        onConflict: 'campaign_id, reddit_id',
+        ignoreDuplicates: true,
+      }
+    );
 
     if (error) {
-      if (error.code === '23505') {
-        // Unique violation, already marked
-        return true;
-      }
       console.error(`    ❌ Error marking post ${redditId} as analyzed:`, error);
       return false;
     }
