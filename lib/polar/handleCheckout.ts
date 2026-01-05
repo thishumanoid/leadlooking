@@ -6,7 +6,6 @@ export async function defaultCheckoutPolar(userEmail: string | null) {
   const results = await polar.checkouts.create({
     products: [
       process.env.NEXT_PUBLIC_POLAR_PRODUCT_A!,
-      process.env.NEXT_PUBLIC_POLAR_PRODUCT_B!,
     ],
     customerEmail: userEmail,
     successUrl: `${process.env.NEXT_PUBLIC_CHECKOUT_SUCCESS_URL}?checkout_id={CHECKOUT_ID}`,

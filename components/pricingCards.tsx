@@ -3,8 +3,7 @@
 import React, { useState } from 'react';
 import { Check, X, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-// import { useAuth } from '@/context/AuthContext';
-import getProductId from '@/utils/functions/findProductId';
+import { useUser } from '@clerk/nextjs'
 
 
 
@@ -30,9 +29,9 @@ const planConfig: PlanConfig[] = [
   {
     level: 'pro',
     name: 'Pro',
-    id: getProductId('pro'),
+    id: process.env.NEXT_PUBLIC_POLAR_PRODUCT_A,
 
-    description: 'For growing teams and startups.',
+    description: 'For growing SaaS.',
     price: '$14',
     isSubscription: true,
     period: '/month',
@@ -53,17 +52,11 @@ export default function PricingCards() {
   const router = useRouter();
   const [activePlans] = useState<PlanConfig[]>(planConfig);
   const [loadingPlanId, setLoadingPlanId] = useState<string | null>(null);
-  const user = false;
+   const { isSignedIn, user} = useUser()
 
   const handleClick = async (plan: PlanConfig) => {
-    if (!user) {
-      router.push('/auth');
-      return;
-    }
-
-    // If it's the free plan, redirect to dashboard
-    if (plan.level === 'free') {
-      router.push('/dashboard');
+    if (!isSignedIn) {
+      router.push('/sign-up');
       return;
     }
 
@@ -78,8 +71,7 @@ export default function PricingCards() {
           },
           body: JSON.stringify({
             id: plan.id,
-            // userEmail: user.email,
-            mode: plan.isSubscription === true ? 'subscription' : 'payment',
+            userEmail: user.emailAddresses[0].emailAddress,
           }),
         });
 
