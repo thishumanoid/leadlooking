@@ -168,7 +168,7 @@ async function processKeywordForCampaign(
           console.log(`✅ ADDED IN DB: r/${post.subreddit} - ${post.title!.substring(0, 50)}...`);
         }
       } else {
-        console.log(`❌ Skipping post, SCORE: ${postLabels.leadScore} Post: ${post.url}`);
+        console.log(`❌ LOW AI SCORE: ${postLabels.leadScore} Post: ${post.url}`);
       }
 
       await markPostAsAnalyzed(campaign.id, post.reddit_id!);

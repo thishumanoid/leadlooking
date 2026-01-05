@@ -274,7 +274,7 @@ class RedditLeadFilter {
     const scoredPosts = posts.map((post) => this.scorePost(post));
 
     if (this.config.debug) {
-      console.log('\n=== FILTERING RESULTS ===\n');
+      console.log('\n=== LOCAL INTENT FILTERING ===\n');
       console.log(
         `Product Terms Extracted: ${this.productTerms.slice(0, 10).join(', ')}${
           this.productTerms.length > 10 ? '...' : ''
@@ -283,7 +283,6 @@ class RedditLeadFilter {
       console.log('');
 
       scoredPosts.forEach((scored) => {
-        console.log(`Title: ${scored.post.title}`);
         console.log(`URL: ${scored.post.url}`);
         console.log(
           `  Product: ${scored.productDescScore.toFixed(2)} | Intent: ${scored.intentScore.toFixed(
