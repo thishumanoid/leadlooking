@@ -30,7 +30,7 @@ export interface Lead {
   title: string;
   preview: string;
   fullText?: string;
-  timestamp: Date;
+  timestamp: Date | string;
   matchStrength: 'strong' | 'partial';
   isNew: boolean;
   postUrl?: string;
@@ -103,9 +103,10 @@ function LeadList({ leads }: LeadListProps) {
     setFilteredLeads(result);
   }, [searchQuery, matchFilter, leads]);
 
-  const formatTimeAgo = (date: Date) => {
+  const formatTimeAgo = (date: Date | string) => {
+    const d = new Date(date);
     const now = new Date();
-    const diffInMs = now.getTime() - date.getTime();
+    const diffInMs = now.getTime() - d.getTime();
     const diffInMins = Math.floor(diffInMs / 60000);
     const diffInHours = Math.floor(diffInMins / 60);
     const diffInDays = Math.floor(diffInHours / 24);
@@ -237,18 +238,16 @@ function LeadList({ leads }: LeadListProps) {
               {/* Card Footer - Engagement & Actions */}
               <div className="px-6 py-3  border-t border-border/50 flex items-center justify-between gap-4">
                 <div className="flex items-center gap-2">
+                  <Link target="_blank" href={lead.postUrl ?? '#'}>
                   <Button
                     size="sm"
                     variant="outline"
                     className="h-9 gap-2 hover:bg-background"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      window.open(lead.postUrl, '_blank');
-                    }}
                   >
                     View Post
                     <ExternalLink className="w-3.5 h-3.5" />
                   </Button>
+                  </Link>
                   <Button
                     onClick={() => handleChatClick(lead)}
                     size="sm"

@@ -48,6 +48,16 @@ export default function CampaignsPage() {
   const [showResultsDialog, setShowResultsDialog] = useState(false);
   const router = useRouter();
 
+  // Trigger.dev hook implementation
+  const searchParams = useSearchParams();
+  const runId = searchParams?.get('runId');
+  const accessToken = searchParams?.get('token');
+
+  const { run } = useRealtimeRun(runId ?? undefined, {
+    accessToken: accessToken ?? '',
+    enabled: !!runId,
+  });
+
   useEffect(() => {
     if (!campaignId) return;
 
@@ -73,50 +83,21 @@ export default function CampaignsPage() {
         if (keywordError) throw keywordError;
         setKeywords(keywordData || []);
 
-        // Fetch leads (campaign_leads joined with reddit_posts)
-        const { data: leadData, error: leadError } = await supabase
-          .from('campaign_leads')
-          .select(
-            `
-            id,
-            lead_score,
-            intent,
-            reddit_post_id,
-            reddit_posts (*)
-          `
-          )
-          .eq('campaign_id', campaignId);
+        // Fetch leads using the new API endpoint
+        const response = await fetch('/api/campaign/get-leads', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ campaignId }),
+        });
 
-        if (leadError) throw leadError;
+        if (!response.ok) {
+          throw new Error('Failed to fetch leads');
+        }
 
-        const transformedLeads: Lead[] = (leadData || [])
-          .map((item: any) => {
-            const post = item.reddit_posts;
-            if (!post) return null;
-
-            return {
-              id: post.id,
-              platform: 'Reddit',
-              subreddit: post.subreddit || 'unknown',
-              author: post.author || 'anonymous',
-              title: post.title || 'No Title',
-              preview: (post.content || '').substring(0, 200) + '...',
-              fullText: post.content || '',
-              timestamp: post.created_at_reddit ? new Date(post.created_at_reddit) : new Date(),
-              matchStrength: (item.lead_score || 0) >= 70 ? 'strong' : 'partial',
-              isNew: post.created_at_reddit
-                ? new Date().getTime() - new Date(post.created_at_reddit).getTime() <
-                  24 * 60 * 60 * 1000
-                : false,
-              postUrl: post.url || '#',
-              chatUrl: post.chat_url || '#',
-              leadScore: Number(item.lead_score || 0),
-              leadIntent: String(item.intent || 'unclear'),
-            } as Lead;
-          })
-          .filter((l): l is Lead => l !== null);
-
-        setLeads(transformedLeads);
+        const data = await response.json();
+        setLeads(data.leads || []);
       } catch (error) {
         console.error('Error fetching campaign data:', error);
       } finally {
@@ -127,16 +108,6 @@ export default function CampaignsPage() {
     fetchData();
   }, [campaignId]);
 
-  // Trigger.dev hook implementation
-  const searchParams = useSearchParams();
-  const runId = searchParams?.get('runId');
-  const accessToken = searchParams?.get('token');
-
-  const { run } = useRealtimeRun(runId ?? undefined, {
-    accessToken: accessToken ?? '',
-    enabled: !!runId,
-  });
-
   // Watch for run completion to refetch leads
   useEffect(() => {
     if (run?.status === 'COMPLETED') {
@@ -144,48 +115,21 @@ export default function CampaignsPage() {
       const refetchLeads = async () => {
         setIsLoading(true); // Maybe not full page load, but update leads
         try {
-          const { data: leadData, error: leadError } = await supabase
-            .from('campaign_leads')
-            .select(
-              `
-              id,
-              lead_score,
-              intent,
-              reddit_post_id,
-              reddit_posts (*)
-            `
-            )
-            .eq('campaign_id', campaignId);
+          // Fetch leads using the new API endpoint
+          const response = await fetch('/api/campaign/get-leads', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ campaignId }),
+          });
 
-          if (leadError) throw leadError;
+          if (!response.ok) {
+            throw new Error('Failed to fetch leads');
+          }
 
-          const transformedLeads: Lead[] = (leadData || [])
-            .map((item: any) => {
-              const post = item.reddit_posts;
-              if (!post) return null;
-
-              return {
-                id: post.id,
-                platform: 'Reddit',
-                subreddit: post.subreddit || 'unknown',
-                author: post.author || 'anonymous',
-                title: post.title || 'No Title',
-                preview: (post.content || '').substring(0, 200) + '...',
-                fullText: post.content || '',
-                timestamp: post.created_at_reddit ? new Date(post.created_at_reddit) : new Date(),
-                matchStrength: (item.lead_score || 0) >= 70 ? 'strong' : 'partial',
-                isNew: post.created_at_reddit
-                  ? new Date().getTime() - new Date(post.created_at_reddit).getTime() <
-                    24 * 60 * 60 * 1000
-                  : false,
-                postUrl: post.url || '#',
-                chatUrl: post.chat_url || '#',
-                leadScore: Number(item.lead_score || 0),
-                leadIntent: String(item.intent || 'unclear'),
-              } as Lead;
-            })
-            .filter((l): l is Lead => l !== null);
-
+          const data = await response.json();
+          const transformedLeads = data.leads || [];
           setLeads(transformedLeads);
 
           if (transformedLeads.length > 0) {
@@ -206,7 +150,7 @@ export default function CampaignsPage() {
 
       refetchLeads();
     }
-  }, [run?.status, campaignId]);
+  }, [run?.status]);
 
   const isScanning =
     run?.status === 'EXECUTING' || run?.status === 'WAITING' || run?.status === 'QUEUED';

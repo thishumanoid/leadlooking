@@ -54,9 +54,10 @@ export default function PostDialog({ lead, isOpen, onClose }: LeadDetailDialogPr
     }
   };
 
-  const formatTimeAgo = (date: Date) => {
+  const formatTimeAgo = (date: Date | string) => {
+    const d = new Date(date);
     const now = new Date();
-    const diffInMs = now.getTime() - date.getTime();
+    const diffInMs = now.getTime() - d.getTime();
     const diffInMins = Math.floor(diffInMs / 60000);
     const diffInHours = Math.floor(diffInMins / 60);
     const diffInDays = Math.floor(diffInHours / 24);
