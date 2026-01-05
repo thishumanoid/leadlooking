@@ -209,7 +209,7 @@ export default async function runReddit() {
       await updateCampaignLastScanned(campaign.id);
       console.log(`✅ Updated last_scanned for campaign: "${campaign.name}"`);
 
-      // await wait.for({ minutes: 11 });
+      await wait.for({ minutes: 11 });
     }
 
     console.log(`✅ Extraction Complete!`);

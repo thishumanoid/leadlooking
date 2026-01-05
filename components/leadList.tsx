@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import PostDialog from '@/components/postDialog';
 import Link from 'next/link';
+import { EmptyLeadState } from '@/components/empty-lead-state';
 import { getUserChatURL } from '@/utils/functions/helpers';
 import { useRouter } from 'next/navigation';
 
@@ -174,13 +175,15 @@ function LeadList({ leads }: LeadListProps) {
       </Card>
 
       <div className="space-y-4">
-        {filteredLeads.length === 0 ? (
+        {leads.length === 0 ? (
+          <EmptyLeadState />
+        ) : filteredLeads.length === 0 ? (
           <Card>
             <CardContent className="py-12">
               <div className="text-center text-muted-foreground">
                 <Search className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                <p className="text-lg font-medium">No leads found</p>
-                <p className="text-sm">Try adjusting your keywords</p>
+                <p className="text-lg font-medium">No leads found matching your filters</p>
+                <p className="text-sm">Try adjusting your search or filters</p>
               </div>
             </CardContent>
           </Card>

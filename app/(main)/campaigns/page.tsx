@@ -232,7 +232,7 @@ const CampaignsPage = () => {
                             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                             <AlertDialogDescription>
                               This will permanently delete the campaign "{campaign.name}" and all
-                              its associated keywords. Reddit posts will NOT be deleted.
+                              its associated keywords.
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
