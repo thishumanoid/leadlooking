@@ -19,7 +19,7 @@ export async function POST(request: Request) {
     const publicToken = await auth.createPublicToken({
       scopes: {
         read: {
-          runs: [handle.id], // ✅ this token can read only these runs
+          runs: [handle.id],
         },
       },
     });

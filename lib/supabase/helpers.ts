@@ -4,7 +4,7 @@ import supabaseAdmin from '@/lib/supabase/supabaseAdmin';
 export async function isEligibleUser(userEmail: string) {
   try {
     const { data, error } = await supabaseAdmin
-      .from('PremiumUsers')
+      .from('profiles')
       .select()
       .eq('user_email', userEmail)
       .single();
@@ -13,7 +13,7 @@ export async function isEligibleUser(userEmail: string) {
     if (data) {
       const premiumStatus = data.subscription_status.trim().toLowerCase();
 
-      if (premiumStatus === 'active' || premiumStatus === 'trialing') return true;
+      if (premiumStatus === 'active' || premiumStatus === 'trialing' || premiumStatus === 'paid') return true;
     }
 
     if (error) return false;
