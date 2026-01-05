@@ -39,6 +39,32 @@ export type Database = {
   }
   public: {
     Tables: {
+      analyzed_posts: {
+        Row: {
+          campaign_id: string | null
+          id: number
+          reddit_id: string
+        }
+        Insert: {
+          campaign_id?: string | null
+          id?: number
+          reddit_id: string
+        }
+        Update: {
+          campaign_id?: string | null
+          id?: number
+          reddit_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "analyzed_posts_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       campaign_leads: {
         Row: {
           campaign_id: string

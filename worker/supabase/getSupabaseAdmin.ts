@@ -109,3 +109,26 @@ export async function fetchSingleCampaignWithKeywords(
     throw error;
   }
 }
+
+export async function fetchAnalyzedPostIds(
+  campaignId: string,
+  redditIds: string[]
+): Promise<string[]> {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('analyzed_posts')
+      .select('reddit_id')
+      .eq('campaign_id', campaignId)
+      .in('reddit_id', redditIds);
+
+    if (error) {
+      console.error(`❌ Error fetching analyzed posts for campaign ${campaignId}:`, error);
+      return [];
+    }
+
+    return data?.map((row) => row.reddit_id) || [];
+  } catch (error) {
+    console.error(`❌ Fatal error fetching analyzed posts for campaign ${campaignId}:`, error);
+    return [];
+  }
+}

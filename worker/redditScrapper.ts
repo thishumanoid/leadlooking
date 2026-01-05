@@ -1,14 +1,19 @@
 import axios from 'axios';
 import { cleanText } from '@/utils/functions/helpers';
 import { analysePost } from './ai/analysePost';
-import { sendLeadEmail } from './email/mailtrap';
-import { RedditLeadFilter, filterDublicates, filterOldPosts } from './filters';
 import {
   fetchCampaignsWithKeywords,
   fetchSingleCampaignWithKeywords,
+  fetchAnalyzedPostIds,
 } from './supabase/getSupabaseAdmin';
-import { upsertRedditPost, updateCampaignLastScanned } from './supabase/upsertSupabaseAdmin';
-import { createCampaignLead } from './supabase/upsertSupabaseAdmin';
+import {
+  upsertRedditPost,
+  updateCampaignLastScanned,
+  createCampaignLead,
+  markPostAsAnalyzed,
+} from './supabase/upsertSupabaseAdmin';
+import { filterDublicates, filterOldPosts, filterAnalyzedPosts, RedditLeadFilter } from './filters';
+
 import { wait } from '@trigger.dev/sdk';
 
 // let filter: RedditLeadFilter;
@@ -33,6 +38,7 @@ interface RedditSearchResponse {
 }
 
 async function scanRedditForKeyword(
+  campaignId: string,
   keyword: string,
   filter: RedditLeadFilter
 ): Promise<RedditPostInsert[]> {
@@ -89,11 +95,20 @@ async function scanRedditForKeyword(
   const uniquePosts = filterDublicates(recentPosts);
   const potentialPosts = filter.filterPosts(uniquePosts);
 
+  // Filter out posts that have already been analyzed for this campaign
+  const redditIdsToFilter = potentialPosts
+    .map((p) => p.reddit_id)
+    .filter((id): id is string => !!id);
+
+  const alreadyAnalyzedIds = await fetchAnalyzedPostIds(campaignId, redditIdsToFilter);
+
+  const freshPosts = filterAnalyzedPosts(potentialPosts, alreadyAnalyzedIds);
+
   console.log(
-    `\n📊 Results: ${potentialPosts.length} out of ${uniquePosts.length} posts passed the filter\n`
+    `\n📊 Results: ${freshPosts.length} out of ${uniquePosts.length} posts remaining for analysis\n`
   );
 
-  return potentialPosts;
+  return freshPosts;
 }
 
 async function processKeywordForCampaign(
@@ -103,7 +118,7 @@ async function processKeywordForCampaign(
 ) {
   console.log(`📍 Processing: Campaign "${campaign.name}" | Keyword "${keyword.keyword}"`);
 
-  const posts = await scanRedditForKeyword(keyword.keyword, filter);
+  const posts = await scanRedditForKeyword(campaign.id, keyword.keyword, filter);
 
   if (posts.length === 0) {
     console.log(`⚠️ No new posts found`);
@@ -155,6 +170,8 @@ async function processKeywordForCampaign(
       } else {
         console.log(`❌ Skipping post, SCORE: ${postLabels.leadScore} Post: ${post.url}`);
       }
+
+      await markPostAsAnalyzed(campaign.id, post.reddit_id!);
     } catch (error) {
       console.log(error);
     }
@@ -191,7 +208,8 @@ export default async function runReddit() {
 
       await updateCampaignLastScanned(campaign.id);
       console.log(`✅ Updated last_scanned for campaign: "${campaign.name}"`);
-      await wait.for({ minutes: 11 });
+
+      // await wait.for({ minutes: 11 });
     }
 
     console.log(`✅ Extraction Complete!`);
@@ -203,8 +221,6 @@ export default async function runReddit() {
     throw error;
   }
 }
-
-
 
 export async function runRedditScanForCampaign(campaignId: string) {
   try {

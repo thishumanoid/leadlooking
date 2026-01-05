@@ -2,7 +2,6 @@ import supabaseAdmin from '@/lib/supabase/supabaseAdmin';
 // import type { RedditPost } from '@/types/globalTypes';
 import type { postLabels } from '@/types/globalTypes';
 
-
 export async function upsertRedditPost(post: RedditPostInsert, chatURL: string | null = null) {
   try {
     const { data, error } = await supabaseAdmin
@@ -95,6 +94,32 @@ export async function updateCampaignLastScanned(campaignId: string) {
     return true;
   } catch (error) {
     console.error(`    ❌ Fatal error updating last_scanned for campaign ${campaignId}:`, error);
+    return false;
+  }
+}
+
+/**
+ * Marks a post as analyzed for a specific campaign to avoid redundant AI analysis
+ */
+export async function markPostAsAnalyzed(campaignId: string, redditId: string) {
+  try {
+    const { error } = await supabaseAdmin.from('analyzed_posts').insert({
+      campaign_id: campaignId,
+      reddit_id: redditId,
+    });
+
+    if (error) {
+      if (error.code === '23505') {
+        // Unique violation, already marked
+        return true;
+      }
+      console.error(`    ❌ Error marking post ${redditId} as analyzed:`, error);
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error(`    ❌ Fatal error marking post ${redditId} as analyzed:`, error);
     return false;
   }
 }

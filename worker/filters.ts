@@ -620,4 +620,32 @@ export function filterOldPosts(posts: RedditPostInsert[]) {
   return filteredPosts;
 }
 
-export { RedditLeadFilter, filterDublicates, type FilterConfig, type RedditPost, type PostScore };
+function filterAnalyzedPosts(posts: RedditPostInsert[], analyzedIds: string[]) {
+  const analyzedSet = new Set(analyzedIds);
+  const remainingPosts = posts.filter((post) => {
+    const isAnalyzed = analyzedSet.has(post.reddit_id!);
+    if (isAnalyzed) {
+      console.log(`⏩ Skipping already analyzed post for this campaign: ${post.url}`);
+    }
+    return !isAnalyzed;
+  });
+
+  if (posts.length !== remainingPosts.length) {
+    console.log(
+      `📊 Analysis filtering complete: ${
+        posts.length - remainingPosts.length
+      } already analyzed posts skipped, ${remainingPosts.length} posts remaining for AI analysis.\n`
+    );
+  }
+
+  return remainingPosts;
+}
+
+export {
+  RedditLeadFilter,
+  filterDublicates,
+  filterAnalyzedPosts,
+  type FilterConfig,
+  type RedditPost,
+  type PostScore,
+};
