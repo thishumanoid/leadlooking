@@ -13,7 +13,7 @@ import { useRouter } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Loader2, Sparkles, WandSparkles } from 'lucide-react';
+import { Loader2, Sparkles, WandSparkles, Globe, Layout, FileText } from 'lucide-react';
 import { toast } from 'sonner';
 import { useSupabase } from '@/hooks/supabase-provider';
 import { scrapeMetadata } from '@/utils/functions/scrapeMetadata';
@@ -388,7 +388,10 @@ export function CampaignDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[95vw] sm:max-w-[800px] max-h-[90vh] flex flex-col bg-card border-none shadow-2xl overflow-hidden p-0">
+      <DialogContent
+        overlayClassName="bg-black/85"
+        className="max-w-[95vw] sm:max-w-[800px] max-h-[90vh] flex flex-col bg-card border-none shadow-2xl overflow-hidden p-0"
+      >
         <div className="absolute inset-0  pointer-events-none" />
         <DialogHeader className="relative px-6 pt-6">
           <DialogTitle className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
@@ -399,20 +402,21 @@ export function CampaignDialog({
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden relative">
-          <div className="flex-1 overflow-y-auto px-6 py-2 space-y-6">
+          <div className="flex-1 overflow-y-auto px-6 py-2 space-y-6 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-muted-foreground/10 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-muted-foreground/20">
             <div className="space-y-4">
               <div className="grid gap-2">
                 <Label htmlFor="websiteUrl" className="text-sm font-medium">
                   Website URL (optional)
                 </Label>
                 <div className="relative">
+                  <Globe className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50" />
                   <Input
                     id="websiteUrl"
                     placeholder="https://example.com"
                     type="text"
                     value={websiteUrl}
                     onChange={(e) => setWebsiteUrl(e.target.value)}
-                    className="bg-background/50 border-muted-foreground/20 focus-visible:ring-1 focus-visible:ring-primary pr-10"
+                    className="bg-background/50 border-muted-foreground/20 focus-visible:ring-1 focus-visible:ring-primary pl-9 pr-10"
                     disabled={isSubmitting}
                   />
                   {isScrapingMetadata && (
@@ -430,29 +434,35 @@ export function CampaignDialog({
                 <Label htmlFor="websiteName" className="text-sm font-medium">
                   Website Name
                 </Label>
-                <Input
-                  id="websiteName"
-                  placeholder="e.g. My Awesome SaaS"
-                  value={websiteName}
-                  onChange={handleWebsiteNameChange}
-                  className="bg-background/50 border-muted-foreground/20 focus-visible:ring-1 focus-visible:ring-primary"
-                  disabled={isSubmitting}
-                  required
-                />
+                <div className="relative">
+                  <Layout className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50" />
+                  <Input
+                    id="websiteName"
+                    placeholder="e.g. My Awesome SaaS"
+                    value={websiteName}
+                    onChange={handleWebsiteNameChange}
+                    className="bg-background/50 border-muted-foreground/20 focus-visible:ring-1 focus-visible:ring-primary pl-9"
+                    disabled={isSubmitting}
+                    required
+                  />
+                </div>
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="description" className="text-sm font-medium">
                   Website Description
                 </Label>
-                <Textarea
-                  id="description"
-                  placeholder="Briefly describe what your business does..."
-                  value={websiteDescription}
-                  onChange={handleWebsiteDescriptionChange}
-                  className="bg-background/50 border-muted-foreground/20 focus-visible:ring-1 focus-visible:ring-primary min-h-[80px] sm:min-h-[100px] resize-none"
-                  required
-                  disabled={isSubmitting}
-                />
+                <div className="relative">
+                  <FileText className="absolute left-3 top-3 h-4 w-4 text-muted-foreground/50" />
+                  <Textarea
+                    id="description"
+                    placeholder="Briefly describe what your business does..."
+                    value={websiteDescription}
+                    onChange={handleWebsiteDescriptionChange}
+                    className="bg-background/50 border-muted-foreground/20 focus-visible:ring-1 focus-visible:ring-primary min-h-[80px] sm:min-h-[100px] resize-none pl-9"
+                    required
+                    disabled={isSubmitting}
+                  />
+                </div>
               </div>
             </div>
             <div className="space-y-3 pb-4">
