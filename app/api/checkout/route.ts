@@ -3,12 +3,12 @@ import { createCheckoutPolar } from '@/lib/polar/handleCheckout';
 
 export async function POST(request: Request) {
   try {
-    const { id, userEmail } = await request.json();
+    const { id, userEmail, userId } = await request.json();
 
     const email = userEmail || null;
     let checkoutUrl;
 
-    const session = await createCheckoutPolar(id, email);
+    const session = await createCheckoutPolar(id, email, userId);
     checkoutUrl = session.url;
 
     return new Response(JSON.stringify({ checkout_url: checkoutUrl }), {

@@ -118,7 +118,7 @@ const Navbar = () => {
                   Dashboard
                 </Link>
               ) : (
-                <Link href="/sign-in" className={buttonVariants({ size: 'sm' })}>
+                <Link href="/sign-up" className={buttonVariants({ size: 'sm' })}>
                   Sign Up
                   <ArrowRight className="size-4 ml-1.5" />
                 </Link>

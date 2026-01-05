@@ -41,17 +41,17 @@ export type Database = {
     Tables: {
       analyzed_posts: {
         Row: {
-          campaign_id: string | null
+          campaign_id: string
           id: number
           reddit_id: string
         }
         Insert: {
-          campaign_id?: string | null
+          campaign_id: string
           id?: number
           reddit_id: string
         }
         Update: {
-          campaign_id?: string | null
+          campaign_id?: string
           id?: number
           reddit_id?: string
         }
@@ -180,7 +180,6 @@ export type Database = {
       }
       profiles: {
         Row: {
-          created_at: string | null
           expires_at: string | null
           id: number
           plan_type: string | null
@@ -189,10 +188,8 @@ export type Database = {
           subscription_status: string
           user_email: string
           user_id: string
-          user_settings: Json | null
         }
         Insert: {
-          created_at?: string | null
           expires_at?: string | null
           id?: number
           plan_type?: string | null
@@ -201,10 +198,8 @@ export type Database = {
           subscription_status: string
           user_email: string
           user_id?: string
-          user_settings?: Json | null
         }
         Update: {
-          created_at?: string | null
           expires_at?: string | null
           id?: number
           plan_type?: string | null
@@ -213,7 +208,6 @@ export type Database = {
           subscription_status?: string
           user_email?: string
           user_id?: string
-          user_settings?: Json | null
         }
         Relationships: []
       }
