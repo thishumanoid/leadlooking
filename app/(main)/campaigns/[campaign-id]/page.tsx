@@ -7,13 +7,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useSupabase } from '@/hooks/supabase-provider';
 import { useParams } from 'next/navigation';
 
-import { RefreshCw, Edit, Trash2, Loader2 } from 'lucide-react';
+import { RefreshCw, Edit, Trash2, Loader2, ArrowLeft } from 'lucide-react';
 import LeadList, { Lead } from '@/components/leadList';
 import { CampaignDialog } from '@/components/campaignDialog';
 import { CampaignStats } from '@/components/campaign-stats';
 import { useSearchParams } from 'next/navigation';
 import { useRealtimeRun } from '@trigger.dev/react-hooks';
-import type { campaignScanTask } from '@/trigger/campaignScanTask';
+import { ScanningLoader } from '@/components/scanning-loader';
+import { ConfettiSideCannons } from '@/components/confetti-side-cannons';
+import { ScanResultsDialog } from '@/components/scan-results-dialog';
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -41,6 +44,8 @@ export default function CampaignsPage() {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
+  const [showResultsDialog, setShowResultsDialog] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -182,7 +187,13 @@ export default function CampaignsPage() {
             .filter((l): l is Lead => l !== null);
 
           setLeads(transformedLeads);
-          toast.success('Scan completed! New leads found.');
+
+          if (transformedLeads.length > 0) {
+            setShowConfetti(true);
+            setShowResultsDialog(true);
+          } else {
+            toast.info('Scan completed. No new leads found matching your criteria.');
+          }
 
           // Clear URL param?
           router.replace(`/campaigns/${campaignId}`);
@@ -245,22 +256,18 @@ export default function CampaignsPage() {
   };
 
   if (isLoading || !isLoaded || isScanning) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
-        <p className="text-muted-foreground animate-pulse">
-          {isScanning ? 'Scanning Reddit for leads...' : 'Loading campaign...'}
-        </p>
-      </div>
-    );
-  }
-
-  if (!campaign) {
-    return <div className="p-8 text-center text-muted-foreground">Campaign not found.</div>;
+    return <ScanningLoader />;
   }
 
   return (
     <div className="flex flex-col gap-6 p-4 lg:p-8 max-w-[1600px] mx-auto">
+      <ConfettiSideCannons autoFire={showConfetti} />
+      <ScanResultsDialog
+        open={showResultsDialog}
+        onOpenChange={setShowResultsDialog}
+        strongMatches={leads.filter((l) => l.matchStrength === 'strong').length}
+        potentialMatches={leads.filter((l) => l.matchStrength === 'partial').length}
+      />
       {/* Header Section */}
       <div className="flex flex-col gap-4">
         <div className="flex items-start justify-between">
