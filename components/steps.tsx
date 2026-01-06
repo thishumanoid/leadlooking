@@ -15,7 +15,7 @@ const steps = [
   },
   {
     id: 2,
-    title: 'We Scan Reddit 24/7',
+    title: 'We Track Reddit',
     description:
       'Our system continuously scans Reddit for new posts matching your keywords, ensuring you never miss a lead.',
     content: <Step2Content />,

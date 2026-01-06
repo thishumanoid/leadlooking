@@ -17,7 +17,7 @@ export default function CtaCard() {
 
               {/* Heading */}
               <h2 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl max-w-2xl px-4">
-                Finding leads manually {<br className="hidden sm:block" />}  is hard. Automate it.
+                Reddit Marketing {<br className="hidden sm:block" />}  Made Easy.
               </h2>
 
 
