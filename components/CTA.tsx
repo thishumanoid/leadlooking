@@ -2,6 +2,7 @@ import { ArrowRight, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import MaxWidthWrapper from './global/MaxWidthWrapper';
+import Link from 'next/link';
 
 export default function CtaCard() {
   return (
@@ -22,10 +23,12 @@ export default function CtaCard() {
 
               {/* Button Group */}
               <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
+                <Link href="/sign-up">
                 <Button size="lg" className="group px-8 h-12 text-base shadow-xl shadow-primary/20">
                   Find My Leads
                   <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Button>
+                </Link>
               </div>
             </CardContent>
           </Card>
