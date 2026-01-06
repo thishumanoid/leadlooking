@@ -37,13 +37,15 @@ export interface Lead {
   chatUrl?: string;
   leadScore?: number;
   leadIntent?: string;
+  isPremiumLocked?: boolean;
 }
 
 interface LeadListProps {
   leads: Lead[];
+  isPremium?: boolean;
 }
 
-function LeadList({ leads }: LeadListProps) {
+function LeadList({ leads, isPremium = true }: LeadListProps) {
   const [filteredLeads, setFilteredLeads] = useState(leads);
   const [searchQuery, setSearchQuery] = useState('');
   const [matchFilter, setMatchFilter] = useState<'all' | 'strong' | 'partial'>('all');
@@ -224,54 +226,107 @@ function LeadList({ leads }: LeadListProps) {
                 </div>
               </div>
 
-              {/* Card Body - Content */}
-              <div className="px-6 cursor-pointer" onClick={() => handleLeadClick(lead)}>
-                <h3 className="text-lg font-semibold mb-3 transition-colors leading-snug">
-                  {lead.title}
+              <div
+                className={`px-6 cursor-pointer ${!isPremium ? 'pointer-events-none' : ''}`}
+                onClick={() => isPremium && handleLeadClick(lead)}
+              >
+                <h3
+                  className={`text-lg font-semibold mb-3 transition-colors leading-snug ${
+                    !isPremium ? 'blur-[4px] select-none' : ''
+                  }`}
+                >
+                  {!isPremium ? 'This is a premium lead title that is hidden' : lead.title}
                 </h3>
 
-                <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
-                  {lead.preview}
+                <p
+                  className={`text-sm text-muted-foreground leading-relaxed line-clamp-3 ${
+                    !isPremium ? 'blur-[6px] select-none' : ''
+                  }`}
+                >
+                  {!isPremium
+                    ? 'This is a sample lead content that is very long and detailed but is currently hidden behind a premium paywall to encourage users to upgrade and see the actual leads found by our system.'
+                    : lead.preview}
                 </p>
               </div>
 
               {/* Card Footer - Engagement & Actions */}
-              <div className="px-6 py-3  border-t border-border/50 flex items-center justify-between gap-4">
+              <div className="px-6 py-3 border-t border-border/50 flex items-center justify-between gap-4">
                 <div className="flex items-center gap-2">
-                  <Link target="_blank" href={lead.postUrl ?? '#'}>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="h-9 gap-2 hover:bg-background"
-                  >
-                    View Post
-                    <ExternalLink className="w-3.5 h-3.5" />
-                  </Button>
-                  </Link>
-                  <Button
-                    onClick={() => handleChatClick(lead)}
-                    size="sm"
-                    className="h-9 gap-2 bg-primary hover:bg-primary/90"
-                    disabled={loadingLeadId === lead.id}
-                  >
-                    {loadingLeadId === lead.id ? (
-                      <>
-                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                        Connecting...
-                      </>
-                    ) : (
-                      <>
-                        Send DM
-                        <ArrowRight className="w-3.5 h-3.5" />
-                      </>
-                    )}
-                  </Button>
+                  {!isPremium ? (
+                    <Button
+                      size="sm"
+                      className="h-9 gap-2 bg-primary hover:bg-primary/90"
+                      onClick={() => router.push('/pricing')}
+                    >
+                      <Zap className="w-3.5 h-3.5 fill-current" />
+                      Upgrade to view lead
+                    </Button>
+                  ) : (
+                    <>
+                      <Link target="_blank" href={lead.postUrl ?? '#'}>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="h-9 gap-2 hover:bg-background"
+                        >
+                          View Post
+                          <ExternalLink className="w-3.5 h-3.5" />
+                        </Button>
+                      </Link>
+                      <Button
+                        onClick={() => handleChatClick(lead)}
+                        size="sm"
+                        className="h-9 gap-2 bg-primary hover:bg-primary/90"
+                        disabled={loadingLeadId === lead.id}
+                      >
+                        {loadingLeadId === lead.id ? (
+                          <>
+                            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                            Connecting...
+                          </>
+                        ) : (
+                          <>
+                            Send DM
+                            <ArrowRight className="w-3.5 h-3.5" />
+                          </>
+                        )}
+                      </Button>
+                    </>
+                  )}
                 </div>
               </div>
             </Card>
           ))
         )}
       </div>
+
+      {!isPremium && leads.length > 0 && (
+        <Card className="mt-8 bg-primary/5 border-primary/20 overflow-hidden relative">
+          <div className="absolute top-0 right-0 p-4 opacity-10">
+            <Zap size={100} className="text-primary fill-current" />
+          </div>
+          <CardContent className="py-8 flex flex-col items-center text-center gap-4">
+            <div className="bg-primary/10 p-3 rounded-full">
+              <Zap className="w-8 h-8 text-primary fill-current" />
+            </div>
+            <div className="max-w-md">
+              <h3 className="text-2xl font-bold mb-2">Unlock All Leads</h3>
+              <p className="text-muted-foreground">
+                You've found {leads.length} potential leads! Upgrade to a premium plan to reveal
+                their content, view the original posts, and start reaching out.
+              </p>
+            </div>
+            <Button
+              size="lg"
+              className="mt-2 gap-2 bg-primary hover:bg-primary/90 text-lg h-12 px-8"
+              onClick={() => router.push('/pricing')}
+            >
+              Get Premium Access Now
+              <ArrowRight className="w-5 h-5" />
+            </Button>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Post Detail Dialog */}
       <PostDialog lead={selectedLead} isOpen={isDialogOpen} onClose={handleCloseDialog} />

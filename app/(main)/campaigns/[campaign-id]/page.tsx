@@ -16,6 +16,7 @@ import { useRealtimeRun } from '@trigger.dev/react-hooks';
 import { ScanningLoader } from '@/components/scanning-loader';
 import { ConfettiSideCannons } from '@/components/confetti-side-cannons';
 import { ScanResultsDialog } from '@/components/scan-results-dialog';
+import { useUser } from '@clerk/nextjs';
 
 import {
   AlertDialog,
@@ -42,11 +43,13 @@ export default function CampaignsPage() {
   const [campaign, setCampaign] = useState<any>(null);
   const [keywords, setKeywords] = useState<any[]>([]);
   const [leads, setLeads] = useState<Lead[]>([]);
+  const [isPremium, setIsPremium] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState(true);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
   const [showResultsDialog, setShowResultsDialog] = useState(false);
   const router = useRouter();
+  const { user } = useUser();
 
   // Trigger.dev hook implementation
   const searchParams = useSearchParams();
@@ -89,7 +92,10 @@ export default function CampaignsPage() {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ campaignId }),
+          body: JSON.stringify({
+            campaignId: campaignId,
+            userEmail: user?.emailAddresses[0].emailAddress,
+          }),
         });
 
         if (!response.ok) {
@@ -97,7 +103,9 @@ export default function CampaignsPage() {
         }
 
         const data = await response.json();
+        console.log('data', data);
         setLeads(data.leads || []);
+        setIsPremium(data.isPremium ?? true);
       } catch (error) {
         console.error('Error fetching campaign data:', error);
       } finally {
@@ -130,7 +138,9 @@ export default function CampaignsPage() {
 
           const data = await response.json();
           const transformedLeads = data.leads || [];
+          console.log('transformedLeads', transformedLeads);
           setLeads(transformedLeads);
+          setIsPremium(data.isPremium ?? true);
 
           if (transformedLeads.length > 0) {
             setShowConfetti(true);
@@ -278,7 +288,7 @@ export default function CampaignsPage() {
         </TabsList>
 
         <TabsContent value="leads" className="mt-6 space-y-4">
-          <LeadList leads={leads} />
+          <LeadList leads={leads} isPremium={isPremium} />
         </TabsContent>
 
         <TabsContent value="keywords" className="mt-6">

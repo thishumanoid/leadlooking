@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server';
 import supabaseAdmin from '@/lib/supabase/supabaseAdmin';
+import { isEligibleUser } from '@/lib/supabase/helpers';
 
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
   try {
-    const { campaignId } = await request.json();
+    const { campaignId, userEmail } = await request.json();
 
     console.log('request recived: ', campaignId);
 
@@ -13,8 +14,44 @@ export async function POST(request: Request) {
       console.error('❌ Missing campaignId in request body');
       return NextResponse.json({ error: 'Missing campaignId' }, { status: 400 });
     }
+    const isEligible = await isEligibleUser(userEmail);
+    console.log('isEligible', isEligible);
+    const transformedLeads = await getLeads(campaignId);
 
-    // Fetch leads (campaign_leads joined with reddit_posts) using supabaseAdmin
+    if (!isEligible) {
+      const restrictedLeads = (transformedLeads || []).map((lead: any) => ({
+        id: lead.id,
+        subreddit: lead.subreddit,
+        matchStrength: lead.matchStrength,
+        timestamp: lead.timestamp,
+        isPremiumLocked: true,
+      }));
+
+      const strongMatches = (transformedLeads || []).filter(
+        (l: any) => l.matchStrength === 'strong'
+      ).length;
+      const partialMatches = (transformedLeads || []).filter(
+        (l: any) => l.matchStrength === 'partial'
+      ).length;
+
+      return NextResponse.json({
+        leads: restrictedLeads,
+        isPremium: false,
+        totalCount: transformedLeads?.length || 0,
+        strongMatches,
+        partialMatches,
+      });
+    }
+
+    return NextResponse.json({ leads: transformedLeads, isPremium: true });
+  } catch (error) {
+    console.error('❌ Fatal error in get-leads route:', error);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+  }
+}
+
+async function getLeads(campaignId: string) {
+  try {
     const { data: leadData, error: leadError } = await supabaseAdmin
       .from('campaign_leads')
       .select(
@@ -30,7 +67,7 @@ export async function POST(request: Request) {
 
     if (leadError) {
       console.error('❌ Error fetching campaign leads:', leadError);
-      return NextResponse.json({ error: 'Failed to fetch leads' }, { status: 500 });
+      return null;
     }
 
     const transformedLeads = (leadData || [])
@@ -60,9 +97,8 @@ export async function POST(request: Request) {
       })
       .filter((l: any) => l !== null);
 
-    return NextResponse.json({ leads: transformedLeads });
+    return transformedLeads;
   } catch (error) {
-    console.error('❌ Fatal error in get-leads route:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    return null;
   }
 }
