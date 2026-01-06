@@ -143,6 +143,14 @@ const Footer = () => {
                         Terms & Conditions
                       </Link>
                     </li>
+                    <li className="mt-2">
+                      <Link
+                        href="/refund"
+                        className="hover:text-foreground transition-all duration-300"
+                      >
+                        Refund Policy
+                      </Link>
+                    </li>
                   </ul>
                 </div>
               </AnimationContainer>
