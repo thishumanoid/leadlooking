@@ -9,16 +9,16 @@ const config = {
   // REQUIRED
   appName: 'LeadLooking',
   // REQUIRED: a short description of your app for SEO tags (can be overwritten)
-  appDescription: 'The gratest chrome extension ever built description.',
+  appDescription: 'Reddit Marketing Made Easy.',
 
   /// REQUIRED: a very short description of your app under 5 words, this will appear in footer
-  footerDescription: 'Lorem ipsum dollar sit',
+  footerDescription: 'Reddit Marketing Made Easy.',
   //// to change logo, search "YourLogo.tsx" file
 
-  appUrl: 'https://example.com',
+  appUrl: 'https://leadlooking.com',
 
-  chromeWebStoreUrl: 'your_extension_installation_page_url_here',
-  firefoxStoreUrl: 'your_extension_installation_page_url_here',
+  chromeWebStoreUrl: 'https://leadlooking.com',
+  firefoxStoreUrl: 'https://leadlooking.com',
 
   extensionDemoVideo: '/',
 

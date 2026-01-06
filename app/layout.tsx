@@ -14,28 +14,28 @@ const inter = Inter({
 /// SEO STUFF
 export const metadata: Metadata = {
   title: {
-    template: '%s | extFast',
-    default: '[DEMO] Web App Boilerplate | extFast',
+    template: '%s | LeadLooking',
+    default: 'LeadLooking - Reddit Marketing Made Easy',
   },
 
   description:
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+    'LeadLooking is tool that finds leads for you from reddit',
 
   metadataBase: new URL(config.appUrl),
-  keywords: ['boilerplate', 'starter kit', 'chrome extension'],
+  keywords: ['marketing', 'leads', 'reddit automation'],
 
   openGraph: {
-    title: '[DEMO] Web App Boilerplate | extFast',
+    title: 'LeadLooking - Reddit Marketing Made Easy',
     description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+      'LeadLooking is tool that finds leads for you from reddit',
     url: config.appUrl,
   },
 
   twitter: {
     card: 'summary_large_image',
-    title: '[DEMO] Web App Boilerplate | extFast',
+    title: 'LeadLooking - Reddit Marketing Made Easy',
     description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+      'LeadLooking is tool that finds leads for you from reddit',
   },
 };
 
