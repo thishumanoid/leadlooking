@@ -30,9 +30,9 @@ function Hero() {
             {/* <Badge className="bg-primary rounded-full py-1 border-primary">v2.0.0 is live!</Badge> */}
             <div className="relative mx-auto mt-6 max-w-fit flex items-center justify-center">
               <h1 className="text-3xl xs:text-4xl sm:text-5xl md:text-6xl font-semibold !leading-[1.2] tracking-tight">
-                Automated marketing for the {' '}
+                Show up in conversations where people talk about {' '}
                 <span className="relative text-primary whitespace-nowrap">
-                  rest of us
+                  your SaaS
                   <svg
                     className="absolute -bottom-2 sm:-bottom-3 md:-bottom-4 left-0 w-full h-3 sm:h-4 md:h-5 text-primary/70 rotate-1"
                     viewBox="0 0 200 9"
@@ -71,7 +71,7 @@ function Hero() {
               <GetStartedBtn onClick={handleClick} className="h-12 text-base mt-3" />
             </div>
 
-            <div className="mt-10 flex flex-col items-center justify-center gap-4">
+            {/* <div className="mt-10 flex flex-col items-center justify-center gap-4">
               <p className="text-sm md:text-base text-muted-foreground">
                 Join <span className="font-bold text-foreground">⭐15+</span> SaaS Founders and Freelancers
               </p>
@@ -86,7 +86,7 @@ function Hero() {
                   +15
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </AnimationContainer>
