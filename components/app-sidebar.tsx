@@ -1,6 +1,6 @@
 'use client';
 
-import { Megaphone, Settings, Users, HelpCircle, MessageCircleHeart } from 'lucide-react';
+import { Megaphone, Settings, MessageCircleHeart } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import Logo from '@/components/global/YourLogo';

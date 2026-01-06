@@ -1,15 +1,10 @@
 'use client';
 
-import { FaReddit } from 'react-icons/fa';
 import AnimationContainer from './global/animation-container';
-import { ArrowUpRight, CirclePlay, Globe } from 'lucide-react';
-import { Badge } from './ui/badge';
-import Link from 'next/link';
+import { Globe } from 'lucide-react';
 
 import MaxWidthWrapper from './global/MaxWidthWrapper';
-import { Button } from '@/components/ui/button';
 import Image from 'next/image';
-// import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import { Input } from './ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';

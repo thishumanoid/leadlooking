@@ -5,7 +5,6 @@ import Features from '@/components/features';
 import PricingCard from '@/components/pricingCards';
 import FAQ from '@/components/faq';
 import CTA from '@/components/CTA';
-import { Testimonials } from '@/components/testimonials';
 
 export default function LandingPage() {
   return (
@@ -14,7 +13,6 @@ export default function LandingPage() {
       <Steps />
       <Features />
       <PricingCard />
-      {/* <Testimonials /> */}
       <FAQ />
       <CTA />
     </MaxWidthWrapper>

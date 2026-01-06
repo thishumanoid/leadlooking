@@ -1,4 +1,3 @@
-import config from '@/config';
 import { createCheckoutPolar } from '@/lib/polar/handleCheckout';
 
 export async function POST(request: Request) {

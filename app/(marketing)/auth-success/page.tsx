@@ -1,6 +1,6 @@
 'use client';
 
-import { CheckCircle2, Sparkles, Zap } from 'lucide-react';
+import { CheckCircle2, Zap } from 'lucide-react';
 import MaxWidthWrapper from '@/components/global/MaxWidthWrapper';
 import Link from 'next/link';
 // import { useAuth } from '@/context/AuthContext';

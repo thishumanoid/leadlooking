@@ -1,13 +1,13 @@
 'use client';
 
-import { useState, useEffect, use } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useSupabase } from '@/hooks/supabase-provider';
 import { useParams } from 'next/navigation';
 
-import { RefreshCw, Edit, Trash2, Loader2, ArrowLeft } from 'lucide-react';
+import { Edit, Trash2 } from 'lucide-react';
 import LeadList, { Lead } from '@/components/leadList';
 import { CampaignDialog } from '@/components/campaignDialog';
 import { CampaignStats } from '@/components/campaign-stats';

@@ -15,7 +15,7 @@ interface CampaignStatsProps {
 export function CampaignStats({ campaign, leads }: CampaignStatsProps) {
   const [timeUntilNextScan, setTimeUntilNextScan] = useState<string>('');
   const [scanProgress, setScanProgress] = useState<number>(0);
-  const { isLoading, subscription, isPremium } = useSubscription();
+  const { isLoading, isPremium } = useSubscription();
 
   useEffect(() => {
     const calculateTime = () => {
