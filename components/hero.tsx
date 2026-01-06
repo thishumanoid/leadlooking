@@ -18,7 +18,7 @@ function Hero() {
     if (user) {
       push('/dashboard');
     } else {
-      push('/auth');
+      push('/sign-up');
     }
   }
 
@@ -52,10 +52,11 @@ function Hero() {
               <div className="absolute -right-12 sm:-right-14 md:-right-16 top-0 sm:top-1/2 sm:-translate-y-1/2 hidden sm:block rotate-12 animate-subtle-float"></div>
             </div>
             <p className="mt-6 text-muted-foreground text-lg xs:text-lg">
-              We track Reddit conversations daily to identify users actively {<br />} asking for products and services like yours.
+              We track Reddit conversations daily to identify users actively {<br />} asking for
+              products and services like yours.
             </p>
             <div className="mt-8 flex flex-col items-center justify-center gap-4 w-full max-w-xs mx-auto">
-              <div className="relative w-full group">
+              {/* <div className="relative w-full group">
                 <div className="absolute left-1.5 top-1.5 bottom-1.5 w-10 bg-card border-none rounded flex items-center justify-center z-10">
                   <span className="text-muted-foreground font-semibold">
                     <Globe className="w-5 h-5" />
@@ -66,17 +67,16 @@ function Hero() {
                   placeholder="example.com"
                   className="w-full pl-14 h-12 bg-background/50 backdrop-blur-sm border-border hover:border-primary/50 transition-colors"
                 />
-              </div>
-              <GetStartedBtn onClick={handleClick} className="w-full h-12 text-base" />
+              </div> */}
+              <GetStartedBtn onClick={handleClick} className="h-12 text-base mt-3" />
             </div>
 
             <div className="mt-10 flex flex-col items-center justify-center gap-4">
               <p className="text-sm md:text-base text-muted-foreground">
-                Join <span className="font-bold text-foreground">15+</span> businesses and
-                freelancers
+                Join <span className="font-bold text-foreground">⭐15+</span> SaaS Founders and Freelancers
               </p>
               <div className="flex -space-x-4">
-                {[45, 46, 47, 48].map((i) => (
+                {[54, 100, 2, 93].map((i) => (
                   <Avatar key={i} className="border-2 border-background w-10 h-10">
                     <AvatarImage src={`https://i.pravatar.cc/100?img=${i + 10}`} />
                     <AvatarFallback>U{i}</AvatarFallback>

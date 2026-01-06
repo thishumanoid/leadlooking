@@ -12,7 +12,7 @@ const config = {
   appDescription: 'Reddit Marketing Made Easy.',
 
   /// REQUIRED: a very short description of your app under 5 words, this will appear in footer
-  footerDescription: 'Reddit Marketing Made Easy.',
+  footerDescription: 'Reddit Marketing Made Easy',
   //// to change logo, search "YourLogo.tsx" file
 
   appUrl: 'https://leadlooking.com',

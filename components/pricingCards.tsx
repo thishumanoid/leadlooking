@@ -14,7 +14,6 @@ interface PlanConfig {
   level: string;
   id?: string;
   name: string;
-  description: string;
   price: string;
   isSubscription?: boolean;
   period: string;
@@ -29,18 +28,16 @@ const planConfig: PlanConfig[] = [
     name: 'Pro',
     id: process.env.NEXT_PUBLIC_POLAR_PRODUCT_A,
 
-    description: 'For growing SaaS.',
     price: '$14',
     isSubscription: true,
     period: '/month',
     isPopular: true,
     buttonText: 'Get Premium',
     features: [
-      { text: 'Unlimited projects', included: true },
-      { text: 'Advanced analytics', included: true },
-      { text: 'Priority email support', included: true },
-      { text: 'Custom domains', included: true },
-      { text: 'Team collaboration', included: true },
+      { text: 'Find Unlimited Leads', included: true },
+      { text: '5 Keywords Tracking', included: true },
+      { text: '1 active campaign', included: true },
+      { text: 'Email notifications', included: true },
       { text: '24/7 Support', included: true },
     ],
   },
@@ -97,10 +94,10 @@ export default function PricingCards() {
     <section className="mx-auto max-w-7xl">
       <div className="mb-12 mt-15 text-center">
         <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-          Simple, transparent pricing
+          Simple pricing
         </h2>
         <p className="mt-4 text-lg text-muted-foreground">
-          Never miss your potential leads on reddit.
+          Manually finding leads on Reddit is hard. Automate it.
         </p>
       </div>
 
@@ -120,7 +117,7 @@ export default function PricingCards() {
           <div
             key={plan.level}
             className={`
-              relative flex flex-col overflow-hidden rounded-xl border bg-card p-6 shadow-sm transition-all duration-200 hover:shadow-md
+              relative flex flex-col overflow-hidden rounded-xl border bg-transparent p-6 shadow-sm transition-all duration-200 hover:shadow-md
               ${
                 plan.isPopular
                   ? 'border-primary shadow-primary/10 ring-1 ring-primary'
