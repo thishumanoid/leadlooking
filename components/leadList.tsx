@@ -312,8 +312,7 @@ function LeadList({ leads, isPremium = true }: LeadListProps) {
             <div className="max-w-md">
               <h3 className="text-2xl font-bold mb-2">Unlock All Leads</h3>
               <p className="text-muted-foreground">
-                You've found {leads.length} potential leads! Upgrade to a premium plan to reveal
-                their content, view the original posts, and start reaching out.
+                Nice! You found {leads.length} lead. Upgrade to see their info and connect.
               </p>
             </div>
             <Button

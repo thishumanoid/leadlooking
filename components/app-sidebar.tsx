@@ -27,7 +27,7 @@ const items = [
   //   icon: LayoutDashboard,
   // },
   {
-    title: 'Campaigns',
+    title: 'Leads',
     url: '/campaigns',
     icon: Megaphone,
   },
@@ -45,12 +45,6 @@ const items = [
 
 export function AppSidebar() {
   const pathname = usePathname();
-
-  const userPlan = 'Starter';
-  const campaignsUsed = 1;
-  const campaignsLimit = 1;
-  const keywordsUsed = 5;
-  const keywordsLimit = 5;
 
   return (
     <Sidebar>

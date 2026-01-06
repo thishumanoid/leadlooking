@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
 import { RefreshCw, Zap, Clock, CoffeeIcon } from 'lucide-react';
 import { Lead } from '@/components/leadList';
+import { useSubscription } from '@/hooks/subscription';
+import Link from 'next/link';
 
 interface CampaignStatsProps {
   campaign: any;
@@ -13,6 +15,7 @@ interface CampaignStatsProps {
 export function CampaignStats({ campaign, leads }: CampaignStatsProps) {
   const [timeUntilNextScan, setTimeUntilNextScan] = useState<string>('');
   const [scanProgress, setScanProgress] = useState<number>(0);
+  const { isLoading, subscription, isPremium } = useSubscription();
 
   useEffect(() => {
     const calculateTime = () => {
@@ -105,7 +108,7 @@ export function CampaignStats({ campaign, leads }: CampaignStatsProps) {
       </Card>
 
       {/* Last Sync */}
-      <Card className="relative overflow-hidden border-blue-500/20 bg-gradient-to-br from-blue-500/5 to-transparent">   
+      <Card className="relative overflow-hidden border-blue-500/20 bg-gradient-to-br from-blue-500/5 to-transparent">
         <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-500/20 to-transparent rounded-full blur-3xl" />
         <CardHeader className="pb-1">
           <CardDescription className="flex items-center gap-2 text-blue-500">
@@ -138,13 +141,30 @@ export function CampaignStats({ campaign, leads }: CampaignStatsProps) {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{timeUntilNextScan || 'Calculating...'}</div>
-          <div className="mt-2 w-full bg-secondary rounded-full h-1.5 overflow-hidden">
-            <div
-              className="bg-gradient-to-r from-purple-500 to-pink-500 h-1.5 rounded-full transition-all duration-500 ease-in-out"
-              style={{ width: `${scanProgress}%` }}
-            />
-          </div>
+          {!isPremium && !isLoading ? (
+            <div className="space-y-2">
+              <div className="text-xl font-bold text-muted-foreground italic">Paused</div>
+              <div className="text-xs text-purple-400 font-medium">
+                Daily scans are available on Pro plans.{' '}
+                <Link
+                  href="/settings"
+                  className="underline hover:text-purple-300 transition-colors"
+                >
+                  Upgrade now
+                </Link>
+              </div>
+            </div>
+          ) : (
+            <>
+              <div className="text-2xl font-bold">{timeUntilNextScan || 'Calculating...'}</div>
+              <div className="mt-2 w-full bg-secondary rounded-full h-1.5 overflow-hidden">
+                <div
+                  className="bg-gradient-to-r from-purple-500 to-pink-500 h-1.5 rounded-full transition-all duration-500 ease-in-out"
+                  style={{ width: `${scanProgress}%` }}
+                />
+              </div>
+            </>
+          )}
         </CardContent>
       </Card>
     </div>
