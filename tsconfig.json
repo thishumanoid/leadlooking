@@ -29,10 +29,9 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts",
     "worker/redditScrapperGemini.ts",
-    "worker/email/mailtrap.ts"
-,
-"worker/d.js",
-"trigger.config.ts"
-],
-  "exclude": ["node_modules"]
+    "worker/email/mailtrap.ts",
+    "worker/d.js",
+    "trigger.config.ts"
+  ],
+  "exclude": ["node_modules", "supabase"]
 }
