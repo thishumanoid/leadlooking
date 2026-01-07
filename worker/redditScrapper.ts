@@ -15,7 +15,7 @@ import {
 import { filterDublicates, filterOldPosts, filterAnalyzedPosts, RedditLeadFilter } from './filters';
 
 import { wait } from '@trigger.dev/sdk';
-import { sendLeadEmail } from './mailtrap/mailtrap';
+import { sendDigestEmail } from './mailtrap/mailtrap';
 
 // let filter: RedditLeadFilter;
 
@@ -96,7 +96,6 @@ async function scanRedditForKeyword(
   const uniquePosts = filterDublicates(recentPosts);
   const potentialPosts = filter.filterPosts(uniquePosts);
 
-  // Filter out posts that have already been analyzed for this campaign
   const redditIdsToFilter = potentialPosts
     .map((p) => p.reddit_id)
     .filter((id): id is string => !!id);
@@ -140,9 +139,6 @@ async function processKeywordForCampaign(
 
         // const chatURL = await getUserChatURL(post.author!);
 
-        // EMAIL
-        await sendLeadEmail(post.url, '', keyword.keyword);
-
         // SUPABASE
         const postId = await upsertRedditPost(post, '');
 
@@ -175,6 +171,23 @@ async function processKeywordForCampaign(
       await markPostAsAnalyzed(campaign.id, post.reddit_id!);
     } catch (error) {
       console.log(error);
+    }
+  }
+
+  if (foundLeads.length > 0) {
+    const notifyEmail = (campaign as any).notify_email;
+    if (notifyEmail) {
+      const leadsForEmail = foundLeads.map((lead) => ({
+        title: lead.title,
+        subreddit: lead.subreddit,
+        url: lead.url,
+        leadScore: lead.leadScore,
+        content: lead.content,
+        createdAt: lead.created_at_reddit,
+      }));
+      await sendDigestEmail(notifyEmail, keyword.keyword, leadsForEmail, campaign.id);
+    } else {
+      console.log(`⚠️ No notify_email found for campaign "${campaign.name}". Skipping email.`);
     }
   }
 
