@@ -13,9 +13,10 @@ import { useRouter } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Loader2, Sparkles, WandSparkles, Globe, Layout, FileText } from 'lucide-react';
+import { Loader2, Sparkles, WandSparkles, Globe, Layout, FileText, Mail } from 'lucide-react';
 import { toast } from 'sonner';
 import { useSupabase } from '@/hooks/supabase-provider';
+import { useUser } from '@clerk/nextjs';
 import { scrapeMetadata } from '@/utils/functions/scrapeMetadata';
 import { getKeywords } from '@/utils/functions/getKeywords';
 import KeywordsGuide from './keywordsGuide';
@@ -42,10 +43,12 @@ export function CampaignDialog({
   const [isGeneratingKeywords, setIsGeneratingKeywords] = useState(false);
   const [metadataError, setMetadataError] = useState('');
   const [keywords, setKeywords] = useState(['', '', '', '', '']);
+  const [notifyEmail, setNotifyEmail] = useState('');
   const [hasGeneratedKeywords, setHasGeneratedKeywords] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { supabase } = useSupabase();
+  const { user } = useUser();
   const router = useRouter();
 
   const [wasManuallyEdited, setWasManuallyEdited] = useState({
@@ -186,6 +189,7 @@ export function CampaignDialog({
       setWebsiteUrl(campaign.website_url || '');
       setWebsiteName(campaign.name || '');
       setWebsiteDescription(campaign.description || '');
+      setNotifyEmail(campaign.notify_email || '');
 
       if (existingKeywords && existingKeywords.length > 0) {
         const paddedKeywords = [...existingKeywords];
@@ -209,6 +213,13 @@ export function CampaignDialog({
     setWebsiteDescription(e.target.value);
     setWasManuallyEdited((prev) => ({ ...prev, description: true }));
   };
+
+  useEffect(() => {
+    if (user?.emailAddresses) {
+      console.log('email', user.emailAddresses[0].emailAddress)
+      setNotifyEmail(user.emailAddresses[0].emailAddress);
+    }
+  }, []);
 
   useEffect(() => {
     if (!open) {
@@ -265,6 +276,7 @@ export function CampaignDialog({
             name: websiteName,
             description: websiteDescription,
             website_url: websiteUrl || null,
+            notify_email: notifyEmail || null,
           })
           .eq('id', campaign.id)
           .select()
@@ -283,6 +295,7 @@ export function CampaignDialog({
             name: websiteName,
             description: websiteDescription,
             website_url: websiteUrl || null,
+            notify_email: notifyEmail || null,
           })
           .select()
           .single();
@@ -528,6 +541,29 @@ export function CampaignDialog({
                 ))}
               </div>
               <KeywordsGuide />
+            </div>
+
+            <div className="space-y-4 pb-4">
+              <div className="flex items-center gap-2">
+                <Label className="text-sm font-medium">Notifications</Label>
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="notifyEmail" className="text-xs text-muted-foreground">
+                  Email for lead notifications
+                </Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50" />
+                  <Input
+                    id="notifyEmail"
+                    placeholder="your@email.com"
+                    type="email"
+                    value={notifyEmail}
+                    onChange={(e) => setNotifyEmail(e.target.value)}
+                    className="bg-background/50 border-muted-foreground/20 focus-visible:ring-1 focus-visible:ring-primary pl-9"
+                    disabled={isSubmitting}
+                  />
+                </div>
+              </div>
             </div>
           </div>
           <DialogFooter className="px-6 py-4 border-t border-muted-foreground/10 bg-card">
