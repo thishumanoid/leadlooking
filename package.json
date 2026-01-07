@@ -75,6 +75,7 @@
     "postbuild": "next-sitemap",
     "start": "next start",
     "trigger": "pnpm dlx trigger.dev@latest dev",
+    "trigger:deploy": "pnpm dlx trigger.dev@latest deploy",
     "email": "email dev"
   },
   "version": "0.1.0"

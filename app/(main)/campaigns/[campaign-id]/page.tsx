@@ -17,6 +17,7 @@ import { ScanningLoader } from '@/components/scanning-loader';
 import { ConfettiSideCannons } from '@/components/confetti-side-cannons';
 import { ScanResultsDialog } from '@/components/scan-results-dialog';
 import { useUser } from '@clerk/nextjs';
+import { CampaignPageSkeleton } from '@/components/campaign-page-skeleton';
 
 import {
   AlertDialog,
@@ -209,7 +210,15 @@ export default function CampaignsPage() {
     }
   };
 
-  if (isLoading || !isLoaded || isScanning) {
+  if (!isLoaded) {
+    return <CampaignPageSkeleton />;
+  }
+
+  if (isLoading) {
+    return <CampaignPageSkeleton />;
+  }
+
+  if (isScanning) {
     return <ScanningLoader />;
   }
 

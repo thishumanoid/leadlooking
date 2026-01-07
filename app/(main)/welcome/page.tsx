@@ -21,9 +21,6 @@ export default function WelcomePage() {
   }, []);
 
   const handleCampaignSuccess = (campaign: any) => {
-    // CampaignDialog already handles navigation, but we can have a fallback here if needed
-    // or just close the modal.
-    // Ideally, the dialog redirects to /campaigns/[id]
     setShowCreateModal(false);
   };
 

@@ -4,6 +4,8 @@ import { Megaphone, Settings, MessageCircleHeart } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import Logo from '@/components/global/YourLogo';
+import { Sparkles } from 'lucide-react';
+import { useSubscription } from '@/hooks/subscription';
 
 import {
   Sidebar,
@@ -21,13 +23,8 @@ import { Button } from '@/components/ui/button';
 
 // Menu items.
 const items = [
-  // {
-  //   title: 'Dashboard',
-  //   url: '/dashboard',
-  //   icon: LayoutDashboard,
-  // },
   {
-    title: 'Leads',
+    title: 'Campaigns',
     url: '/campaigns',
     icon: Megaphone,
   },
@@ -43,8 +40,31 @@ const items = [
   },
 ];
 
+function UpgradeCard() {
+  return (
+    <div className="px-3 py-2">
+      <Link href="/upgrade">
+        <Card className="group relative overflow-hidden bg-transparent border-dashed border-muted-foreground/20 hover:border-primary/30 transition-all shadow-none border">
+          <CardContent className="">
+
+            <h3 className="font-semibold text-sm text-foreground mb-1">Upgrade to Pro</h3>
+            <p className="text-[12px] leading-snug text-muted-foreground mb-4">
+              Find relevant conversations
+            </p>
+
+            <Button className="w-full h-8 text-[11px] font-bold shadow-sm transition-all active:scale-95">
+              Upgrade Now
+            </Button>
+          </CardContent>
+        </Card>
+      </Link>
+    </div>
+  );
+}
+
 export function AppSidebar() {
   const pathname = usePathname();
+  const { isPremium, isLoading } = useSubscription();
 
   return (
     <Sidebar>
@@ -72,6 +92,11 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      {!isLoading && !isPremium && (
+        <SidebarFooter className="pb-4">
+          <UpgradeCard />
+        </SidebarFooter>
+      )}
     </Sidebar>
   );
 }
