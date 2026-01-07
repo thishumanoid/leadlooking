@@ -256,7 +256,7 @@ function LeadList({ leads, isPremium = true }: LeadListProps) {
                     <Button
                       size="sm"
                       className="h-9 gap-2 bg-primary hover:bg-primary/90"
-                      onClick={() => router.push('/pricing')}
+                      onClick={() => router.push('/upgrade')}
                     >
                       <Zap className="w-3.5 h-3.5 fill-current" />
                       Upgrade to view lead
@@ -312,13 +312,13 @@ function LeadList({ leads, isPremium = true }: LeadListProps) {
             <div className="max-w-md">
               <h3 className="text-2xl font-bold mb-2">Unlock All Leads</h3>
               <p className="text-muted-foreground">
-                Nice! You found {leads.length} lead. Upgrade to see their info and connect.
+                You found {leads.length} lead. Upgrade to see their info and connect.
               </p>
             </div>
             <Button
               size="lg"
               className="mt-2 gap-2 bg-primary hover:bg-primary/90 text-lg h-12 px-8"
-              onClick={() => router.push('/pricing')}
+              onClick={() => router.push('/upgrade')}
             >
               Get Premium Access Now
               <ArrowRight className="w-5 h-5" />
