@@ -1,4 +1,6 @@
 import axios from 'axios';
+import { XMLParser } from 'fast-xml-parser';
+import * as cheerio from 'cheerio';
 import { cleanText } from '@/utils/functions/helpers';
 import { analysePost } from './ai/analysePost';
 import {
@@ -19,61 +21,67 @@ import { sendDigestEmail } from './mailtrap/mailtrap';
 
 // let filter: RedditLeadFilter;
 
-interface RedditSearchResponse {
-  data: {
-    children: Array<{
-      data: {
-        id: string;
-        title: string;
-        selftext: string;
-        author: string;
-        subreddit: string;
-        created_utc: number;
-        url: string;
-        permalink: string;
-        score: number;
-        num_comments: number;
-      };
-    }>;
-  };
-}
-
 async function scanRedditForKeyword(
   campaignId: string,
   keyword: string,
   filter: RedditLeadFilter
 ): Promise<RedditPostInsert[]> {
   const posts: RedditPostInsert[] = [];
-  const baseUrl = 'https://www.reddit.com/search.json';
+  const baseUrl = 'https://www.reddit.com/search.rss';
   try {
-    console.log(`Searching for keyword: "${keyword}"`);
+    console.log(`Searching for keyword via RSS: "${keyword}"`);
 
-    /// figure out the final url and match it with reddit app's url
-    const response = await axios.get<RedditSearchResponse>(baseUrl, {
+    const response = await axios.get(baseUrl, {
       params: {
         q: `${keyword}`,
         sort: 'new',
         limit: 10,
       },
       headers: {
-        'User-Agent': 'RedditKeywordScanner/1.0',
+        'User-Agent':
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
       },
     });
 
-    const children = response.data.data.children;
-    console.log('✅ total posts fetched: ', children.length);
+    const parser = new XMLParser({
+      ignoreAttributes: false,
+      attributeNamePrefix: '@_',
+    });
 
-    for (const post of children) {
-      const postData = post.data;
+    const jsonObj = parser.parse(response.data);
+    const entries = jsonObj.feed?.entry;
+
+    if (!entries) {
+      console.log('⚠️ No entries found in RSS feed');
+      return [];
+    }
+
+    const entryList = Array.isArray(entries) ? entries : [entries];
+    console.log('✅ total posts fetched: ', entryList.length);
+
+    for (const entry of entryList) {
+      // Extract reddit_id (t3_ prefix removal)
+      const reddit_id = entry.id?.replace('t3_', '') || '';
+
+      // Extract author (/u/ prefix removal)
+      const author = entry.author?.name?.replace('/u/', '') || 'unknown';
+
+      // Extract subreddit
+      const subreddit = entry.category?.['@_term'] || '';
+
+      // Clean content HTML using cheerio
+      const contentHtml = entry.content?.['#text'] || entry.content || '';
+      const $ = cheerio.load(contentHtml);
+      const contentText = $.text().trim();
 
       posts.push({
-        reddit_id: postData.id,
-        subreddit: postData.subreddit,
-        author: postData.author,
-        title: postData.title,
-        content: cleanText(postData.selftext),
-        url: `https://www.reddit.com${postData.permalink}`,
-        created_at_reddit: new Date(postData.created_utc * 1000).toISOString(),
+        reddit_id,
+        subreddit,
+        author,
+        title: entry.title,
+        content: cleanText(contentText),
+        url: entry.link?.['@_href'] || entry.link || '',
+        created_at_reddit: entry.updated || entry.published || new Date().toISOString(),
       });
     }
 
