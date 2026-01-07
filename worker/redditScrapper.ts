@@ -15,6 +15,7 @@ import {
 import { filterDublicates, filterOldPosts, filterAnalyzedPosts, RedditLeadFilter } from './filters';
 
 import { wait } from '@trigger.dev/sdk';
+import { sendLeadEmail } from './mailtrap/mailtrap';
 
 // let filter: RedditLeadFilter;
 
@@ -140,7 +141,7 @@ async function processKeywordForCampaign(
         // const chatURL = await getUserChatURL(post.author!);
 
         // EMAIL
-        // await sendLeadEmail(post.url, '', keyword.keyword);
+        await sendLeadEmail(post.url, '', keyword.keyword);
 
         // SUPABASE
         const postId = await upsertRedditPost(post, '');

@@ -29,7 +29,7 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts",
     "worker/redditScrapperGemini.ts",
-    "worker/email/mailtrap.ts",
+    "worker/mailtrap/mailtrap.ts",
     "worker/d.js",
     "trigger.config.ts"
   ],

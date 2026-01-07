@@ -121,6 +121,7 @@ export type Database = {
           id: string
           last_scanned: string | null
           name: string | null
+          notify_email: string | null
           user_id: string
           website_url: string | null
         }
@@ -131,6 +132,7 @@ export type Database = {
           id?: string
           last_scanned?: string | null
           name?: string | null
+          notify_email?: string | null
           user_id?: string
           website_url?: string | null
         }
@@ -141,6 +143,7 @@ export type Database = {
           id?: string
           last_scanned?: string | null
           name?: string | null
+          notify_email?: string | null
           user_id?: string
           website_url?: string | null
         }
