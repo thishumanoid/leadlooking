@@ -147,7 +147,7 @@ export function CampaignStats({ campaign, leads }: CampaignStatsProps) {
               <div className="text-xs text-purple-400 font-medium">
                 Daily scans are available on Pro plans.{' '}
                 <Link
-                  href="/settings"
+                  href="/upgrade"
                   className="underline hover:text-purple-300 transition-colors"
                 >
                   Upgrade now

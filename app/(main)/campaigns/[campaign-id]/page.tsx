@@ -218,10 +218,6 @@ export default function CampaignsPage() {
     return <CampaignPageSkeleton />;
   }
 
-  if (isScanning) {
-    return <ScanningLoader />;
-  }
-
   return (
     <div className="flex flex-col gap-6 p-4 lg:p-8 max-w-[1600px] mx-auto">
       <ConfettiSideCannons autoFire={showConfetti} />
@@ -297,7 +293,7 @@ export default function CampaignsPage() {
         </TabsList>
 
         <TabsContent value="leads" className="mt-6 space-y-4">
-          <LeadList leads={leads} isPremium={isPremium} />
+          {isScanning ? <ScanningLoader /> : <LeadList leads={leads} isPremium={isPremium} />}
         </TabsContent>
 
         <TabsContent value="keywords" className="mt-6">
