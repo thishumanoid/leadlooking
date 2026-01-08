@@ -16,7 +16,7 @@ function Hero() {
 
   function handleClick() {
     if (user) {
-      push('/dashboard');
+      push('/campaigns');
     } else {
       push('/sign-up');
     }

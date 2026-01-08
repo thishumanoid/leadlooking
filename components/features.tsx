@@ -10,10 +10,10 @@ import { cn } from '@/lib/utils';
 const caseStudies = [
   {
     id: 'saas-founders',
-    label: 'SaaS Founders',
+    label: 'SaaS',
     icon: Zap,
     quote:
-      '"XYZ - A platform that helps founders build and manage waitlists in seconds."',
+      '"LaunchList: A platform that helps founders build and manage waitlists in seconds."',
     leads: [
       {
         source: 'r/saas',
@@ -65,7 +65,7 @@ const caseStudies = [
     id: 'agencies',
     label: 'Agencies',
     icon: Handshake,
-    quote: '"ABC - We provide high-impact SEO and content strategy for fast-growing B2B tech companies."',
+    quote: '"SEO.io - We provide high-impact SEO and content strategy for fast-growing B2B tech companies."',
     leads: [
       {
         source: 'r/marketing',
@@ -333,7 +333,7 @@ export default function Features() {
         {/* Header */}
         <div className="space-y-4 text-center max-w-3xl mx-auto">
           <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground">
-            Case Studies
+            Some Examples
           </h2>
           <p className="text-lg text-muted-foreground">
             People ask for your product daily, but you're missing them.

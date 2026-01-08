@@ -116,6 +116,7 @@ const Navbar = () => {
               {isSignedIn ? (
                 <Link href="/campaigns" className={buttonVariants({ size: 'sm' })}>
                   Dashboard
+                  <ArrowRight className="size-4 ml-1.5" />
                 </Link>
               ) : (
                 <Link href="/sign-up" className={buttonVariants({ size: 'sm' })}>

@@ -40,9 +40,6 @@ export default function Steps() {
             viewport={{ once: true }} // Should only animate once
             transition={{ duration: 0.5 }}
           >
-            <div className="inline-flex items-center px-3 py-1 mb-6 text-sm font-medium border rounded-full border-primary/20 bg-primary/10 text-primary">
-              How It Works
-            </div>
             <h2 className="text-4xl font-bold tracking-tight text-foreground sm:text-6xl">
               Find Your Next Customers in <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-orange-500">

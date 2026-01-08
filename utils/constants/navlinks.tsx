@@ -12,10 +12,10 @@ type NavLink = {
 };
 
 export const NAV_LINKS: NavLink[] = [
-    {
-        title: "Home",
-        href: "/",
-    },
+    // {
+    //     title: "Home",
+    //     href: "/",
+    // },
     // {
     //     title: "Features",
     //     href: "/features",
@@ -46,10 +46,10 @@ export const NAV_LINKS: NavLink[] = [
     //         },
     //     ],
     // },
-    {
-        title: "Pricing",
-        href: "/pricing",
-    },
+    // {
+    //     title: "Pricing",
+    //     href: "/pricing",
+    // },
     
     
     // {
