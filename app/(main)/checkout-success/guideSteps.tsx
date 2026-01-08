@@ -1,84 +1,67 @@
 'use client';
 
-import { MousePointerClick, User, ThumbsUp, Mail } from 'lucide-react';
+import { Rocket, Sparkles, LayoutDashboard, Mail, ArrowRight } from 'lucide-react';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 
 export default function GuideAfterPayment() {
   return (
-    <div className="min-h-screen bg-gradient-to-br flex items-center justify-center p-4">
-      <div className="max-w-2xl w-full">
-        {/* Steps Card */}
-        <div className="bg-card rounded-lg shadow-lg border border-border p-8 mb-6">
-          <h2 className="text-xl font-semibold text-foreground mb-6">Next Steps</h2>
+    <div className="min-h-screen bg-background flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Background Decorative Elements */}
+      {/* <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/10 rounded-full blur-3xl" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-3xl" /> */}
 
-          {/* Step 1 */}
-          <div className="flex gap-4 mb-6 pb-6 border-b border-border">
-            <div className="flex-shrink-0">
-              <div className="flex items-center justify-center w-10 h-10 bg-primary rounded-full">
-                <MousePointerClick className="w-5 h-5 text-secondary-foreground" />
-              </div>
-            </div>
-            <div className="flex-1">
-              <h3 className="font-semibold text-foreground mb-2">
-                Step 1: Lorem ipsum dolor sit
-              </h3>
-              <p className="text-muted-foreground">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-              </p>
-            </div>
+      <div className="max-w-xl w-full relative z-10">
+        <div className="bg-transparent rounded-2xl shadow-2xl border border-border p-8 md:p-12 mb-8 text-center">
+          <div className="mb-6 inline-flex items-center justify-center w-20 h-20 bg-primary/10 rounded-2xl border border-primary/20 animate-in fade-in zoom-in duration-500">
+            <Sparkles className="w-10 h-10 text-primary" />
           </div>
 
-          {/* Step 2 */}
-          <div className="flex gap-4 mb-6 pb-6 border-b border-border">
-            <div className="flex-shrink-0">
-              <div className="flex items-center justify-center w-10 h-10 bg-primary rounded-full">
-                <User className="w-5 h-5 text-secondary-foreground" />
-              </div>
-            </div>
-            <div className="flex-1">
-              <h3 className="font-semibold text-foreground mb-2">Step 2: Lorem ipsum dolor sit</h3>
-              <p className="text-muted-foreground mb-3">
-                Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-              </p>
-            </div>
-          </div>
+          <h1 className="text-3xl font-bold text-foreground mb-4 tracking-tight">
+            You're now a Premium User!
+          </h1>
 
-          {/* Step 3 */}
-          <div className="flex gap-4">
-            <div className="flex-shrink-0">
-              <div className="flex items-center justify-center w-10 h-10 bg-primary rounded-full">
-                <ThumbsUp className="w-5 h-5 text-accent-foreground" />
-              </div>
-            </div>
-            <div className="flex-1">
-              <h3 className="font-semibold text-foreground mb-2">
-                Step 3: Lorem ipsum dolor sit
-              </h3>
-              <p className="text-muted-foreground">
-                Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Troubleshooting Card */}
-        <div className="bg-accent/10 rounded-lg p-6 mb-6 border-accent">
-          <h3 className="font-semibold text-foreground mb-2 flex items-center gap-2">
-            <Mail className="w-5 h-5" />
-            Having Issues?
-          </h3>
-          <p className="text-foreground text-sm">
-            If your premium plan isn't showing up after following these steps, <br /> please mail
-            me: <strong>your@email.com</strong> i am free all day :)
+          <p className="text-muted-foreground text-lg mb-8 leading-relaxed">
+            Welcome to the inner circle. Your account has been upgraded, and you now have full
+            access to all leads across every campaign.
           </p>
+
+          <div className="grid gap-4 mb-10">
+            <div className="flex items-center gap-4 p-4 rounded-xl bg-accent/30 border border-border text-left">
+              <div className="w-10 h-10 rounded-lg bg-background flex items-center justify-center shadow-sm">
+                <Rocket className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-sm">Full Lead Access</h3>
+                <p className="text-xs text-muted-foreground">
+                  View every single match our AI finds for you.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <Link href="/campaigns" className="block">
+            <Button
+              size="lg"
+              className="w-full h-14 text-lg font-semibold shadow-lg shadow-primary/20 group"
+            >
+              Go to Campaigns
+              <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </Button>
+          </Link>
         </div>
 
-        {/* Footer */}
-        <div className="text-center text-muted-foreground text-sm">
-          <p>
-            Need help?{' '}
-            <a className="text-primary font-medium" href="/feedback">
-              click here
-            </a>
+        <div className="bg-muted/50 rounded-2xl p-6 border border-border">
+          <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2">
+            <Mail className="w-5 h-5 text-primary" />
+            Need help?
+          </h3>
+          <p className="text-muted-foreground text-sm leading-relaxed">
+            If your premium benefits aren't active immediately, please refresh the page. Still
+            having issues? Contact support at{' '}
+            <span className="text-foreground font-semibold underline decoration-primary/30">
+              neuhiman@gmail.com
+            </span>
           </p>
         </div>
       </div>

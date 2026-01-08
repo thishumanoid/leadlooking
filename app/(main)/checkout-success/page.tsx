@@ -48,7 +48,7 @@ export default function CheckoutSuccess() {
           </main>
         </div>
         <br />
-        <Separator />
+        {/* <Separator /> */}
         <br />
         <GuideAfterPayment />
       </MaxWidthWrapper>
