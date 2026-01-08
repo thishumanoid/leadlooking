@@ -358,7 +358,7 @@ export function CampaignDialog({
       // Trigger scan if it's a new campaign
       if (!campaign?.id) {
         try {
-          // toast.info('Starting initial scan...');
+          toast.info('Starting initial scan...');
           const scanResponse = await fetch('/api/campaign/scan-this', {
             method: 'POST',
             headers: {

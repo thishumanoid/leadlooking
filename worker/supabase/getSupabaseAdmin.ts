@@ -132,3 +132,26 @@ export async function fetchAnalyzedPostIds(
     return [];
   }
 }
+
+
+
+export async function isEligibleUserID(userID: string) {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('profiles')
+      .select()
+      .eq('user_id', userID)
+      .single();
+
+
+    if (data) {
+      const premiumStatus = data.subscription_status.trim().toLowerCase();
+
+      if (premiumStatus === 'active' || premiumStatus === 'trialing' || premiumStatus === 'paid') return true;
+    }
+
+    if (error) return false;
+  } catch (error) {
+    return false;
+  }
+}

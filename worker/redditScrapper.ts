@@ -19,6 +19,8 @@ import { filterDublicates, filterOldPosts, filterAnalyzedPosts, RedditLeadFilter
 import { wait } from '@trigger.dev/sdk';
 import { sendDigestEmail } from './mailtrap/mailtrap';
 
+import { isEligibleUserID } from './supabase/getSupabaseAdmin';
+
 // let filter: RedditLeadFilter;
 
 async function scanRedditForKeyword(
@@ -182,7 +184,9 @@ async function processKeywordForCampaign(
     }
   }
 
-  if (foundLeads.length > 0) {
+  const isPremium = await isEligibleUserID(campaign.user_id);
+
+  if (isPremium && foundLeads.length > 0) {
     const notifyEmail = (campaign as any).notify_email;
     if (notifyEmail) {
       const leadsForEmail = foundLeads.map((lead) => ({
@@ -193,7 +197,7 @@ async function processKeywordForCampaign(
         content: lead.content,
         createdAt: lead.created_at_reddit,
       }));
-      // await sendDigestEmail(notifyEmail, keyword.keyword, leadsForEmail, campaign.id);
+      await sendDigestEmail(notifyEmail, keyword.keyword, leadsForEmail, campaign.id);
     } else {
       console.log(`⚠️ No notify_email found for campaign "${campaign.name}". Skipping email.`);
     }
