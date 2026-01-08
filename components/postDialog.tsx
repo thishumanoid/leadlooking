@@ -233,7 +233,7 @@ export default function PostDialog({ lead, isOpen, onClose }: LeadDetailDialogPr
                 </Button>
               </Link>
 
-              <Button
+              {/* <Button
                 onClick={handleChatClick}
                 disabled={isGeneratingComment}
                 className="w-full sm:w-48 h-10 sm:h-12 text-xs sm:text-sm"
@@ -242,7 +242,7 @@ export default function PostDialog({ lead, isOpen, onClose }: LeadDetailDialogPr
                 <span className="hidden lg:inline">Send DM</span>
                 <span className="hidden sm:inline lg:hidden">Send DM</span>
                 <span className="sm:hidden">Send DM</span>
-              </Button>
+              </Button> */}
             </div>
           </div>
         </div>
