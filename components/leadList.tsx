@@ -273,7 +273,7 @@ function LeadList({ leads, isPremium = true }: LeadListProps) {
                           <ExternalLink className="w-3.5 h-3.5" />
                         </Button>
                       </Link>
-                      <Button
+                      {/* <Button
                         onClick={() => handleChatClick(lead)}
                         size="sm"
                         className="h-9 gap-2 bg-primary hover:bg-primary/90"
@@ -290,7 +290,7 @@ function LeadList({ leads, isPremium = true }: LeadListProps) {
                             <ArrowRight className="w-3.5 h-3.5" />
                           </>
                         )}
-                      </Button>
+                      </Button> */}
                     </>
                   )}
                 </div>

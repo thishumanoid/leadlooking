@@ -193,7 +193,7 @@ async function processKeywordForCampaign(
         content: lead.content,
         createdAt: lead.created_at_reddit,
       }));
-      await sendDigestEmail(notifyEmail, keyword.keyword, leadsForEmail, campaign.id);
+      // await sendDigestEmail(notifyEmail, keyword.keyword, leadsForEmail, campaign.id);
     } else {
       console.log(`⚠️ No notify_email found for campaign "${campaign.name}". Skipping email.`);
     }

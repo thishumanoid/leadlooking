@@ -292,7 +292,7 @@ export default function CampaignsPage() {
       {/* Tabs Section */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid grid-cols-2 bg-card border-none">
-          <TabsTrigger value="leads">Leads</TabsTrigger>
+          <TabsTrigger value="leads">Conversations</TabsTrigger>
           <TabsTrigger value="keywords">Keywords</TabsTrigger>
         </TabsList>
 
