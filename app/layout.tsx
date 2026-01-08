@@ -16,24 +16,24 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: {
     template: '%s | LeadLooking',
-    default: 'LeadLooking - Reddit Marketing Made Easy',
+    default: 'LeadLooking - Find Your Next Customer on Reddit',
   },
 
-  description: 'LeadLooking is tool that finds leads for you from reddit',
+  description: 'Find high-intent Reddit leads everyday. Track keywords, get instant notifications and join conversations where people need exactly what you offer.',
 
   metadataBase: new URL(config.appUrl),
   keywords: ['marketing', 'leads', 'reddit automation'],
 
   openGraph: {
-    title: 'LeadLooking - Reddit Marketing Made Easy',
-    description: 'LeadLooking is tool that finds leads for you from reddit',
+    title: 'LeadLooking - Find Your Next Customer on Reddit',
+    description: 'Find high-intent Reddit leads everyday. Track keywords, get instant notifications and join conversations where people need exactly what you offer.',
     url: config.appUrl,
   },
 
   twitter: {
     card: 'summary_large_image',
-    title: 'LeadLooking - Reddit Marketing Made Easy',
-    description: 'LeadLooking is tool that finds leads for you from reddit',
+    title: 'LeadLooking - Find Your Next Customer on Reddit',
+    description: 'Find high-intent Reddit leads everyday. Track keywords, get instant notifications and join conversations where people need exactly what you offer.',
   },
 };
 

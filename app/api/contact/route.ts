@@ -1,14 +1,19 @@
-/// docs: https://extfast-docs.hashnode.space/docs/emails/resend-email-setup
 
 import { NextRequest, NextResponse } from 'next/server';
+import { Resend } from "resend";
 import config from '@/config';
-import resend from '@/lib/resend/resendClient';
+
+
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const { email, message } = body;
+
+    console.log('resend recieved: ', email, message)
 
     if (!email || !message) {
       return NextResponse.json(
@@ -29,8 +34,8 @@ export async function POST(request: NextRequest) {
 
     const { data, error } = await resend.emails.send({
       from: 'Feedback Form <onboarding@resend.dev>',
-      to: [config.contactEmail],
-      subject: `New Contact Form Message from ${email}`,
+      to: ['iconicmasti@gmail.com'],
+      subject: `New Contact Form Message`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h2 style="color: #333; border-bottom: 2px solid #eee; padding-bottom: 10px;">
