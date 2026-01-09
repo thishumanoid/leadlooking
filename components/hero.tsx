@@ -9,13 +9,14 @@ import { useRouter } from 'next/navigation';
 import { Input } from './ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import GetStartedBtn from './ui/GetStartedBtn';
+import { useUser } from '@clerk/nextjs';
 
 function Hero() {
   const { push } = useRouter();
-  const user = false;
+  const { isSignedIn } = useUser();
 
   function handleClick() {
-    if (user) {
+    if (isSignedIn) {
       push('/campaigns');
     } else {
       push('/sign-up');
