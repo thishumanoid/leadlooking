@@ -6,7 +6,7 @@ import runReddit from '@/worker/redditScrapper';
 export async function POST(request: Request) {
   console.log('🔥recived api request');
 
-  // await runReddit();
+  await runReddit();
 
 
   // await exampleKeywordGenerator()

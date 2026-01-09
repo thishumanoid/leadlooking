@@ -23,7 +23,7 @@ export async function sendDigestEmail(
     const result = await mailtrap.send({
       from: sender,
       to: [{ email: toEmail }],
-      subject: `LeadLooking: New Leads for "${keyword}"`,
+      subject: `LeadLooking: New Leads Found`,
       html: html,
     });
     console.log(`✅ Digest email sent to ${toEmail} for keyword "${keyword}"`);

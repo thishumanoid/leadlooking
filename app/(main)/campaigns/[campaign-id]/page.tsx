@@ -121,6 +121,10 @@ export default function CampaignsPage() {
     fetchData();
   }, [campaignId]);
 
+  // Define isScanning here so it can be used in useEffects below
+  const isScanning =
+    run?.status === 'EXECUTING' || run?.status === 'WAITING' || run?.status === 'QUEUED';
+
   // Watch for run completion to refetch leads
   useEffect(() => {
     if (run?.status === 'COMPLETED') {
@@ -170,8 +174,52 @@ export default function CampaignsPage() {
     }
   }, [run?.status]);
 
-  const isScanning =
-    run?.status === 'EXECUTING' || run?.status === 'WAITING' || run?.status === 'QUEUED';
+  // Poll for new leads every 50 seconds while scanning is active
+  useEffect(() => {
+    if (!isScanning || !campaignId || !user?.emailAddresses[0]?.emailAddress) {
+      return;
+    }
+
+    const pollForNewLeads = async () => {
+      try {
+        const response = await fetch('/api/campaign/get-leads', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            campaignId: campaignId,
+            userEmail: user?.emailAddresses[0].emailAddress,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch leads during polling');
+        }
+
+        const data = await response.json();
+        const newLeads = data.leads || [];
+
+        // Only update if we have new leads (compare by length or IDs)
+        if (newLeads.length > leads.length) {
+          console.log('New leads found during polling:', newLeads.length - leads.length);
+          setLeads(newLeads);
+          setIsPremium(data.isPremium ?? true);
+        }
+      } catch (error) {
+        console.error('Error polling for new leads:', error);
+      }
+    };
+
+    // Poll immediately on mount if scanning
+    // pollForNewLeads();
+
+    // Set up interval to poll every 50 seconds
+    const intervalId = setInterval(pollForNewLeads, 50000);
+
+    // Cleanup interval on unmount or when scanning stops
+    return () => clearInterval(intervalId);
+  }, [isScanning, campaignId, user?.emailAddresses[0]?.emailAddress, leads.length]);
 
   const handleEditSuccess = (updatedCampaign: any) => {
     setCampaign(updatedCampaign);
@@ -326,7 +374,8 @@ export default function CampaignsPage() {
         </TabsList>
 
         <TabsContent value="leads" className="mt-6 space-y-4">
-          {isScanning ? <ScanningLoader /> : <LeadList leads={leads} isPremium={isPremium} />}
+          {isScanning && <ScanningLoader />}
+          <LeadList leads={leads} isPremium={isPremium} />
         </TabsContent>
 
         <TabsContent value="keywords" className="mt-6">
