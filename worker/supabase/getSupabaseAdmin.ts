@@ -1,4 +1,7 @@
 import supabaseAdmin from '@/lib/supabase/supabaseAdmin';
+import { logger } from '@trigger.dev/sdk';
+
+
 
 // interface Keyword {
 //   id: string;
@@ -22,7 +25,7 @@ interface CampaignWithKeywords {
   keywords: Keyword[];
 }
 
-export async function fetchCampaignsWithKeywords(): Promise<CampaignWithKeywords[]> {
+export async function fetchCampaignsWithKeywords(isCron: boolean = false): Promise<CampaignWithKeywords[]> {
   try {
     // Fetch all campaigns
     const { data: campaigns, error: campaignsError } = await supabaseAdmin
@@ -45,6 +48,14 @@ export async function fetchCampaignsWithKeywords(): Promise<CampaignWithKeywords
     const campaignsWithKeywords = [];
 
     for (const campaign of campaigns) {
+
+      const isEligible = await isEligibleUserID(campaign.user_id);
+
+      if (isCron && !isEligible) {
+        logger.info(`❌Campaign ${campaign.id} is not eligible for cron job`);
+        continue;
+      };
+
       const { data: keywords, error: keywordsError } = await supabaseAdmin
         .from('keywords')
         .select('id, keyword')

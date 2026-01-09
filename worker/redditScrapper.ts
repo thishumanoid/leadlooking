@@ -205,11 +205,10 @@ async function processKeywordForCampaign(
   return foundLeads;
 }
 
-export default async function runReddit() {
+export default async function runReddit(isCron: boolean = false) {
   try {
-    console.log('running v2')
     // Step 1: Fetch all campaigns with keywords
-    const campaignsWithKeywords = await fetchCampaignsWithKeywords();
+    const campaignsWithKeywords = await fetchCampaignsWithKeywords(true);
 
     if (campaignsWithKeywords.length === 0) {
       console.log('⚠️ No campaigns with keywords found. Exiting.');
