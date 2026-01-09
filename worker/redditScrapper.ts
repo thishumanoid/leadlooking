@@ -208,7 +208,7 @@ async function processKeywordForCampaign(
 export default async function runReddit(isCron: boolean = false) {
   try {
     // Step 1: Fetch all campaigns with keywords
-    const campaignsWithKeywords = await fetchCampaignsWithKeywords(true);
+    const campaignsWithKeywords = await fetchCampaignsWithKeywords(isCron);
 
     if (campaignsWithKeywords.length === 0) {
       console.log('⚠️ No campaigns with keywords found. Exiting.');

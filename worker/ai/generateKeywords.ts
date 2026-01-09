@@ -73,12 +73,11 @@ export async function generateKeywords(
 export type GeneratedKeywords = z.infer<typeof KeywordsArraySchema>;
 
 // Example usage
-export async function exampleKeywordGenerator() {
+export async function exampleKeywordGenerator(productDescription: string) {
   try {
-    const PRODUCT_DESCRIPTION =
-      'Drag-and-drop website builder for small businesses. Create professional websites without coding. Includes hosting, SSL, mobile optimization, and SEO tools. 100+ customizable templates.';
-    const results = await generateKeywords(PRODUCT_DESCRIPTION);
-    console.log('keywords', results.keywords);
+    const results = await generateKeywords(productDescription);
+
+    return results.keywords;
 
   } catch (error) {
     console.error('Failed to generate keywords:', error);

@@ -31,7 +31,7 @@ function Hero() {
             {/* <Badge className="bg-primary rounded-full py-1 border-primary">v2.0.0 is live!</Badge> */}
             <div className="relative mx-auto mt-6 max-w-fit flex items-center justify-center">
               <h1 className="text-3xl xs:text-4xl sm:text-5xl md:text-6xl font-semibold !leading-[1.2] tracking-tight">
-                Find Customers From Reddit on  {' '}
+                Find Customers From Reddit on{' '}
                 <span className="relative text-primary whitespace-nowrap">
                   Autopilot
                   <svg
@@ -72,9 +72,10 @@ function Hero() {
               <GetStartedBtn onClick={handleClick} className="h-12 text-base mt-3" />
             </div>
 
-            {/* <div className="mt-10 flex flex-col items-center justify-center gap-4">
+            <div className="mt-10 flex flex-col items-center justify-center gap-4">
               <p className="text-sm md:text-base text-muted-foreground">
-                Join <span className="font-bold text-foreground">⭐15+</span> SaaS Founders and Freelancers
+                Join <span className="font-bold text-foreground">⭐15+</span> SaaS Founders and
+                Freelancers
               </p>
               <div className="flex -space-x-4">
                 {[54, 100, 2, 93].map((i) => (
@@ -87,7 +88,7 @@ function Hero() {
                   +15
                 </div>
               </div>
-            </div> */}
+            </div>
           </div>
         </div>
       </AnimationContainer>
