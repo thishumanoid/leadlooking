@@ -165,7 +165,7 @@ export default function SettingsPage() {
               </CardFooter>
             </Card>
           ) : (
-            <PricingCards />
+            ""
           )}
         </div>
       </div>

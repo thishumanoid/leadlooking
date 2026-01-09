@@ -49,7 +49,7 @@ function UpgradeCard() {
 
             <h3 className="font-semibold text-sm text-foreground mb-1">Upgrade to Pro</h3>
             <p className="text-[12px] leading-snug text-muted-foreground mb-4">
-              Find relevant conversations
+              Get Lead Notifications Daily
             </p>
 
             <Button className="w-full h-8 text-[11px] font-bold shadow-sm transition-all active:scale-95">

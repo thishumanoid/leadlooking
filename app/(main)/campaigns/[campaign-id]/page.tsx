@@ -1,3 +1,5 @@
+/// campaigns/[campaign-id]/page.tsx:
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -7,7 +9,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useSupabase } from '@/hooks/supabase-provider';
 import { useParams } from 'next/navigation';
 
-import { Edit, Trash2 } from 'lucide-react';
+// Added Zap, Crown, Mail to imports
+import { Edit, Trash2, Zap, Crown, Mail } from 'lucide-react';
 import LeadList, { Lead } from '@/components/leadList';
 import { CampaignDialog } from '@/components/campaignDialog';
 import { CampaignStats } from '@/components/campaign-stats';
@@ -33,8 +36,8 @@ import {
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import KeywordsGuide from '@/components/keywordsGuide';
-
-// Sample data for demonstration
+import { useSubscription } from '@/hooks/subscription';
+import Link from 'next/link';
 
 export default function CampaignsPage() {
   const params = useParams();
@@ -51,6 +54,7 @@ export default function CampaignsPage() {
   const [showResultsDialog, setShowResultsDialog] = useState(false);
   const router = useRouter();
   const { user } = useUser();
+  const { isPremium: isSubscriptionPremium } = useSubscription();
 
   // Trigger.dev hook implementation
   const searchParams = useSearchParams();
@@ -228,20 +232,15 @@ export default function CampaignsPage() {
         potentialMatches={leads.filter((l) => l.matchStrength === 'partial').length}
       />
       {/* Header Section */}
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-6">
         <div className="flex items-start justify-between">
           <div className="flex flex-col gap-3">
             <h1 className="text-4xl font-bold bg-clip-text ">{campaign.name}</h1>
-            <p className="text-muted-foreground max-w-2xl">{campaign.description}</p>
+            <p className="text-muted-foreground max-w-2xl border border-gray-200/10 rounded px-2 py-1 inline-block border-b">
+              {campaign.website_url}
+            </p>
           </div>
           <div className="flex items-center gap-2">
-            {/* <Button
-              variant="outline"
-              className="gap-2 border-primary/20 hover:border-primary/40 hover:bg-primary/5"
-            >
-              <RefreshCw className="w-4 h-4" />
-              Sync now
-            </Button> */}
             <Button
               variant="outline"
               className="gap-2 border-primary/20 hover:border-primary/40 hover:bg-primary/5"
@@ -281,6 +280,42 @@ export default function CampaignsPage() {
             </AlertDialog>
           </div>
         </div>
+
+        {!isSubscriptionPremium && (
+          <div className="rounded-xl border bg-transparent p-4">
+            <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+              {/* Icon Wrapper */}
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-transparent text-primary dark:text-primary-foreground">
+                <Zap className="h-6 w-6" />
+              </div>
+
+              <div className="flex-1 space-y-1">
+                <div className="flex items-center gap-2">
+                  <h3 className="font-semibold text-lg leading-none">Autopilot Mode is off</h3>
+                  {/* Premium Badge */}
+                  {/* <span className="inline-flex items-center rounded-md border border-orange-500/30 bg-orange-500/10 px-2 py-0.5 text-xs font-medium text-orange-600 dark:text-orange-400">
+                    <Crown className="mr-1 h-3 w-3" />
+                    Requires Premium
+                  </span> */}
+                </div>
+
+                <p className="text-sm text-muted-foreground">
+                  With Premium, LeadLooking will scan reddit everyday and send new leads to{' '}
+                  <span className="inline-flex items-center font-medium text-foreground mx-1">
+                    <Mail className="w-3 h-3 mr-1" />
+                    {campaign.notify_email || 'your email'}
+                  </span>
+                </p>
+              </div>
+              <Link href="/upgrade">
+                <Button>
+                  {/* <Crown className="mr-2 h-4 w-4" /> */}
+                  Enable Autopilot
+                </Button>
+              </Link>
+            </div>
+          </div>
+        )}
 
         <CampaignStats campaign={campaign} leads={leads} />
       </div>
