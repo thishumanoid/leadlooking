@@ -16,7 +16,6 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 import { useSubscription } from '@/hooks/subscription';
-import PricingCards from '@/components/pricingCards';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export default function SettingsPage() {
@@ -148,8 +147,6 @@ export default function SettingsPage() {
 
                   {/* Renewal Date */}
                   <div className="pt-4 border-t">
-                    <p className="text-sm font-medium text-muted-foreground mb-1">Next Renewal</p>
-                    <p className="text-base font-medium">January 29, 2026</p>
                     <p className="text-sm text-muted-foreground mt-0.5">
                       Your subscription will automatically renew
                     </p>

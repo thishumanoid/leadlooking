@@ -1,4 +1,4 @@
-import { Zap } from 'lucide-react';
+import { Zap, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface BtnProps {
@@ -11,7 +11,7 @@ export default function GetStartedBtn({ className, onClick }: BtnProps) {
     <div className={`flex flex-row gap-4 ${className || ''}`}>
       <Button onClick={onClick} size="lg" className="w-full gap-4">
         Find My Leads
-        <Zap size={20} fill="white" className="-ml-2" />
+        <ArrowRight className="size-5" />
       </Button>
     </div>
   );

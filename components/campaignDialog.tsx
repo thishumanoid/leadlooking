@@ -408,10 +408,10 @@ export function CampaignDialog({
         <div className="absolute inset-0  pointer-events-none" />
         <DialogHeader className="relative px-6 pt-6">
           <DialogTitle className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
-            {campaign?.id ? 'Edit Campaign' : "Let's Find Relevant Conversations For Your SaaS"}
+            {campaign?.id ? 'Edit Campaign' : "Let's find Leads"}
           </DialogTitle>
           <DialogDescription className="text-muted-foreground">
-            Enter your product or service details and keywords to start finding relevant conversations on Reddit
+            Enter your product or service details and keywords to start finding leads on Reddit
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden relative">
@@ -549,7 +549,7 @@ export function CampaignDialog({
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="notifyEmail" className="text-xs text-muted-foreground">
-                  Email for notifications
+                  Email for lead notifications
                 </Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50" />

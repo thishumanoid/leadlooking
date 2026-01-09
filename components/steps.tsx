@@ -42,7 +42,7 @@ export default function Steps() {
           >
             <h2 className="text-4xl font-bold tracking-tight text-foreground sm:text-6xl">
               Find Your Next Customers in <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-orange-500">
+              <span className="text-transparent bg-clip-text bg-primary">
                 3 Simple Steps
               </span>
             </h2>

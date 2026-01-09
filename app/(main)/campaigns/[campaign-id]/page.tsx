@@ -10,7 +10,7 @@ import { useSupabase } from '@/hooks/supabase-provider';
 import { useParams } from 'next/navigation';
 
 // Added Zap, Crown, Mail to imports
-import { Edit, Trash2, Zap, Crown, Mail } from 'lucide-react';
+import { Edit, Trash2, Zap, Bell, Mail } from 'lucide-react';
 import LeadList, { Lead } from '@/components/leadList';
 import { CampaignDialog } from '@/components/campaignDialog';
 import { CampaignStats } from '@/components/campaign-stats';
@@ -236,9 +236,9 @@ export default function CampaignsPage() {
         <div className="flex items-start justify-between">
           <div className="flex flex-col gap-3">
             <h1 className="text-4xl font-bold bg-clip-text ">{campaign.name}</h1>
-            <p className="text-muted-foreground max-w-2xl border border-gray-200/10 rounded px-2 py-1 inline-block border-b">
+            {/* <p className="text-muted-foreground max-w-2xl border border-gray-200/10 rounded px-2 py-1 inline-block border-b">
               {campaign.website_url}
-            </p>
+            </p> */}
           </div>
           <div className="flex items-center gap-2">
             <Button
@@ -286,17 +286,12 @@ export default function CampaignsPage() {
             <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
               {/* Icon Wrapper */}
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-transparent text-primary dark:text-primary-foreground">
-                <Zap className="h-6 w-6" />
+                <Bell className="h-6 w-6" />
               </div>
 
               <div className="flex-1 space-y-1">
                 <div className="flex items-center gap-2">
                   <h3 className="font-semibold text-lg leading-none">Autopilot Mode is off</h3>
-                  {/* Premium Badge */}
-                  {/* <span className="inline-flex items-center rounded-md border border-orange-500/30 bg-orange-500/10 px-2 py-0.5 text-xs font-medium text-orange-600 dark:text-orange-400">
-                    <Crown className="mr-1 h-3 w-3" />
-                    Requires Premium
-                  </span> */}
                 </div>
 
                 <p className="text-sm text-muted-foreground">
@@ -323,7 +318,7 @@ export default function CampaignsPage() {
       {/* Tabs Section */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid grid-cols-2 bg-card border-none">
-          <TabsTrigger value="leads">Conversations</TabsTrigger>
+          <TabsTrigger value="leads">Leads</TabsTrigger>
           <TabsTrigger value="keywords">Keywords</TabsTrigger>
         </TabsList>
 

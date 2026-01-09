@@ -38,7 +38,7 @@ export function EmptyLeadState() {
               <Clock className="w-5 h-5 text-orange-500" />
             </div>
             <div>
-              <h4 className="font-medium mb-1">Wait for the next scan</h4>
+              <h4 className="font-medium mb-1">Wait for the next scan (premium)</h4>
               <p className="text-sm text-muted-foreground">
                 Maybe nobody posted about your topic recently. Be patient! Our system checks for new
                 posts periodically.

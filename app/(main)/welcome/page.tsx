@@ -42,7 +42,7 @@ export default function WelcomePage() {
         </h1>
 
         <p className="text-xl text-muted-foreground max-w-2xl mb-12">
-          You're one step away from finding quality conversations on Reddit. Let's set up your first campaign!
+          You're one step away from finding quality Leads on Reddit. Let's set up your first campaign!
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 items-center">

@@ -147,8 +147,6 @@ async function processKeywordForCampaign(
       if (postLabels.leadScore > 50) {
         console.log(`✨Found Lead, SCORE: ${postLabels.leadScore} Post: ${post.url}`);
 
-        // const chatURL = await getUserChatURL(post.author!);
-
         // SUPABASE
         const postId = await upsertRedditPost(post, '');
 

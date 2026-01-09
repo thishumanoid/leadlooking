@@ -17,15 +17,15 @@ export default function CtaCard() {
 
               {/* Heading */}
               <h2 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl max-w-2xl px-4">
-                Reddit Marketing {<br className="hidden sm:block" />}  Made Easy.
+                Finding Leads {<br className="hidden sm:block" />} Manually is Hard.
               </h2>
 
 
               {/* Button Group */}
-              <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
+              <div className="mt-8 flex flex-col items-center justify-center gap-4">
                 <Link href="/sign-up">
                 <Button size="lg" className="group px-8 h-12 text-base shadow-xl shadow-primary/20">
-                  Find My Leads
+                  Automate it
                   <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Button>
                 </Link>
