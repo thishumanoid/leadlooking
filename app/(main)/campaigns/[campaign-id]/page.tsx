@@ -134,7 +134,10 @@ export default function CampaignsPage() {
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ campaignId }),
+            body: JSON.stringify({
+              campaignId: campaignId,
+              userEmail: user?.emailAddresses[0].emailAddress,
+            }),
           });
 
           if (!response.ok) {

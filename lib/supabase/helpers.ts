@@ -6,7 +6,7 @@ export async function isEligibleUser(userEmail: string) {
     const { data, error } = await supabaseAdmin
       .from('profiles')
       .select()
-      .eq('user_email', userEmail)
+      .eq('user_email', userEmail.trim())
       .single();
 
 
