@@ -7,6 +7,7 @@ export async function scrapeMetadata(url: string): Promise<
   | undefined
 > {
   try {
+
     const normalizeUrl = (url: string): string | null => {
       const trimmed = url.trim();
       if (!trimmed) return null;

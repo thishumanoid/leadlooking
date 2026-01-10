@@ -544,7 +544,7 @@ function filterDublicates(posts: RedditPostInsert[]) {
         // 2. Exact Title Match
         if (currentPost.title?.trim() === seenPost.title?.trim()) {
           console.log(
-            `❌ Duplicate found (100%): "${currentPost.url}"`
+            `❌ Duplicate found (Exact Match): "${currentPost.title}" by u/${currentPost.author} in r/${currentPost.subreddit}`
           );
           isDuplicate = true;
           break;
