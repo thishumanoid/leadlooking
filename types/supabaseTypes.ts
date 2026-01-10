@@ -186,6 +186,8 @@ export type Database = {
           expires_at: string | null
           id: number
           plan_type: string | null
+          slack_access_token: string | null
+          slack_channel_id: string | null
           subscribed_at: string | null
           subscription_id: string | null
           subscription_status: string
@@ -196,6 +198,8 @@ export type Database = {
           expires_at?: string | null
           id?: number
           plan_type?: string | null
+          slack_access_token?: string | null
+          slack_channel_id?: string | null
           subscribed_at?: string | null
           subscription_id?: string | null
           subscription_status: string
@@ -206,6 +210,8 @@ export type Database = {
           expires_at?: string | null
           id?: number
           plan_type?: string | null
+          slack_access_token?: string | null
+          slack_channel_id?: string | null
           subscribed_at?: string | null
           subscription_id?: string | null
           subscription_status?: string
