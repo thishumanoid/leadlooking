@@ -23,6 +23,7 @@
     "@radix-ui/react-tooltip": "^1.2.8",
     "@react-email/components": "1.0.3",
     "@react-email/render": "2.0.1",
+    "@slack/web-api": "^7.13.0",
     "@supabase/supabase-js": "^2.86.0",
     "@trigger.dev/react-hooks": "4.3.2",
     "@trigger.dev/sdk": "4.3.2",

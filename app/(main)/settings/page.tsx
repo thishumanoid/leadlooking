@@ -17,6 +17,8 @@ import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 import { useSubscription } from '@/hooks/subscription';
 import { Skeleton } from '@/components/ui/skeleton';
+import ConnectSlackButton from '@/components/connectSlackButton';
+import SlackChannelSelector from '@/components/slackChannelSelector';
 
 export default function SettingsPage() {
   const [emailNotifications, setEmailNotifications] = useState(true);
@@ -68,6 +70,10 @@ export default function SettingsPage() {
                   onCheckedChange={setEmailNotifications}
                 />
               </div>
+
+              <ConnectSlackButton />
+
+              <SlackChannelSelector />
 
               {/* Slack Notifications */}
               <div className="flex items-center justify-between space-x-4 opacity-60">
