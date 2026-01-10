@@ -1,3 +1,6 @@
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+
 
 export function truncateText(text: string | null | undefined, maxLength: number = 500): string {
   if (!text || text.length <= maxLength) return text ?? ''
@@ -87,4 +90,17 @@ export async function getUserChatURL(username: string): Promise<string> {
     console.error(`Failed to fetch user ID for ${username}:`, error);
     return '';
   }
+}
+
+
+
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
+export function absoluteUrl(path: string) {
+  return `${
+    process.env.NEXT_PUBLIC_WEB_APP_URL || "http://localhost:3000"
+  }/${path}`;
 }
