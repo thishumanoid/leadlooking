@@ -39,7 +39,7 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
           .from('profiles')
           .select('*')
           .eq('user_id', user.id)
-          .single();
+          .maybeSingle();
 
         if (error) {
           console.error('Error fetching subscription:', error);

@@ -11,7 +11,7 @@ export async function POST(request: Request) {
 
     const SLACK_CLIENT_ID = process.env.SLACK_CLIENT_ID;
 
-    const slackRedirectURI = absoluteUrl('/api/slack/callback');
+    const slackRedirectURI = absoluteUrl('api/slack/callback');
     const state = userId;
 
     const scopes = ['chat:write', 'chat:write.public', 'channels:read', 'groups:read'];

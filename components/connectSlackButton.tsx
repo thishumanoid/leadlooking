@@ -2,13 +2,16 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useSubscription } from '@/hooks/subscription';
+import { useUser } from '@clerk/nextjs';
 
 export default function ConnectSlackButton() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { subscription } = useSubscription();
+  const { user } = useUser();
 
   const handleConnect = async () => {
+    console.log('subscription: ', user?.id);
     setLoading(true);
     // 1. Call your API to get the Slack Auth URL
     const res = await fetch('/api/slack/auth', {
