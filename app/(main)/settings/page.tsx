@@ -19,6 +19,7 @@ import { useSubscription } from '@/hooks/subscription';
 import { Skeleton } from '@/components/ui/skeleton';
 import ConnectSlackButton from '@/components/connectSlackButton';
 import SlackChannelSelector from '@/components/slackChannelSelector';
+import { Separator } from '@/components/ui/separator';
 
 export default function SettingsPage() {
   const [emailNotifications, setEmailNotifications] = useState(true);
@@ -69,29 +70,24 @@ export default function SettingsPage() {
                   onCheckedChange={setEmailNotifications}
                 />
               </div>
-
-              <ConnectSlackButton />
-
-              <SlackChannelSelector />
+              <Separator />
 
               {/* Slack Notifications */}
-              <div className="flex items-center justify-between space-x-4 opacity-60">
+              <div className="flex items-center justify-between space-x-4">
                 <div className="flex items-start gap-3 flex-1">
                   <Slack className="h-5 w-5 text-muted-foreground mt-0.5" />
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
                       <Label className="text-base font-medium">Slack Notifications</Label>
-                      <Badge variant="secondary" className="text-xs">
-                        Coming Soon
-                      </Badge>
                     </div>
                     <p className="text-sm text-muted-foreground">
                       Get instant notifications in your Slack workspace
                     </p>
                   </div>
                 </div>
-                <Switch disabled />
+              <ConnectSlackButton />
               </div>
+              <SlackChannelSelector />
             </CardContent>
           </Card>
 
@@ -167,7 +163,7 @@ export default function SettingsPage() {
               </CardFooter>
             </Card>
           ) : (
-            ""
+            ''
           )}
         </div>
       </div>

@@ -17,7 +17,7 @@ import {
 import { filterDublicates, filterOldPosts, filterAnalyzedPosts, RedditLeadFilter } from './filters';
 
 import { wait } from '@trigger.dev/sdk';
-import { sendDigestEmail } from './mailtrap/mailtrap';
+import { sendDigestEmail } from './notifications/mailtrap';
 
 import { isEligibleUserID } from './supabase/getSupabaseAdmin';
 

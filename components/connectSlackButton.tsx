@@ -34,7 +34,7 @@ export default function ConnectSlackButton() {
     <button
       onClick={handleConnect}
       disabled={loading}
-      className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition"
+      className="bg-primary text-primary-foreground px-4 py-2 rounded hover:bg-primary/90 transition"
     >
       {loading ? 'Redirecting...' : 'Connect Slack Workspace'}
     </button>

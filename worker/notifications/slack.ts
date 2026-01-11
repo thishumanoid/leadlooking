@@ -1,9 +1,7 @@
-// lib/slack.ts
-import { createClient } from '@supabase/supabase-js';
 import { WebClient } from '@slack/web-api';
-import supabaseAdmin from './supabase/supabaseAdmin';
+import supabaseAdmin from '../../lib/supabase/supabaseAdmin';
 
-export async function notifyUser(clerkUserId: string, message: string) {
+export async function sendSlackNotification(clerkUserId: string, message: string) {
   // 1. Get the user's Slack token from DB
   const { data } = await supabaseAdmin
     .from('profiles')
@@ -25,13 +23,13 @@ export async function notifyUser(clerkUserId: string, message: string) {
       text: message,
       blocks: [
         {
-          type: "section",
+          type: 'section',
           text: {
-            type: "mrkdwn",
-            text: `🚨 *New Lead Found!* \n\n${message}`
-          }
-        }
-      ]
+            type: 'mrkdwn',
+            text: `⚡ *New Lead Found!* \n\n${message}`,
+          },
+        },
+      ],
     });
     console.log('Slack notification sent!');
   } catch (error) {
