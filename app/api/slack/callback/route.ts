@@ -11,7 +11,7 @@ export async function GET(req: Request) {
 
   if (error || !code || !state) {
     return NextResponse.redirect(
-      `${process.env.NEXT_PUBLIC_WEB_APP_URL}/dashboard?error=slack_failed`
+      `${process.env.NEXT_PUBLIC_WEB_APP_URL}/settings?error=slack_failed`
     );
   }
 
@@ -53,12 +53,12 @@ export async function GET(req: Request) {
 
     // 4. Success Redirect
     return NextResponse.redirect(
-      `${process.env.NEXT_PUBLIC_WEB_APP_URL}/dashboard?success=slack_connected`
+      `${process.env.NEXT_PUBLIC_WEB_APP_URL}/settings?success=slack_connected`
     );
   } catch (err) {
     console.error('Slack OAuth Error:', err);
     return NextResponse.redirect(
-      `${process.env.NEXT_PUBLIC_WEB_APP_URL}/dashboard?error=server_error`
+      `${process.env.NEXT_PUBLIC_WEB_APP_URL}/settings?error=server_error`
     );
   }
 }
