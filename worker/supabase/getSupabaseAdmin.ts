@@ -166,3 +166,30 @@ export async function isEligibleUserID(userID: string) {
     return false;
   }
 }
+
+export async function isPremiumWithData(profile: Profile) {
+  const premiumStatus = profile.subscription_status.trim().toLowerCase();
+
+  if (premiumStatus === 'active' || premiumStatus === 'trialing' || premiumStatus === 'paid') return true;
+
+  return false;
+}
+
+
+export async function getUserProfile(userID: string) {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('profiles')
+      .select()
+      .eq('user_id', userID)
+      .single();
+
+    if (data) {
+      return data;
+    }
+
+    if (error) return null;
+  } catch (error) {
+    return null;
+  }
+}

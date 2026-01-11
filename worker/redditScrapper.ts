@@ -20,6 +20,9 @@ import { wait } from '@trigger.dev/sdk';
 import { sendDigestEmail } from './notifications/mailtrap';
 
 import { isEligibleUserID } from './supabase/getSupabaseAdmin';
+import { getUserProfile } from './supabase/getSupabaseAdmin';
+import { isPremiumWithData } from './supabase/getSupabaseAdmin';
+import { sendSlackNotification } from './notifications/slack';
 
 // let filter: RedditLeadFilter;
 
@@ -182,23 +185,34 @@ async function processKeywordForCampaign(
     }
   }
 
-  const isPremium = await isEligibleUserID(campaign.user_id);
+  const userProfile = await getUserProfile(campaign.user_id);
+  const isPremium = await isPremiumWithData(userProfile!);
 
   if (isPremium && foundLeads.length > 0) {
-    const notifyEmail = (campaign as any).notify_email;
+    const leadsForEmail = foundLeads.map((lead) => ({
+      title: lead.title,
+      subreddit: lead.subreddit,
+      url: lead.url,
+      leadScore: lead.leadScore,
+      content: lead.content,
+      createdAt: lead.created_at_reddit,
+    }));
+
+    const notifyEmail = campaign.notify_email;
     if (notifyEmail) {
-      const leadsForEmail = foundLeads.map((lead) => ({
-        title: lead.title,
-        subreddit: lead.subreddit,
-        url: lead.url,
-        leadScore: lead.leadScore,
-        content: lead.content,
-        createdAt: lead.created_at_reddit,
-      }));
       // await sendDigestEmail(notifyEmail, keyword.keyword, leadsForEmail, campaign.id);
     } else {
       console.log(`⚠️ No notify_email found for campaign "${campaign.name}". Skipping email.`);
     }
+
+    if (!userProfile?.slack_access_token) return foundLeads;
+
+    await sendSlackNotification(
+      userProfile.slack_access_token,
+      userProfile.slack_channel_id!,
+      leadsForEmail,
+      campaign.id
+    );
   }
 
   console.log(`  📊 Results: ${foundLeads.length} new leads created from ${posts.length} posts`);
