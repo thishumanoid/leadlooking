@@ -5,7 +5,7 @@ import { getSlackChannels, saveSelectedChannel } from '@/app/actions/slack';
 import { toast } from 'sonner';
 
 export default function SlackChannelSelector() {
-  const [channels, setChannels] = useState<{ id: string; name: string }[]>([]);
+  const [channels, setChannels] = useState<{ id: string | undefined; name: string | undefined }[]>([]);
   const [selected, setSelected] = useState('');
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -18,7 +18,7 @@ export default function SlackChannelSelector() {
       setChannels(data);
       setLoading(false);
     }
-    load();
+    load()
   }, []);
 
   const handleSave = async () => {
