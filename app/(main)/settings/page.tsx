@@ -36,7 +36,6 @@ export default function SettingsPage() {
         </div>
 
         <div className="space-y-6">
-          {/* Notifications Section */}
           <Card>
             <CardHeader>
               <div className="flex items-center gap-2">
