@@ -15,10 +15,10 @@ const config = {
   footerDescription: 'Reddit Marketing Made Easy',
   //// to change logo, search "YourLogo.tsx" file
 
-  appUrl: 'https://leadlooking.com',
+  appUrl: 'https://www.leadlooking.com',
 
-  chromeWebStoreUrl: 'https://leadlooking.com',
-  firefoxStoreUrl: 'https://leadlooking.com',
+  chromeWebStoreUrl: 'https://www.leadlooking.com',
+  firefoxStoreUrl: 'https://www.leadlooking.com',
 
   extensionDemoVideo: '/',
 

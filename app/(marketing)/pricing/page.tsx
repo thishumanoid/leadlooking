@@ -1,9 +1,14 @@
-"use client"
 
-
+import type { Metadata } from 'next';
 import AnimationContainer from '@/components/global/animation-container';
 import MaxWidthWrapper from '@/components/global/MaxWidthWrapper';
 import PricingCards from '@/components/pricingCards';
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: 'https://www.leadlooking.com/',
+  }
+};
 
 const PricingPage = () => {
   return (

@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
-import config from '@/config';
 import { ClerkProvider } from '@clerk/nextjs';
 import { dark } from '@clerk/themes';
 import { Toaster } from 'sonner';
@@ -21,13 +20,13 @@ export const metadata: Metadata = {
 
   description: 'Find high-intent Reddit leads everyday. Track keywords, get instant notifications and join conversations where people need exactly what you offer.',
 
-  metadataBase: new URL(config.appUrl),
+  metadataBase: new URL('https://www.leadlooking.com/'),
   keywords: ['marketing', 'leads', 'reddit automation'],
 
   openGraph: {
     title: 'LeadLooking - Find Your Next Customer on Reddit',
     description: 'Find high-intent Reddit leads everyday. Track keywords, get instant notifications and join conversations where people need exactly what you offer.',
-    url: config.appUrl,
+    url: 'https://www.leadlooking.com/',
   },
 
   twitter: {
@@ -35,6 +34,10 @@ export const metadata: Metadata = {
     title: 'LeadLooking - Find Your Next Customer on Reddit',
     description: 'Find high-intent Reddit leads everyday. Track keywords, get instant notifications and join conversations where people need exactly what you offer.',
   },
+
+  alternates: {
+    canonical: 'https://www.leadlooking.com/',
+  }
 };
 
 export default function RootLayout({
