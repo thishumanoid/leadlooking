@@ -6,6 +6,18 @@ module.exports = {
   siteUrl: process.env.NEXT_PUBLIC_WEB_APP_URL,
   generateRobotsTxt: true,
   generateIndexSitemap: false,
+  exclude: [
+    '/dashboard',
+    '/campaigns',
+    '/campaigns/*',
+    '/checkout-success',
+    '/checkout-success/*',
+    '/feedback',
+    '/settings',
+    '/settings/*',
+    '/upgrade',
+    '/welcome'
+  ],
   robotsTxtOptions: {
     policies: [
       {

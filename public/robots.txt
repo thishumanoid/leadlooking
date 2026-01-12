@@ -3,7 +3,7 @@ User-agent: *
 Allow: /
 
 # Host
-Host: https://leadlooking.com
+Host: https://www.leadlooking.com
 
 # Sitemaps
-Sitemap: https://leadlooking.com/sitemap.xml
+Sitemap: https://www.leadlooking.com/sitemap.xml
