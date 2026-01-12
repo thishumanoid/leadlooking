@@ -103,7 +103,7 @@ function Hero() {
           <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
             <iframe
               className="absolute top-0 left-0 w-full h-full rounded-md lg:rounded-xl ring-1 ring-border"
-              src="https://www.youtube-nocookie.com/embed/CbekwOxjnJc?si=q-VV8TjlD4V7yLT-"
+              src="https://www.youtube.com/embed/2rkmmnwdjRA?si=txsEvEXrJ8JJIKVt"
               title="YouTube video player"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               referrerPolicy="strict-origin-when-cross-origin"
