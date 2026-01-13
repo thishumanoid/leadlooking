@@ -1,5 +1,6 @@
 import { Webhooks } from '@polar-sh/nextjs';
 import supabaseAdmin from '@/lib/supabase/supabaseAdmin';
+import { sendWelcomeEmail } from '@/worker/notifications/mailtrap';
 
 async function handleSubscriptionChange(payload: any) {
   console.log('payload recived: ', payload);
@@ -26,6 +27,10 @@ async function handleSubscriptionChange(payload: any) {
   }
 
   console.log(`✅Inserted/updated subscription`);
+
+  if (payload.data.status === 'active' || payload.data.status === 'trialing') {
+    await sendWelcomeEmail(payload.data.customer.email);
+  }
 }
 
 export const POST = Webhooks({

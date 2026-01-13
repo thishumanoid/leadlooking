@@ -32,14 +32,14 @@ export const LeadDigestEmail = ({
   keyword = 'example keyword',
   leads = [
     {
-      title: 'Need help with CRM',
+      title: '[Test] Need help with CRM',
       subreddit: 'marketing',
       url: 'https://reddit.com/r/marketing/...',
       leadScore: 85,
       content: 'I am looking for a CRM that can help me with...',
     },
     {
-      title: 'Best CRM for startups?',
+      title: '[Test] Best CRM for startups?',
       subreddit: 'startups',
       url: 'https://reddit.com/r/startups/...',
       leadScore: 75,
@@ -132,7 +132,7 @@ const formatTimeAgo = (date: Date | string) => {
 const main = {
   backgroundColor: '#f5f5f5',
   fontFamily: "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif",
-  padding: '40px 0',
+  padding: '24px 0',
 };
 
 const container = {
@@ -140,7 +140,7 @@ const container = {
   border: '1px solid #e5e5e5',
   borderRadius: '8px',
   margin: '0 auto',
-  padding: '40px',
+  padding: '24px',
   maxWidth: '600px',
 };
 
@@ -153,16 +153,16 @@ const h1 = {
 };
 
 const text = {
-  color: '#333',
+  color: '#334155',
   fontSize: '16px',
-  lineHeight: '1.5',
-  margin: '0 0 20px',
+  lineHeight: '1.7',
+  margin: '0 0 24px',
 };
 
 const keywordBox = {
-  backgroundColor: '#fef2f2',
-  borderLeft: '4px solid #dc2626',
-  borderRadius: '4px',
+  backgroundColor: '#f8fafc',
+  border: '1px solid #e2e8f0',
+  borderRadius: '8px',
   padding: '16px 20px',
   marginBottom: '32px',
 };
@@ -226,8 +226,8 @@ const link = {
 
 const leadContent = {
   fontSize: '14px',
-  color: '#555',
-  lineHeight: '1.5',
+  color: '#475569',
+  lineHeight: '1.6',
   margin: '0 0 16px',
 };
 
