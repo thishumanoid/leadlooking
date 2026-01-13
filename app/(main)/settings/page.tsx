@@ -75,13 +75,12 @@ export default function SettingsPage() {
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
                       <Label className="text-base font-medium">
-                        Slack Notifications (Highly Recommended){' '}
-                        {subscription?.slack_access_token?.trim() !== '' ? (
-                          <CircleCheck className="h-5 w-5 text-green-500 mt-0.5" />
-                        ) : (
-                          ''
-                        )}
+                        Slack Notifications (Highly Recommended)
                       </Label>
+                      {subscription?.slack_access_token &&
+                        subscription.slack_access_token.trim() !== '' && (
+                          <CircleCheck className="h-5 w-5 text-green-500" />
+                        )}
                     </div>
                     <p className="text-sm text-muted-foreground">
                       Get instant notifications in your Slack workspace, Most reliable.
