@@ -24,12 +24,12 @@ export default function CheckoutSuccess() {
 
   return (
     <>
-      <MaxWidthWrapper className="mt-15">
+      <MaxWidthWrapper className="mt-10">
         <div className="flex flex-col">
           <main className="flex flex-col items-center justify-center flex-grow text-center p-4 md:p-6">
             <BadgeCheck strokeWidth={1.5} className="h-14 w-14 text-primary" />
             <h1 className="mt-4 text-2xl font-semibold">Checkout Successful</h1>
-            <p className="mt-2 text-muted-foreground">Thank you for your purchase!</p>
+            <p className="mt-2 text-muted-foreground">You're now a Premium User!</p>
             <div className="mt-6 border border-border rounded-lg p-4 w-full max-w-md">
               <div className="flex justify-between text-sm mt-2">
                 <span>Date & Time:</span>
@@ -47,9 +47,6 @@ export default function CheckoutSuccess() {
             </div>
           </main>
         </div>
-        <br />
-        {/* <Separator /> */}
-        <br />
         <GuideAfterPayment />
       </MaxWidthWrapper>
     </>

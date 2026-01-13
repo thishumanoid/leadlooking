@@ -54,7 +54,7 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
     };
 
     fetchSubscription();
-  }, [user, isUserLoaded, supabase, isSupabaseLoaded]);
+  }, []);
 
   const isPremium =
     subscription?.subscription_status === 'active' ||

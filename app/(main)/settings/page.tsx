@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Bell, Mail, Slack, CreditCard, Check } from 'lucide-react';
+import { Bell, Mail, Slack, CreditCard, Check, CircleCheck } from 'lucide-react';
 import {
   Card,
   CardContent,
@@ -23,7 +23,7 @@ import { Separator } from '@/components/ui/separator';
 
 export default function SettingsPage() {
   const [emailNotifications, setEmailNotifications] = useState(true);
-  const { isPremium, isLoading } = useSubscription();
+  const { isPremium, isLoading, subscription } = useSubscription();
 
   return (
     <div className="min-h-screen bg-background">
@@ -31,9 +31,7 @@ export default function SettingsPage() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-2">Settings</h1>
-          <p className="text-muted-foreground">
-            Manage your notifications and subscription preferences
-          </p>
+          <p className="text-muted-foreground">Manage your notifications and subscription</p>
         </div>
 
         <div className="space-y-6">
@@ -41,11 +39,8 @@ export default function SettingsPage() {
             <CardHeader>
               <div className="flex items-center gap-2">
                 <Bell className="h-5 w-5 text-primary" />
-                <CardTitle>Notifications</CardTitle>
+                <CardTitle>Notifications (Premium Only)</CardTitle>
               </div>
-              <CardDescription>
-                Choose how you want to be notified when new leads are found
-              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               {/* Email Notifications */}
@@ -60,15 +55,16 @@ export default function SettingsPage() {
                       Email Notifications
                     </Label>
                     <p className="text-sm text-muted-foreground">
-                      Receive email alerts when leads matching your keywords are found
+                      Save "hello@leadlooking.com" in your contacts and Mark it as "Important" so
+                      you never miss a lead notification.
                     </p>
                   </div>
                 </div>
-                <Switch
+                {/* <Switch
                   id="email-notifications"
                   checked={emailNotifications}
                   onCheckedChange={setEmailNotifications}
-                />
+                /> */}
               </div>
               <Separator />
 
@@ -78,14 +74,21 @@ export default function SettingsPage() {
                   <Slack className="h-5 w-5 text-muted-foreground mt-0.5" />
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
-                      <Label className="text-base font-medium">Slack Notifications</Label>
+                      <Label className="text-base font-medium">
+                        Slack Notifications (Highly Recommended){' '}
+                        {subscription?.slack_access_token?.trim() !== '' ? (
+                          <CircleCheck className="h-5 w-5 text-green-500 mt-0.5" />
+                        ) : (
+                          ''
+                        )}
+                      </Label>
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      Get instant notifications in your Slack workspace
+                      Get instant notifications in your Slack workspace, Most reliable.
                     </p>
                   </div>
                 </div>
-              <ConnectSlackButton />
+                <ConnectSlackButton />
               </div>
               <SlackChannelSelector />
             </CardContent>

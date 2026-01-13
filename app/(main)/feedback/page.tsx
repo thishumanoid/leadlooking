@@ -1,7 +1,5 @@
 'use client';
 
-// docs: https://extfast-docs.hashnode.space/docs/emails/resend-email-setup
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -53,11 +51,11 @@ export default function ContactForm() {
         <div className="w-full max-w-2xl mx-auto space-y-8">
           {/* Header Section */}
           <div className="space-y-3 text-center">
-            <h2 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-              Send Us Your Feedback
+            <h2 className="text-4xl font-bold">
+              Any Feedback?
             </h2>
             <p className="text-muted-foreground text-lg">
-              We'd love to hear from you! Share your thoughts, suggestions, or report any issues.
+              Share your thoughts, suggestions, or report any issues.
             </p>
           </div>
 
@@ -147,7 +145,7 @@ export default function ContactForm() {
                 <h3 className="text-lg font-semibold">Prefer Email?</h3>
               </div>
               <p className="text-sm text-muted-foreground">
-                If the form isn't working, you can reach us directly at:
+                If the form isn't working, you main me directly at:
               </p>
               <a
                 href="mailto:neuhiman@gmail.com"
