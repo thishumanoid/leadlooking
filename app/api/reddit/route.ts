@@ -1,4 +1,3 @@
-
 // import { analysePost } from '@/worker/ai/analysePost';
 import runReddit from '@/worker/redditScrapper';
 import { exampleKeywordGenerator } from '@/worker/ai/generateKeywords';
@@ -16,27 +15,35 @@ import {
 // import { wait } from '@trigger.dev/sdk';
 
 export async function POST(request: Request) {
-  const websiteUrl = "https://www.lowcontent.ai/?ref=trustmrr"
-
-  console.log(websiteUrl);
+  const websiteUrl = 'https://faceless.so/?ref=trustmrr';
 
   const metadata = await scrapeMetadata(websiteUrl);
-  const filter = new RedditLeadFilter(metadata?.description || '');
+  console.log('metadata', metadata);
 
-  const keywords = await exampleKeywordGenerator(metadata?.description || '');
+  if (metadata?.description) {
+  console.log('running dynamic')
+    const keywords = await exampleKeywordGenerator(metadata?.description || '');
+    console.log(keywords);
+    return new Response();
+  }
+
+  const staticMetadata = {
+    description:
+      'Userbase is the easiest way to add user accounts and data persistence to your static site. All Userbase features are accessible through a very simple JavaScript SDK, directly from the browser. No backend necessary.',
+  };
+  console.log('running static');
+  const keywords = await exampleKeywordGenerator(staticMetadata?.description || '');
   console.log(keywords);
 
+  // const filter = new RedditLeadFilter(metadata?.description || '');
   // let finalPosts = [];
 
   // for (const keyword of keywords!) {
   //   const filteredPosts = await scanRedditForKeyword(keyword, filter);
   //   finalPosts.push(...filteredPosts);
   // }
-
-  return new Response(JSON.stringify(keywords));
+  return new Response();
 }
-
-
 
 async function scanRedditForKeyword(keyword: string, filter: RedditLeadFilter) {
   const posts = [];

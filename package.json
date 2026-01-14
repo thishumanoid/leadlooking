@@ -72,6 +72,7 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev",
+    "d": "next dev",
     "lint": "eslint",
     "postbuild": "next-sitemap",
     "start": "next start",

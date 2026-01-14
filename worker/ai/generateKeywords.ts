@@ -20,8 +20,8 @@ You must generate search strings based on these three intent levels:
 1. You MUST use Reddit Boolean operators: AND, OR, NOT, ( ).
 2. You MUST use quotes "" for exact phrases (e.g., "best CRM").
 3. You MUST combine "Intent Phrases" with "Niche Keywords" using parentheses.
-4. Aim for 2-5 terms per keyword.
-
+4. A maximum of four terms per keyword is allowed.
+5. CHARACTER LIMIT: Each search string MUST be under 125 characters total (including spaces and operators). If a string is too long, remove the least important synonyms to fit the limit.
 
 ### EXAMPLES
 Input: "Emailify is a tool that automates cold emails for agencies."
@@ -31,9 +31,7 @@ Output:
 3. ("how to" OR "help with") AND ("automate cold emails" OR "scale outreach")
 4. ("alternative to" OR "better than") AND ("lemlist" OR "instantly")
 5. ("tired of" OR "hate") AND ("manual emailing" OR "copy pasting emails")
-
-### OUTPUT FORMAT
-Return exactly 5 search strings.`;
+`;
 
 const generateUserPrompt = (productDescription: string) => `Here is the product description I need leads for:
 
