@@ -49,3 +49,4 @@ next-env.d.ts
 .vercel
 
 .trigger
+app/api/reddit/route.ts

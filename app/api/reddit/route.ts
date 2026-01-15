@@ -14,36 +14,108 @@ import {
 } from '@/worker/filters';
 // import { wait } from '@trigger.dev/sdk';
 
+const baseUrl = 'http://localhost:3001';
+
 export async function POST(request: Request) {
-  const websiteUrl = 'https://faceless.so/?ref=trustmrr';
+  const websiteUrl = 'https://pika.style/?ref=trustmrr';
 
-  const metadata = await scrapeMetadata(websiteUrl);
-  console.log('metadata', metadata);
+  try {
+    const metadata = await scrapeMetadata(websiteUrl);
+    console.log('metadata', metadata);
 
-  if (metadata?.description) {
-  console.log('running dynamic')
-    const keywords = await exampleKeywordGenerator(metadata?.description || '');
-    console.log(keywords);
-    return new Response();
+    if (metadata?.description.trim() !== '') {
+      console.log('running dynamic');
+      const keywords = await exampleKeywordGenerator(metadata?.description || '');
+      console.log(keywords);
+      return new Response();
+    }
+  } catch (error) {
+    const staticMetadata = {
+      description: `
+      HVAC Design, Streamlined
+Engineering teams use HVAKR to develop mechanical designs under budget and ahead of schedule.
+
+
+      `,
+    };
+    console.log('running static');
+    // const keywords = await exampleKeywordGenerator(staticMetadata?.description || '');
+    // console.log(keywords);
   }
-
-  const staticMetadata = {
-    description:
-      'Userbase is the easiest way to add user accounts and data persistence to your static site. All Userbase features are accessible through a very simple JavaScript SDK, directly from the browser. No backend necessary.',
-  };
-  console.log('running static');
-  const keywords = await exampleKeywordGenerator(staticMetadata?.description || '');
-  console.log(keywords);
-
-  // const filter = new RedditLeadFilter(metadata?.description || '');
-  // let finalPosts = [];
-
-  // for (const keyword of keywords!) {
-  //   const filteredPosts = await scanRedditForKeyword(keyword, filter);
-  //   finalPosts.push(...filteredPosts);
-  // }
   return new Response();
 }
+
+
+
+
+export async function scrapeMetadata(url: string): Promise<
+  | {
+      name: string;
+      description: string;
+      image?: string;
+    }
+  | undefined
+> {
+  try {
+    const normalizeUrl = (url: string): string | null => {
+      const trimmed = url.trim();
+      if (!trimmed) return null;
+      let normalized = trimmed;
+      if (!/^https?:\/\//i.test(normalized)) {
+        normalized = 'https://' + normalized;
+      }
+      try {
+        new URL(normalized);
+        return normalized;
+      } catch {
+        return null;
+      }
+    };
+
+    const finalUrl = normalizeUrl(url);
+
+    if (!finalUrl) {
+      return;
+    }
+
+    const response = await fetch(`${baseUrl}/api/campaign/scrape-metatags`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ url: finalUrl }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to scrape metadata');
+    }
+
+    const data = await response.json();
+    console.log(`✓ Fetched metadata from ${finalUrl}`);
+
+    return data;
+  } catch (error) {
+    console.error(`Failed to fetch metadata for ${url}:`, error);
+    throw new Error('Could not fetch website metadata. Please enter details manually.');
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 async function scanRedditForKeyword(keyword: string, filter: RedditLeadFilter) {
   const posts = [];
@@ -129,58 +201,4 @@ async function scanRedditForKeyword(keyword: string, filter: RedditLeadFilter) {
   );
 
   return potentialPosts;
-}
-
-export async function scrapeMetadata(url: string): Promise<
-  | {
-      name: string;
-      description: string;
-      image?: string;
-    }
-  | undefined
-> {
-  try {
-    const normalizeUrl = (url: string): string | null => {
-      const trimmed = url.trim();
-      if (!trimmed) return null;
-      let normalized = trimmed;
-      if (!/^https?:\/\//i.test(normalized)) {
-        normalized = 'https://' + normalized;
-      }
-      try {
-        new URL(normalized);
-        return normalized;
-      } catch {
-        return null;
-      }
-    };
-
-    const finalUrl = normalizeUrl(url);
-
-    if (!finalUrl) {
-      return;
-    }
-
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-    const response = await fetch(`${baseUrl}/api/campaign/scrape-metatags`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ url: finalUrl }),
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || 'Failed to scrape metadata');
-    }
-
-    const data = await response.json();
-    console.log(`✓ Fetched metadata from ${finalUrl}`);
-
-    return data;
-  } catch (error) {
-    console.error(`Failed to fetch metadata for ${url}:`, error);
-    throw new Error('Could not fetch website metadata. Please enter details manually.');
-  }
 }
