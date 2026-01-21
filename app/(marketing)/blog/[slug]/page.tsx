@@ -8,6 +8,7 @@ import rehypePrettyCode from 'rehype-pretty-code';
 import { LeadLookingAd } from '@/components/LeadLookingAd';
 import { LeadLookingBottomAd } from '@/components/LeadLookingBottomAd';
 import { LeadLookingPopup } from '@/components/LeadLookingPopup';
+import { LeadLookingStickyBanner } from '@/components/LeadLookingStickyBanner';
 import CtaCard from '@/components/CTA';
 
 export async function generateStaticParams() {
@@ -72,6 +73,7 @@ export default async function BlogPost({ params }: Props) {
 
   return (
     <div className="min-h-screen">
+      <LeadLookingStickyBanner />
       <div className="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8 bg-background">
         <LeadLookingPopup />
         {/* Header */}

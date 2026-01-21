@@ -11,7 +11,7 @@ const MarketingLayout = ({ children }: Props) => {
     <>
       <div id="home" className="absolute" />
       <Navbar />
-      <main className="mx-auto w-full z-0 relative">{children}</main>
+      <main className="mx-auto w-full">{children}</main>
       <Footer />
     </>
   );
