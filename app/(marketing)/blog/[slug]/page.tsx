@@ -7,14 +7,13 @@ import { notFound } from 'next/navigation';
 import rehypePrettyCode from 'rehype-pretty-code';
 import { LeadLookingAd } from '@/components/LeadLookingAd';
 
-
 export async function generateStaticParams() {
   const blogsDir = path.join(process.cwd(), 'content', 'blogs');
   const files = fs.readdirSync(blogsDir);
-  
+
   return files
-    .filter(file => file.endsWith('.mdx'))
-    .map(file => ({
+    .filter((file) => file.endsWith('.mdx'))
+    .map((file) => ({
       slug: file.replace('.mdx', ''),
     }));
 }
@@ -22,21 +21,19 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
   const filePath = path.join(process.cwd(), 'content', 'blogs', `${slug}.mdx`);
-  
+
   if (!fs.existsSync(filePath)) {
     return {};
   }
-  
+
   const fileContent = fs.readFileSync(filePath, 'utf8');
   const { data } = matter(fileContent);
-  
+
   return {
     title: data.title,
     description: data.description || '',
   };
 }
-
-
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -70,36 +67,34 @@ export default async function BlogPost({ params }: Props) {
 
   return (
     <div className="min-h-screen">
-      <div className="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8 bg-white dark:bg-transparent">
+      <div className="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8 bg-background">
         {/* Header */}
-        <header className="mb-10 pb-8 border-b border-gray-200 dark:border-gray-800">
-          <h1 className="text-5xl font-bold mb-4 text-gray-900 dark:text-white leading-tight">
-            {data.title}
-          </h1>
-          <time className="text-sm text-gray-600 dark:text-gray-400">
-            {formattedDate}
-          </time>
+        <header className="mb-10 pb-8 border-b border-border">
+          <h1 className="text-5xl font-bold mb-4 text-foreground leading-tight">{data.title}</h1>
+          <time className="text-sm text-muted-foreground">{formattedDate}</time>
         </header>
 
         {/* Content */}
-        <article className="prose prose-lg dark:prose-invert max-w-none
+        <article
+          className="prose prose-lg dark:prose-invert max-w-none
           prose-headings:font-bold 
           prose-h1:text-4xl 
           prose-h2:text-3xl 
           prose-h3:text-2xl
-          prose-p:text-gray-700 dark:prose-p:text-gray-300
-          prose-a:text-blue-600 dark:prose-a:text-blue-400
-          prose-strong:text-gray-900 dark:prose-strong:text-gray-100
-          prose-code:text-pink-600 dark:prose-code:text-pink-400
-          prose-code:bg-gray-100 dark:prose-code:bg-gray-800
+          prose-p:text-foreground/80
+          prose-a:text-primary
+          prose-strong:text-foreground
+          prose-code:text-primary
+          prose-code:bg-muted
           prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded
           prose-code:before:content-none prose-code:after:content-none
-          prose-pre:bg-gray-950 prose-pre:border prose-pre:border-gray-800
+          prose-pre:bg-card prose-pre:border prose-pre:border-border
           prose-img:rounded-lg
-          prose-blockquote:border-l-blue-500
-          prose-li:marker:text-blue-600 dark:prose-li:marker:text-blue-400
-        ">
-          <MDXRemote 
+          prose-blockquote:border-l-primary
+          prose-li:marker:text-primary
+        "
+        >
+          <MDXRemote
             source={content}
             components={components}
             options={{

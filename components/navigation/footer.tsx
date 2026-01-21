@@ -115,6 +115,14 @@ const Footer = () => {
                         Feedback?
                       </Link>
                     </li>
+                    <li className="mt-2">
+                      <Link
+                        href="/blog"
+                        className="hover:text-foreground transition-all duration-300"
+                      >
+                        Blogs
+                      </Link>
+                    </li>
                   </ul>
                 </div>
               </AnimationContainer>
