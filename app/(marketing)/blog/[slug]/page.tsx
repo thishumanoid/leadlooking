@@ -6,6 +6,9 @@ import { MDXRemote } from 'next-mdx-remote/rsc';
 import { notFound } from 'next/navigation';
 import rehypePrettyCode from 'rehype-pretty-code';
 import { LeadLookingAd } from '@/components/LeadLookingAd';
+import { LeadLookingBottomAd } from '@/components/LeadLookingBottomAd';
+import { LeadLookingPopup } from '@/components/LeadLookingPopup';
+import CtaCard from '@/components/CTA';
 
 export async function generateStaticParams() {
   const blogsDir = path.join(process.cwd(), 'content', 'blogs');
@@ -42,6 +45,8 @@ type Props = {
 // Make the ad component available in MDX
 const components = {
   LeadLookingAd,
+  LeadLookingBottomAd,
+  CtaCard,
 };
 
 export default async function BlogPost({ params }: Props) {
@@ -68,6 +73,7 @@ export default async function BlogPost({ params }: Props) {
   return (
     <div className="min-h-screen">
       <div className="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8 bg-background">
+        <LeadLookingPopup />
         {/* Header */}
         <header className="mb-10 pb-8 border-b border-border">
           <h1 className="text-5xl font-bold mb-4 text-foreground leading-tight">{data.title}</h1>

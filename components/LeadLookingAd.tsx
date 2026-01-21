@@ -1,52 +1,35 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+'use client';
+
 import { Button } from '@/components/ui/button';
-import { Sparkles, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
+import Link from 'next/link';
+import { FaReddit } from 'react-icons/fa';
+import RedditIcon from './global/RedditIcon';
 
 export function LeadLookingAd() {
   return (
-    <Card className="my-8 border-2 border-blue-500/20 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20">
-      <CardHeader>
-        <div className="flex items-center gap-2 mb-2">
-          <Sparkles className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-          <span className="text-xs font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wide">
-            Sponsored
-          </span>
+    <div className="my-10 not-prose">
+      <div className="flex flex-col md:flex-row items-center justify-between gap-6 p-6 rounded-xl border border-border bg-card/50 hover:bg-card transition-colors duration-200">
+        <div className="flex items-center gap-5">
+          <div className="flex-shrink-0 w-12 h-12 flex items-center justify-center rounded-lg bg-red-500/10 text-red-500">
+            <RedditIcon />
+          </div>
+          <div className="space-y-1">
+            <h4 className="text-xl font-bold text-foreground">Find your next customer on Reddit</h4>
+            <p className="text-muted-foreground text-sm max-w-md">
+              LeadLooking tracks Reddit on autopilot and notifies you the second someone needs your
+              solution.
+            </p>
+          </div>
         </div>
-        <CardTitle className="text-2xl">
-          🎯 Find High-Intent Leads on Reddit Automatically
-        </CardTitle>
-        <CardDescription className="text-base mt-2">
-          Stop wasting hours searching Reddit manually. LeadLooking finds your ideal clients while
-          you focus on closing deals.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <ul className="space-y-2 mb-6">
-          <li className="flex items-start gap-2">
-            <span className="text-blue-600 dark:text-blue-400 mt-1">✓</span>
-            <span className="text-sm">Automated lead discovery across all subreddits</span>
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="text-blue-600 dark:text-blue-400 mt-1">✓</span>
-            <span className="text-sm">Real-time notifications for high-intent prospects</span>
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="text-blue-600 dark:text-blue-400 mt-1">✓</span>
-            <span className="text-sm">Save 10+ hours per week on lead generation</span>
-          </li>
-        </ul>
-        <div className="flex gap-3">
-          <a href="https://yoursite.com/signup" target="_blank" rel="noopener noreferrer">
-            <Button className="flex-1 bg-blue-600 hover:bg-blue-700">
-              Start Free Trial
-              <ArrowRight className="ml-2 w-4 h-4" />
-            </Button>
-          </a>
-          <a href="https://yoursite.com" target="_blank" rel="noopener noreferrer">
-            <Button variant="outline">Learn More</Button>
-          </a>
-        </div>
-      </CardContent>
-    </Card>
+
+        <Link href="/sign-up" className="w-full md:w-auto">
+          <Button className="w-full md:w-auto px-8 h-11 bg-primary text-primary-foreground font-bold rounded-lg hover:opacity-90 transition-opacity">
+            Try LeadLooking
+            <ArrowRight className="ml-2 h-4 w-4" />
+          </Button>
+        </Link>
+      </div>
+    </div>
   );
 }
