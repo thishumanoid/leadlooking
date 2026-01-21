@@ -85,7 +85,8 @@
     "trigger:deploy": "pnpm dlx trigger.dev@latest deploy",
     "trigger:dev": "pnpm dlx trigger.dev@latest dev",
     "email": "email dev",
-    "ngrok": "ngrok http 3000"
+    "ngrok": "ngrok http 3000",
+    "generate-blog": "npx tsx scripts/generate-blog.ts"
   },
   "version": "0.1.0"
 }

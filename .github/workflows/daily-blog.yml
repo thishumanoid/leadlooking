@@ -21,7 +21,7 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 9 # You can change this to match your local pnpm version
+          version: 10
 
       # 2. Setup Node (with pnpm caching enabled)
       - name: Setup Node
@@ -45,4 +45,4 @@ jobs:
         with:
           commit_message: "🤖 AI: Published new blog post"
           branch: main
-          file_pattern: 'content/blogs/*.mdx'
+          file_pattern: 'content/blogs/*.mdx blog-cache.json'
