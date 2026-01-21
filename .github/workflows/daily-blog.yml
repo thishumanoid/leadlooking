@@ -17,18 +17,28 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
 
+      # 1. Install pnpm environment
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9 # You can change this to match your local pnpm version
+
+      # 2. Setup Node (with pnpm caching enabled)
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: 'pnpm'
 
+      # 3. Install dependencies using pnpm
       - name: Install Dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Generate Blog Post
         env:
           GOOGLE_GENERATIVE_AI_API_KEY: ${{ secrets.GOOGLE_GENERATIVE_AI_API_KEY }}
-        run: npx tsx scripts/generate-blog.ts
+        # 4. Use pnpm to run the script (assuming tsx is in your devDependencies)
+        run: pnpm dlx tsx scripts/generate-blog.ts
 
       - name: Commit and Push
         uses: stefanzweifel/git-auto-commit-action@v5
