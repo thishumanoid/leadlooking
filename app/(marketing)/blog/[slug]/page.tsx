@@ -120,6 +120,7 @@ export default async function BlogPost({ params }: Props) {
             }}
           />
         </article>
+        <LeadLookingBottomAd />
       </div>
     </div>
   );
