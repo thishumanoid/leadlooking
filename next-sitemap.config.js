@@ -1,6 +1,16 @@
 /** @type {import('next-sitemap').IConfig} */
 
-/// replace this below example.com url with your real web app url
+const fs = require('fs');
+const path = require('path');
+
+function getBlogSlugs() {
+  const blogsDir = path.join(process.cwd(), 'content', 'blogs');
+  const files = fs.readdirSync(blogsDir);
+
+  return files
+    .filter((file) => file.endsWith('.mdx'))
+    .map((file) => `/blog/${file.replace('.mdx', '')}`);
+}
 
 module.exports = {
   siteUrl: process.env.NEXT_PUBLIC_WEB_APP_URL,
@@ -16,8 +26,18 @@ module.exports = {
     '/settings',
     '/settings/*',
     '/upgrade',
-    '/welcome'
+    '/welcome',
   ],
+  additionalPaths: async (config) => {
+    const blogPaths = getBlogSlugs();
+
+    return blogPaths.map((path) => ({
+      loc: path,
+      changefreq: 'weekly',
+      priority: 0.7,
+      lastmod: new Date().toISOString(),
+    }));
+  },
   robotsTxtOptions: {
     policies: [
       {

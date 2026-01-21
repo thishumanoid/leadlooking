@@ -1,7 +1,7 @@
 import type { Config } from 'tailwindcss';
 
 const config: Config = {
-  content: ['./app/**/*.{js,ts,jsx,tsx,mdx}', './components/**/*.{js,ts,jsx,tsx,mdx}'],
+  content: ['./app/**/*.{js,ts,jsx,tsx,mdx}', './components/**/*.{js,ts,jsx,tsx,mdx}', './content/**/*.mdx'],
   theme: {
     extend: {
       colors: {
@@ -48,10 +48,10 @@ const config: Config = {
           '50%': { transform: 'translateY(-5px)' },
         },
         'subtle-float': {
-          '0%, 100%': { 
+          '0%, 100%': {
             transform: 'translateY(0px) rotate(12deg)',
           },
-          '50%': { 
+          '50%': {
             transform: 'translateY(-8px) rotate(12deg)',
           },
         },
@@ -62,7 +62,7 @@ const config: Config = {
       },
     },
   },
-  plugins: [],
+  plugins: [require('@tailwindcss/typography')],
 };
 
 export default config;

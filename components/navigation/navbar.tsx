@@ -120,7 +120,7 @@ const Navbar = () => {
                 </Link>
               ) : (
                 <Link href="/sign-up" className={buttonVariants({ size: 'sm' })}>
-                  Sign Up
+                  Find Reddit Customers
                   <ArrowRight className="size-4 ml-1.5" />
                 </Link>
               )}
