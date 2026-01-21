@@ -1,9 +1,0 @@
-# *
-User-agent: *
-Allow: /
-
-# Host
-Host: https://www.leadlooking.com
-
-# Sitemaps
-Sitemap: https://www.leadlooking.com/sitemap.xml

@@ -81,7 +81,6 @@
     "dev": "next dev",
     "d": "next dev",
     "lint": "eslint",
-    "postbuild": "next-sitemap",
     "start": "next start",
     "trigger": "pnpm dlx trigger.dev@latest dev",
     "trigger:deploy": "pnpm dlx trigger.dev@latest deploy",
