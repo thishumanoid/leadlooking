@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -10,8 +11,10 @@ import RedditIcon from './global/RedditIcon';
 
 export function LeadLookingPopup() {
   const [isOpen, setIsOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     // Show popup after 5 seconds
     const timer = setTimeout(() => {
       const hasSeenPopup = sessionStorage.getItem('hasSeenPopup');
@@ -28,7 +31,9 @@ export function LeadLookingPopup() {
     sessionStorage.setItem('hasSeenPopup', 'true');
   };
 
-  return (
+  if (!mounted) return null;
+
+  return createPortal(
     <AnimatePresence>
       {isOpen && (
         <>
@@ -130,12 +135,12 @@ export function LeadLookingPopup() {
                     </Button>
                   </Link>
                 </div>
-
               </div>
             </motion.div>
           </div>
         </>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   );
 }
