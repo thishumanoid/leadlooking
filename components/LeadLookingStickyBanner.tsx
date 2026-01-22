@@ -33,22 +33,22 @@ export function LeadLookingStickyBanner() {
           transition={{ duration: 0.2, ease: 'easeOut' }}
           className="fixed top-0 left-0 right-0 z-[100001] bg-[#0E101A] border-b border-white/10 shadow-2xl"
         >
-          <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-center gap-6">
-            <div className="flex items-center gap-3">
-              <div className="hidden sm:flex w-7 h-7 rounded-sm bg-[#FC4503] items-center justify-center text-white scale-90">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 min-h-[56px] py-2 flex items-center justify-center gap-3 sm:gap-6">
+            <div className="flex items-center gap-2 sm:gap-3 shrink">
+              <div className="hidden sm:flex w-7 h-7 rounded-sm bg-[#FC4503] items-center justify-center text-white scale-90 shrink-0">
                 <RedditIcon />
               </div>
-              <p className="text-white font-bold text-sm sm:text-[15px] tracking-tight whitespace-nowrap">
+              <p className="text-white font-bold text-xs sm:text-[15px] tracking-tight leading-tight sm:leading-normal text-center sm:text-left">
                 Find high-intent customers on Reddit.
               </p>
             </div>
 
-            <Link href="/sign-up">
+            <Link href="/sign-up" className="shrink-0">
               <Button
                 size="sm"
-                className="h-8 px-4 bg-primary font-bold rounded-sm text-[13px] transition-all"
+                className="h-8 px-3 sm:px-4 bg-primary font-bold rounded-sm text-xs sm:text-[13px] transition-all whitespace-nowrap"
               >
-                {"Find Customers ->"}
+                {'Find Customers ->'}
               </Button>
             </Link>
           </div>

@@ -26,7 +26,7 @@ export const BlogPostSchema = z.object({
   markdownContent: z
     .string()
     .describe(
-      'The full blog post content in Markdown format. formatted with proper H2, H3 headings, bold text, lists, and links. Do NOT include the frontmatter here, just the body.',
+      'The full blog post content in Markdown format. formatted with proper H2, H3 headings, bold text, lists, and links.',
     ),
 });
 
@@ -34,7 +34,7 @@ export function getTitleGenerationPrompts(existingTitles: string[] = []) {
   const system = `You are an expert SEO researcher and content strategist specializing in SaaS marketing. Your job is to identify high-potential, low-competition blog topics that will drive organic traffic and attract potential customers.
 
 **Your Goal:**
-Analyze current search trends and LeadLooking's value proposition to generate ONE high-potential blog topic.
+Analyze current search trends to generate ONE high-potential blog topic.
 
 **LeadLooking Context:**
 - Automates Reddit monitoring for specific keywords.
@@ -43,7 +43,6 @@ Analyze current search trends and LeadLooking's value proposition to generate ON
 
 **Title Criteria:**
 - Keyword volume: 500-5000/mo.
-- "How to", "Guide", "Best vs", "Strategies" type titles.
 - MUST be actionable and solve a real pain point.
 - Low to Medium competition.
 
@@ -68,7 +67,6 @@ export function getContentGenerationPrompts(brief: z.infer<typeof BlogBriefSchem
 - **LeadLooking Integration:** Mention LeadLooking ONLY in the conclusion as a helpful tool.
 
 **Output Requirements:**
-- You MUST return a valid JSON object matching the schema.
 - The 'markdownContent' field must contain the ENTIRE body of the post (Introduction, H2s, Conclusion, etc.).
 - Do NOT include the frontmatter in the 'markdownContent'; it will be added programmatically.
 `;
@@ -86,7 +84,7 @@ ${brief.keySections.map((s) => `- ${s}`).join('\n')}
 
 **Integration Plan:** ${brief.leadLookingIntegration}
 
-Make it 1800-2500 words. Comprehensive and detailed.`;
+Make it 1500-2000 words. Comprehensive and detailed.`;
 
   return { system, user };
 }

@@ -3,7 +3,7 @@ import 'dotenv/config';
 import fs from 'fs';
 import path from 'path';
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
-import { generateObject } from 'ai';
+import { generateText, Output } from 'ai';
 import slugify from 'slugify';
 import {
   getTitleGenerationPrompts,
@@ -48,9 +48,11 @@ async function main() {
   const titlePrompts = getTitleGenerationPrompts(cache.generatedTitles);
 
   console.log('🤔 Generating Topic Brief...');
-  const { object: topicBrief } = await generateObject({
-    model: google('gemini-2.5-flash'),
-    schema: BlogBriefSchema,
+  const { output: topicBrief } = await generateText({
+    model: google('gemini-3-flash-preview'),
+    output: Output.object({
+      schema: BlogBriefSchema,
+    }),
     prompt: titlePrompts.user,
     system: titlePrompts.system,
   });
@@ -66,13 +68,17 @@ async function main() {
   // 3. Generate the Content with structured output
   const contentPrompts = getContentGenerationPrompts(topicBrief);
 
-  console.log('✍️ Writing Blog Post...');
-  const { object: blogPost } = await generateObject({
-    model: google('gemini-2.5-flash'),
-    schema: BlogPostSchema,
+  console.log('✍️ Writing Blog Post with systme prompt: ', contentPrompts.system);
+  const { output: blogPost } = await generateText({
+    model: google('gemini-3-flash-preview'),
+    output: Output.object({
+      schema: BlogPostSchema,
+    }),
     prompt: contentPrompts.user,
     system: contentPrompts.system,
   });
+
+  console.log('AI blog output: ', blogPost);
 
   // 4. Construct the Final File Content
   let description = blogPost.description;
