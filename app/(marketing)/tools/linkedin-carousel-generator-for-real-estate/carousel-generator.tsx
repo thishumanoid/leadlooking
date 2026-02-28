@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useRef, useCallback } from 'react';
-import { Button } from '../ui/button';
 import { jsPDF } from 'jspdf';
+import { Button } from '@/components/ui/button';
 import { toPng } from 'html-to-image';
 
 const PALETTES = [
@@ -306,7 +306,7 @@ function AuthorBar({ branding, palette }) {
           style={{
             width: 38,
             height: 38,
-            borderRadius: '50%',
+            borderRadius: 100,
             overflow: 'hidden',
             flexShrink: 0,
             border: '2px solid rgba(255,255,255,0.3)',
@@ -320,7 +320,7 @@ function AuthorBar({ branding, palette }) {
             <img
               src={photo}
               alt="author"
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 100 }}
             />
           ) : (
             <span style={{ fontSize: '0.75rem', fontWeight: 700, color: palette.text }}>
@@ -714,11 +714,7 @@ function BrandingPanel({ branding, onChange }) {
           <div className="flex items-center gap-3">
             <div className="w-[58px] h-[58px] rounded-full overflow-hidden shrink-0 border-2 border-border bg-muted flex items-center justify-center">
               {branding.photo ? (
-                <img
-                  src={branding.photo}
-                  alt="headshot"
-                  className="w-full h-full object-cover"
-                />
+                <img src={branding.photo} alt="headshot" className="w-full h-full object-cover" />
               ) : (
                 <span className="text-2xl leading-none">😄</span>
               )}
@@ -787,7 +783,6 @@ function BrandingPanel({ branding, onChange }) {
   );
 }
 
-
 // ── PalettePicker ─────────────────────────────────────────────────────────────
 
 function PalettePicker({ selected, onSelect }) {
@@ -814,19 +809,11 @@ function PalettePicker({ selected, onSelect }) {
               style={{
                 outline: active ? `2.5px solid ${p.accent}` : '2.5px solid transparent',
                 transform: active ? 'scale(1.1)' : 'scale(1)',
-                boxShadow: active
-                  ? `0 0 0 3px ${p.accent}25`
-                  : '0 1px 3px rgba(0,0,0,0.12)',
+                boxShadow: active ? `0 0 0 3px ${p.accent}25` : '0 1px 3px rgba(0,0,0,0.12)',
               }}
             >
-              <span
-                className="absolute inset-0 right-1/2"
-                style={{ backgroundColor: p.bg }}
-              />
-              <span
-                className="absolute inset-0 left-1/2"
-                style={{ backgroundColor: p.accent }}
-              />
+              <span className="absolute inset-0 right-1/2" style={{ backgroundColor: p.bg }} />
+              <span className="absolute inset-0 left-1/2" style={{ backgroundColor: p.accent }} />
               {active && (
                 <span
                   className="absolute inset-0 flex items-center justify-center text-xs font-bold"
@@ -850,7 +837,7 @@ function PalettePicker({ selected, onSelect }) {
 
 export default function LinkedInCarouselGenerator() {
   const [slides, setSlides] = useState(DEFAULT_SLIDES);
-  const [palette, setPalette] = useState(PALETTES[10]);
+  const [palette, setPalette] = useState(PALETTES[6]);
   const [branding, setBranding] = useState(DEFAULT_BRANDING);
   const [downloading, setDownloading] = useState(false);
   const scrollRef = useRef(null);

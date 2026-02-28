@@ -12,7 +12,6 @@ const Footer = () => {
       <footer className="flex flex-col relative items-center justify-center border-t border-border pt-16 pb-8 md:pb-0 px-6 lg:px-8 w-full max-w-6xl mx-auto lg:pt-32">
 
         <div className="grid gap-8 xl:grid-cols-3 xl:gap-8 w-full">
-          <AnimationContainer delay={0.1}>
             <div className="flex flex-col items-start justify-start md:max-w-[200px]">
               <div className="flex items-start">
                 <Link href="/">
@@ -23,11 +22,9 @@ const Footer = () => {
                 {config.footerDescription ?? ''}
               </p>
             </div>
-          </AnimationContainer>
 
           <div className="grid-cols-2 gap-8 grid mt-16 xl:col-span-2 xl:mt-0">
             <div className="md:grid md:grid-cols-2 md:gap-8">
-              <AnimationContainer delay={0.2}>
                 <div className="">
                   <h3 className="text-base font-medium text-white">Product</h3>
                   <ul className="mt-4 text-sm text-muted-foreground">
@@ -64,7 +61,6 @@ const Footer = () => {
                   </li> */}
                   </ul>
                 </div>
-              </AnimationContainer>
               {/* <AnimationContainer delay={0.3}>
               <div className="mt-10 md:mt-0 flex flex-col">
                 <h3 className="text-base font-medium text-white">Integrations</h3>
@@ -94,7 +90,6 @@ const Footer = () => {
             </AnimationContainer> */}
             </div>
             <div className="md:grid md:grid-cols-2 md:gap-8">
-              <AnimationContainer delay={0.4}>
                 <div className="">
                   <h3 className="text-base font-medium text-white">Resources</h3>
                   <ul className="mt-4 text-sm text-muted-foreground">
@@ -116,6 +111,14 @@ const Footer = () => {
                     </li>
                     <li className="mt-2">
                       <Link
+                        href="/tools"
+                        className="hover:text-foreground transition-all duration-300"
+                      >
+                        Free Tools
+                      </Link>
+                    </li>
+                    <li className="mt-2">
+                      <Link
                         href="/blog"
                         className="hover:text-foreground transition-all duration-300"
                       >
@@ -124,7 +127,6 @@ const Footer = () => {
                     </li>
                   </ul>
                 </div>
-              </AnimationContainer>
               <AnimationContainer delay={0.5}>
                 <div className="flex flex-col">
                   <h3 className="text-base font-medium text-white">Legal</h3>
