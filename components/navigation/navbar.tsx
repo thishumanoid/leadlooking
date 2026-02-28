@@ -20,116 +20,103 @@ import MobileNavbar from './mobile-navbar';
 import AnimationContainer from '../global/animation-container';
 import { usePathname } from 'next/navigation';
 import Logo from '../global/YourLogo';
-import { useUser } from '@clerk/nextjs'
+import config from '@/config';
+import { FaChrome } from 'react-icons/fa6';
 
 const Navbar = () => {
-  const { isSignedIn } = useUser()
   const pathname = usePathname();
   const isAuthPage = pathname.includes('auth');
 
   return (
     <header className="sticky top-0 inset-x-0 h-14 w-full border-background/80 bg-background/80 z-[99999]">
-      <AnimationContainer reverse delay={0.1} className="size-full">
-        <MaxWidthWrapper className="flex items-center justify-between">
-          {/* Logo Section */}
-          <div className="flex items-center space-x-12">
-            <Link href="/" className="flex items-center gap-2">
-              <Logo height="28" width="28" />
-              <span className="text-lg font-normal font-heading">Lead
-                <span className="text-lg font-bold font-heading">Looking</span>
-              </span>
-            </Link>
+      <MaxWidthWrapper className="flex items-center justify-between">
+        {/* Logo Section */}
+        <div className="flex items-center space-x-12">
+          <Link href="/" className="flex items-center gap-2">
+            <Logo height="28" width="28" />
+            <span className="text-lg font-normal font-heading">
+              Lead
+              <span className="text-lg font-bold font-heading">Looking</span>
+            </span>
+          </Link>
 
-            {/* Desktop Navigation */}
-            {!isAuthPage && (
-              <NavigationMenu className="hidden lg:flex">
-                <NavigationMenuList>
-                  {NAV_LINKS.map((link) => (
-                    <NavigationMenuItem key={link.title}>
-                      {link.menu ? (
-                        <>
-                          <NavigationMenuTrigger className="bg-transparent data-[state=open]:bg-transparent">
-                            {link.title}
-                          </NavigationMenuTrigger>
-                          <NavigationMenuContent>
-                            <ul
-                              className={cn(
-                                'grid gap-1 p-4 md:w-[400px] lg:w-[500px] rounded-xl',
-                                link.title === 'Features'
-                                  ? 'lg:grid-cols-[.75fr_1fr]'
-                                  : 'lg:grid-cols-2'
-                              )}
-                            >
-                              {link.title === 'Features' && (
-                                <li className="row-span-4">
-                                  <NavigationMenuLink asChild>
-                                    <Link
-                                      href="/"
-                                      className="flex h-full w-full flex-col justify-end rounded-lg p-4 no-underline outline-none focus:shadow-md"
-                                    >
-                                      <h6 className="mb-2 mt-4 text-lg font-medium">
-                                        All Features
-                                      </h6>
-                                      <p className="text-sm leading-tight text-muted-foreground">
-                                        Comments and engage
-                                      </p>
-                                    </Link>
-                                  </NavigationMenuLink>
-                                </li>
-                              )}
-                              {link.menu.map((menuItem) => (
-                                <ListItem
-                                  key={menuItem.title}
-                                  title={menuItem.title}
-                                  href={menuItem.href}
-                                  icon={menuItem.icon}
-                                >
-                                  {menuItem.tagline}
-                                </ListItem>
-                              ))}
-                            </ul>
-                          </NavigationMenuContent>
-                        </>
-                      ) : (
-                        <NavigationMenuLink asChild>
-                          <Link
-                            href={link.href}
+          {/* Desktop Navigation */}
+          {!isAuthPage && (
+            <NavigationMenu className="hidden lg:flex">
+              <NavigationMenuList>
+                {NAV_LINKS.map((link) => (
+                  <NavigationMenuItem key={link.title}>
+                    {link.menu ? (
+                      <>
+                        <NavigationMenuTrigger className="bg-transparent data-[state=open]:bg-transparent">
+                          {link.title}
+                        </NavigationMenuTrigger>
+                        <NavigationMenuContent>
+                          <ul
                             className={cn(
-                              navigationMenuTriggerStyle(),
-                              'bg-transparent hover:bg-accent hover:text-accent-foreground'
+                              'grid gap-1 p-4 md:w-[400px] lg:w-[500px] rounded-xl',
+                              link.title === 'Features'
+                                ? 'lg:grid-cols-[.75fr_1fr]'
+                                : 'lg:grid-cols-2',
                             )}
                           >
-                            {link.title}
-                          </Link>
-                        </NavigationMenuLink>
-                      )}
-                    </NavigationMenuItem>
-                  ))}
-                </NavigationMenuList>
-              </NavigationMenu>
-            )}
-          </div>
-
-          {/* Auth Actions */}
-          {!isAuthPage && (
-            <div className="hidden lg:flex items-center">
-              {isSignedIn ? (
-                <Link href="/campaigns" className={buttonVariants({ size: 'sm' })}>
-                  Dashboard
-                  <ArrowRight className="size-4 ml-1.5" />
-                </Link>
-              ) : (
-                <Link href="/sign-up" className={buttonVariants({ size: 'sm' })}>
-                  Find Reddit Customers
-                  <ArrowRight className="size-4 ml-1.5" />
-                </Link>
-              )}
-            </div>
+                            {link.title === 'Features' && (
+                              <li className="row-span-4">
+                                <NavigationMenuLink asChild>
+                                  <Link
+                                    href="/"
+                                    className="flex h-full w-full flex-col justify-end rounded-lg p-4 no-underline outline-none focus:shadow-md"
+                                  >
+                                    <h6 className="mb-2 mt-4 text-lg font-medium">All Features</h6>
+                                    <p className="text-sm leading-tight text-muted-foreground">
+                                      Comments and engage
+                                    </p>
+                                  </Link>
+                                </NavigationMenuLink>
+                              </li>
+                            )}
+                            {link.menu.map((menuItem) => (
+                              <ListItem
+                                key={menuItem.title}
+                                title={menuItem.title}
+                                href={menuItem.href}
+                                icon={menuItem.icon}
+                              >
+                                {menuItem.tagline}
+                              </ListItem>
+                            ))}
+                          </ul>
+                        </NavigationMenuContent>
+                      </>
+                    ) : (
+                      <NavigationMenuLink asChild>
+                        <Link
+                          href={link.href}
+                          className={cn(
+                            navigationMenuTriggerStyle(),
+                            'bg-transparent hover:bg-accent hover:text-accent-foreground',
+                          )}
+                        >
+                          {link.title}
+                        </Link>
+                      </NavigationMenuLink>
+                    )}
+                  </NavigationMenuItem>
+                ))}
+              </NavigationMenuList>
+            </NavigationMenu>
           )}
+        </div>
 
-          <MobileNavbar />
-        </MaxWidthWrapper>
-      </AnimationContainer>
+        {/* Auth Actions */}
+
+        <Link href={config.chromeWebStoreUrl || '#'} target="_blank" className={buttonVariants({ size: 'sm' })}>
+          <FaChrome className="size-4 mr-1.5" />
+          Track Leads Easily
+        </Link>
+
+        {/* <MobileNavbar /> */}
+      </MaxWidthWrapper>
     </header>
   );
 };
@@ -146,7 +133,7 @@ const ListItem = React.forwardRef<
           ref={ref}
           className={cn(
             'block space-y-1 rounded-lg p-3 leading-none no-underline outline-none transition-all hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground',
-            className
+            className,
           )}
           {...props}
         >

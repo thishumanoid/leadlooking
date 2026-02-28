@@ -19,7 +19,7 @@ import { useRealtimeRun } from '@trigger.dev/react-hooks';
 import { ScanningLoader } from '@/components/scanning-loader';
 import { ConfettiSideCannons } from '@/components/confetti-side-cannons';
 import { ScanResultsDialog } from '@/components/scan-results-dialog';
-import { useUser } from '@clerk/nextjs';
+// import { useUser } from '@clerk/nextjs';
 import { CampaignPageSkeleton } from '@/components/campaign-page-skeleton';
 
 import {
@@ -53,7 +53,8 @@ export default function CampaignsPage() {
   const [showConfetti, setShowConfetti] = useState(false);
   const [showResultsDialog, setShowResultsDialog] = useState(false);
   const router = useRouter();
-  const { user } = useUser();
+  // const { user } = useUser();
+  const user = {emailAddresses: [{emailAddress: 'test@gmail.com'}]}
   const { isPremium: isSubscriptionPremium } = useSubscription();
 
   // Trigger.dev hook implementation

@@ -28,82 +28,33 @@ const Footer = () => {
                 <div className="">
                   <h3 className="text-base font-medium text-white">Product</h3>
                   <ul className="mt-4 text-sm text-muted-foreground">
-                    {/* <li className="mt-2">
-                      <Link href="/blogs" className="hover:text-foreground transition-all duration-300">
-                      Blogs
-                    </Link>
-                    </li> */}
                     <li className="mt-2">
                       <Link
-                        href="/pricing"
+                        href="https://tagfast.web.app/pricing"
                         className="hover:text-foreground transition-all duration-300"
                       >
                         Pricing
                       </Link>
                     </li>
-                    <li className="mt-2">
-                      <Link
-                        href="/feedback"
-                        className="hover:text-foreground transition-all duration-300"
-                      >
-                        Support
-                      </Link>
-                    </li>
-                    {/* <li className="mt-2">
-                    <Link href="" className="hover:text-foreground transition-all duration-300">
-                      Testimonials
-                    </Link>
-                  </li> */}
-                    {/* <li className="mt-2">
-                    <Link href="" className="hover:text-foreground transition-all duration-300">
-                      Integration
-                    </Link>
-                  </li> */}
                   </ul>
                 </div>
-              {/* <AnimationContainer delay={0.3}>
-              <div className="mt-10 md:mt-0 flex flex-col">
-                <h3 className="text-base font-medium text-white">Integrations</h3>
-                <ul className="mt-4 text-sm text-muted-foreground">
-                  <li className="">
-                    <Link href="" className="hover:text-foreground transition-all duration-300">
-                      Facebook
-                    </Link>
-                  </li>
-                  <li className="mt-2">
-                    <Link href="" className="hover:text-foreground transition-all duration-300">
-                      Instagram
-                    </Link>
-                  </li>
-                  <li className="mt-2">
-                    <Link href="" className="hover:text-foreground transition-all duration-300">
-                      Twitter
-                    </Link>
-                  </li>
-                  <li className="mt-2">
-                    <Link href="" className="hover:text-foreground transition-all duration-300">
-                      LinkedIn
-                    </Link>
-                  </li>
-                </ul>
-              </div>
-            </AnimationContainer> */}
+              
             </div>
             <div className="md:grid md:grid-cols-2 md:gap-8">
                 <div className="">
                   <h3 className="text-base font-medium text-white">Resources</h3>
                   <ul className="mt-4 text-sm text-muted-foreground">
-                    <li className="mt-2">
+                    {/* <li className="mt-2">
                       <Link
                         href="/resources/help"
                         className="hover:text-foreground transition-all duration-300"
                       >
                         FAQ
                       </Link>
-                    </li>
+                    </li> */}
                     <li className="mt-2">
                       <Link
-                        href="/feedback"
+                        href="https://tagfast.web.app/feedback"
                         className="hover:text-foreground transition-all duration-300"
                       >
                         Feedback?
@@ -127,7 +78,6 @@ const Footer = () => {
                     </li>
                   </ul>
                 </div>
-              <AnimationContainer delay={0.5}>
                 <div className="flex flex-col">
                   <h3 className="text-base font-medium text-white">Legal</h3>
                   <ul className="text-sm text-muted-foreground">
@@ -138,7 +88,7 @@ const Footer = () => {
                   </li> */}
                     <li className="mt-2">
                       <Link
-                        href="/privacy"
+                        href="https://tagfast.web.app/privacy"
                         className="hover:text-foreground transition-all duration-300"
                       >
                         Privacy Policy
@@ -146,32 +96,35 @@ const Footer = () => {
                     </li>
                     <li className="mt-2">
                       <Link
-                        href="/terms"
+                        href="https://tagfast.web.app/terms"
                         className="hover:text-foreground transition-all duration-300"
                       >
                         Terms & Conditions
                       </Link>
                     </li>
-                    <li className="mt-2">
+                    {/* <li className="mt-2">
                       <Link
                         href="/refund"
                         className="hover:text-foreground transition-all duration-300"
                       >
                         Refund Policy
                       </Link>
-                    </li>
+                    </li> */}
                   </ul>
                 </div>
-              </AnimationContainer>
             </div>
           </div>
         </div>
 
-        <div className="mt-8 mb-7 border-t border-border/40 pt-4 md:pt-8 md:flex md:items-center md:justify-between w-full">
+        {/* <div className="mt-8 mb-7 border-t border-border/40 pt-4 md:pt-8 md:flex md:items-center md:justify-between w-full">
           <p className="text-sm text-muted-foreground/50 mt-8 md:mt-0">
             &copy; {new Date().getFullYear()} {config.appName}. All rights reserved.
           </p>
-        </div>
+        </div> */}
+
+        <br />
+        <br />
+        <br />
       </footer>
     </>
   );

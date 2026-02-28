@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { useUser } from '@clerk/nextjs';
+// import { useUser } from '@clerk/nextjs';
 import { useSupabase } from './supabase-provider';
 import { Tables } from '@/types/supabaseTypes';
 
@@ -20,25 +20,25 @@ const SubscriptionContext = createContext<SubscriptionContextType>({
 });
 
 export const SubscriptionProvider = ({ children }: { children: React.ReactNode }) => {
-  const { user, isLoaded: isUserLoaded } = useUser();
+  const user = {emailAddresses: [{emailAddress: 'test@gmail.com', id: 'test', verified: true }]}
   const { supabase, isLoaded: isSupabaseLoaded } = useSupabase();
   const [subscription, setSubscription] = useState<Profile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchSubscription = async () => {
-      if (!isUserLoaded || !isSupabaseLoaded || !user) {
-        if (isUserLoaded && !user) {
-          setIsLoading(false);
-        }
-        return;
-      }
+      // if (!isUserLoaded || !isSupabaseLoaded || !user) {
+      //   if (isUserLoaded && !user) {
+      //     setIsLoading(false);
+      //   }
+      //   return;
+      // }
 
       try {
         const { data, error } = await supabase
           .from('profiles')
           .select('*')
-          .eq('user_id', user.id)
+          .eq('user_id', user.emailAddresses[0].id)
           .maybeSingle();
 
         if (error) {

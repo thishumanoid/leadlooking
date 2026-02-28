@@ -16,7 +16,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Loader2, Sparkles, WandSparkles, Globe, Layout, FileText, Mail } from 'lucide-react';
 import { toast } from 'sonner';
 import { useSupabase } from '@/hooks/supabase-provider';
-import { useUser } from '@clerk/nextjs';
+// import { useUser } from '@clerk/nextjs';
 import { scrapeMetadata } from '@/utils/functions/scrapeMetadata';
 import { getKeywords } from '@/utils/functions/getKeywords';
 import KeywordsGuide from './keywordsGuide';
@@ -48,7 +48,7 @@ export function CampaignDialog({
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { supabase } = useSupabase();
-  const { user } = useUser();
+  const user = {emailAddresses: [{emailAddress: 'test@gmail.com'}]}
   const router = useRouter();
 
   const [wasManuallyEdited, setWasManuallyEdited] = useState({

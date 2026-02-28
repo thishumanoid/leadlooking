@@ -2,7 +2,6 @@
 
 import type { ConfigProps } from './types/config';
 
-
 /// this is the file where you should customize all the global level stuff like app name and payment provider
 
 const config = {
@@ -12,13 +11,14 @@ const config = {
   appDescription: 'Reddit Marketing Made Easy.',
 
   /// REQUIRED: a very short description of your app under 5 words, this will appear in footer
-  footerDescription: 'Reddit Marketing Made Easy',
+  footerDescription: 'Track, Track, Track, Track',
   //// to change logo, search "YourLogo.tsx" file
 
   appUrl: 'https://www.leadlooking.com',
 
-  chromeWebStoreUrl: 'https://www.leadlooking.com',
-  firefoxStoreUrl: 'https://www.leadlooking.com',
+  chromeWebStoreUrl:
+    'https://chromewebstore.google.com/detail/tagfast-mark-profiles-as/olohoaikbpcfhkbcolocphodjbdjnign?utm_source=leadlooking',
+  firefoxStoreUrl: 'https://addons.mozilla.org/en-US/firefox/addon/tagfast-track-leads/',
 
   extensionDemoVideo: '/',
 

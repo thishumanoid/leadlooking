@@ -6,12 +6,10 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import { Badge } from '@/components/ui/badge';
 import { Zap, Lock, Gift, Smartphone } from 'lucide-react';
 import LinkedInCarouselGenerator from './carousel-generator';
 import config from '@/config';
-
-// ─── Metadata ────────────────────────────────────────────────────────────────
+import CtaCard from '@/components/CTA';
 
 export const metadata: Metadata = {
   title: 'LinkedIn Carousel Generator for Real Estate',
@@ -271,35 +269,24 @@ export default function LinkedInCarouselPage() {
         </section>
 
         {/* ── FAQ ── */}
-        <section className="space-y-6 max-w-3xl">
-          <h2 className="text-2xl font-bold tracking-tight">Frequently Asked Questions</h2>
-          <Accordion type="single" collapsible className="space-y-2">
+        <section className="max-w-3xl space-y-6">
+          <div className="space-y-1">
+            <h2 className="text-2xl font-bold tracking-tight">Frequently Asked Questions</h2>
+          </div>
+
+          <Accordion type="single" collapsible className="w-full">
             {faqs.map((faq, i) => (
-              <AccordionItem key={i} value={`faq-${i}`} className="border rounded-xl px-4">
-                <AccordionTrigger className="text-left font-semibold hover:no-underline">
-                  {faq.q}
-                </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground">{faq.a}</AccordionContent>
+              <AccordionItem key={i} value={`faq-${i}`}>
+                <AccordionTrigger className="text-sm font-medium">{faq.q}</AccordionTrigger>
+                <AccordionContent className="text-sm text-muted-foreground leading-relaxed">
+                  {faq.a}
+                </AccordionContent>
               </AccordionItem>
             ))}
           </Accordion>
         </section>
 
-        {/* ── CTA ── */}
-        <section className="text-center space-y-4 py-12 px-6 rounded-2xl bg-muted/40 border">
-          <h2 className="text-2xl font-bold">Want to Automate Your LinkedIn Content?</h2>
-          <p className="text-muted-foreground max-w-xl mx-auto">
-            This free tool is a taste of what's possible. Our full platform lets real estate teams
-            schedule carousels, repurpose listings automatically, and grow their LinkedIn presence
-            on autopilot.
-          </p>
-          <a
-            href="/"
-            className="inline-flex items-center gap-2 bg-primary text-primary-foreground hover:bg-primary/90 font-semibold px-6 py-3 rounded-full transition-colors"
-          >
-            Explore the Full Platform →
-          </a>
-        </section>
+        <CtaCard />
       </main>
     </>
   );

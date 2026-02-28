@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Check, X, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useUser } from '@clerk/nextjs';
+// import { useUser } from '@clerk/nextjs';
 
 interface PricingFeature {
   text: string;
@@ -47,10 +47,10 @@ export default function PricingCards() {
   const router = useRouter();
   const [activePlans] = useState<PlanConfig[]>(planConfig);
   const [loadingPlanId, setLoadingPlanId] = useState<string | null>(null);
-  const { isSignedIn, user } = useUser();
+  const user = {emailAddresses: [{emailAddress: 'test@gmail.com', id: 'test'}]}
 
   const handleClick = async (plan: PlanConfig) => {
-    if (!isSignedIn) {
+    if (!user) {
       router.push('/sign-up');
       return;
     }
@@ -67,7 +67,7 @@ export default function PricingCards() {
           body: JSON.stringify({
             id: plan.id,
             userEmail: user.emailAddresses[0].emailAddress,
-            userId: user?.id,
+            userId: user
           }),
         });
 

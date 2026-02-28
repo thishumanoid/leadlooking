@@ -1,8 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
-import { ClerkProvider } from '@clerk/nextjs';
-import { dark } from '@clerk/themes';
 import { Toaster } from 'sonner';
 import { PostHogProvider } from '@/hooks/posthog-provider';
 
@@ -46,11 +44,6 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider
-      appearance={{
-        theme: dark,
-      }}
-    >
       <html lang="en">
         <head>
           <meta name="apple-mobile-web-app-title" content="LeadLooking" />
@@ -62,6 +55,5 @@ export default function RootLayout({
           </PostHogProvider>
         </body>
       </html>
-    </ClerkProvider>
   );
 }

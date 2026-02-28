@@ -8,12 +8,12 @@ import {
 } from '@/components/ui/accordion';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import config from '@/config';
 import { cn } from '@/lib/utils';
 import { NAV_LINKS } from '@/utils/constants/navlinks';
 import { LucideIcon, Menu, X } from 'lucide-react';
 import Link from 'next/link';
 import React, { useState } from 'react';
-// import { useAuth } from '@/context/AuthContext';
 
 const MobileNavbar = () => {
   const user = false;
@@ -42,17 +42,9 @@ const MobileNavbar = () => {
           <div className="flex flex-col h-full pt-6 px-6">
             {/* Auth Button */}
             <div className="pb-6">
-              {user ? (
+              
                 <Link
-                  href="/dashboard"
-                  onClick={handleClose}
-                  className={buttonVariants({ variant: 'primary', className: 'w-full' })}
-                >
-                  Dashboard
-                </Link>
-              ) : (
-                <Link
-                  href="/auth"
+                  href={config.chromeWebStoreUrl || '#'}
                   onClick={() => {
                     handleClick('navbar_mobile:get_started_btn:click');
                     handleClose();
@@ -61,7 +53,6 @@ const MobileNavbar = () => {
                 >
                   Get Started
                 </Link>
-              )}
             </div>
 
             {/* Navigation Links */}

@@ -10,11 +10,14 @@ export default function LandingPage() {
   return (
     <MaxWidthWrapper>
       <Hero />
-      <Steps />
-      <Features />
-      <PricingCard />
-      <FAQ />
-      <CTA />
+      {/* <Steps /> */}
+      {/* <Features /> */}
+      {/* <PricingCard /> */}
+      {/* <FAQ /> */}
+      {/* <CTA /> */}
+      <br />
+      <br />
+      <br />
     </MaxWidthWrapper>
   );
 }
