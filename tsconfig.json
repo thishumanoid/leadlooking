@@ -32,6 +32,6 @@
     "worker/notifications/mailtrap.ts",
     "worker/d.js",
     "trigger.config.ts"
-  ],
+, "app/(marketing)/tools/linkedin-carousel-generator-for-real-estate/carousel-generator.jsx"  ],
   "exclude": ["node_modules", "supabase"]
 }

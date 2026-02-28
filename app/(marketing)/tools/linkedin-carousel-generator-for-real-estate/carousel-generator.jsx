@@ -880,7 +880,7 @@ export default function LinkedInCarouselGenerator() {
       });
 
       for (let i = 0; i < elements.length; i++) {
-        const el = elements[i] as HTMLElement;
+        const el = elements[i];
 
         // Use a high pixel ratio for crisp text/images
         const dataUrl = await toPng(el, {
