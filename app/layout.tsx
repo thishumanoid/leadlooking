@@ -13,29 +13,45 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: {
     template: '%s | LeadLooking',
-    default: 'LeadLooking - Find Your Next Customer on Reddit',
+    default: 'LeadLooking - Track Your Leads Easily',
   },
 
-  description: 'Find high-intent Reddit leads everyday. Track keywords, get instant notifications and join conversations where people need exactly what you offer.',
+  description:
+    'Mark profiles with labels, set reminders & track your interactions across social platforms. The Chrome extension that helps marketers eliminate duplicate outreach and stay organized.',
 
   metadataBase: new URL('https://www.leadlooking.com/'),
-  keywords: ['marketing', 'leads', 'reddit automation'],
+  keywords: [
+    'social media outreach tracking',
+    'chrome extension for marketers',
+    'avoid duplicate messages',
+    'track social interactions',
+    'outreach management tool',
+    'social selling chrome extension',
+    'LinkedIn outreach tracker',
+    'Twitter outreach tool',
+    'marketer productivity tool',
+    'social media CRM',
+    'contact tracking extension',
+    'sales outreach organizer',
+  ],
 
   openGraph: {
-    title: 'LeadLooking - Find Your Next Customer on Reddit',
-    description: 'Find high-intent Reddit leads everyday. Track keywords, get instant notifications and join conversations where people need exactly what you offer.',
+    title: 'LeadLooking - Track Your Leads Easily',
+    description:
+      'Mark profiles with labels, set reminders & track your interactions across social platforms. The Chrome extension that helps marketers eliminate duplicate outreach and stay organized.',
     url: 'https://www.leadlooking.com/',
   },
 
   twitter: {
     card: 'summary_large_image',
-    title: 'LeadLooking - Find Your Next Customer on Reddit',
-    description: 'Find high-intent Reddit leads everyday. Track keywords, get instant notifications and join conversations where people need exactly what you offer.',
+    title: 'LeadLooking - Track Your Leads Easily',
+    description:
+      'Chrome extension for smart marketers. Track interactions, mark profiles with labels, set reminders & never send duplicate messages again.',
   },
 
   alternates: {
     canonical: 'https://www.leadlooking.com/',
-  }
+  },
 };
 
 export default function RootLayout({
@@ -44,16 +60,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-      <html lang="en">
-        <head>
-          <meta name="apple-mobile-web-app-title" content="LeadLooking" />
-        </head>
-        <body className={`${inter.className} antialiased dark`}>
-          <PostHogProvider>
-            {children}
-            <Toaster />
-          </PostHogProvider>
-        </body>
-      </html>
+    <html lang="en">
+      <head>
+        <meta name="apple-mobile-web-app-title" content="LeadLooking" />
+      </head>
+      <body className={`${inter.className} antialiased dark`}>
+        <PostHogProvider>
+          {children}
+          <Toaster />
+        </PostHogProvider>
+      </body>
+    </html>
   );
 }
