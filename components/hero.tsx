@@ -74,7 +74,7 @@ function Hero() {
 
             <div className="mt-10 flex flex-col items-center justify-center gap-4">
               <p className="text-sm md:text-base text-muted-foreground">
-                Join <span className="font-bold text-foreground">⭐15+</span> SaaS Founders and
+                Join <span className="font-bold text-foreground">⭐16+</span> SaaS Founders and
                 Freelancers
               </p>
               <div className="flex -space-x-4">
