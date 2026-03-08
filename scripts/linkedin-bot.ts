@@ -66,8 +66,7 @@ export default async function linkedinBot() {
   // 3. Publish to LinkedIn
   // We need the URN (ID) of the user to post.
   // Ideally, store your URN in env, or fetch it dynamically (shown below).
-  // const LINKEDIN_ACCESS_TOKEN = process.env.LINKEDIN_ACCESS_TOKEN;
-  const LINKEDIN_ACCESS_TOKEN = `AQVX8SIt6FIMS29Tr4RWDhiS5BBvQK4OCdqDWXTk8wAiualJnEWBTBA_Xg-StS6aIJHcjyrLaJOrT2-12_UMuByP3JctnrSO2MjcjDhkIAIokKOt5ryE-RuSpbW6-pw-ouprLbDZjnVhZGEO0IM4Pfl-_m9v1Ks_k8HruWYIkHu4KoWzaHu2FaenUIOeR1z_935lvWogemsPPzMScvkO429kxk07lsFrjV7B-k-PbycFpdBe1CJ5FyDgGIQOXwitg2l_r8QVceVE518Ie63gW5bKlw0G-a2VViOlOLc4ZiiyWnTDGEZTha8Lp37pxSIaTHnBU_EM3iJx3JkV1my_xBRtoVR6rQ`;
+  const LINKEDIN_ACCESS_TOKEN = process.env.LINKEDIN_ACCESS_TOKEN;
 
 
 

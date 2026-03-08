@@ -4,9 +4,6 @@ import { auth } from '@clerk/nextjs/server';
 import { WebClient } from '@slack/web-api';
 import supabaseAdmin from '@/lib/supabase/supabaseAdmin';
 
-///// replace hard coded id ////////////////////
-
-// const userId = 'user_386Q5mG9IOTH7OIZsmgJOnJw5SP'
 
 export async function getSlackChannels() {
   const { userId } = await auth();

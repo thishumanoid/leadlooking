@@ -15,7 +15,7 @@ import {
 const CACHE_FILE = path.join(process.cwd(), 'blog-cache.json');
 
 const google = createGoogleGenerativeAI({
-  apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY || 'AIzaSyC--cS6PaB5S0EC6s_idnC60uM3cQn1c7Q',
+  apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY,
 });
 
 function readCache(): { generatedTitles: string[] } {
