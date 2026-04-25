@@ -1,216 +1,236 @@
-# ⚡extFast - Web App Boilerplate
+# LeadLooking 🔍
 
-Welcome to extFast! This repo is built with NextJs + Shadcn UI + Supabase.
+> An autonomous AI agent that monitors Reddit 24/7 and surfaces warm leads for your product — on autopilot.
 
-## Go to [Browser Extension Boilerplate](https://github.com/extFast/extension-boilerplate)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178c6?style=flat-square&logo=typescript&logoColor=white)
+![React](https://img.shields.io/badge/React-61dafb?style=flat-square&logo=react&logoColor=black)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind-06b6d4?style=flat-square&logo=tailwindcss&logoColor=white)
+![Vercel](https://img.shields.io/badge/Vercel-000000?style=flat-square&logo=vercel&logoColor=white)
+![Trigger.dev](https://img.shields.io/badge/Trigger.dev-e879f9?style=flat-square)
+![License: MIT](https://img.shields.io/badge/License-MIT-22c55e?style=flat-square)
 
-## Go to [Documentation](https://extfast-docs.hashnode.space/docs/getting-started)
+**[Live Demo](https://leadlooking.com)** · **[Report a Bug](https://github.com/thishumanoid/leadlooking/issues)** · **[Request a Feature](https://github.com/thishumanoid/leadlooking/issues)**
 
+---
 
+## The Problem
 
-##  Core Tech
+Reddit is one of the highest-intent platforms on the internet. Every day, thousands of people post things like:
 
-- **Framework**:[ Next.js](https://nextjs.org/docs)
-- **UI**: [shadcn/ui](https://ui.shadcn.com/)
-- **Authentication**: [Supabase Auth](https://supabase.com/docs/guides/auth)
-- **Payments**: [Polar.sh](https://polar.sh/docs/introduction)
-- **Email**: [Resend](https://resend.com/docs/introduction)
-- **Typescript**: Saves a lot of testing headache & autocomplete while writing code
+> *"Is there any tool that helps me automate X?"*
+> 
+> *"Looking for a SaaS that does Y — any recommendations?"*
+> 
+> *"We're struggling with Z at work. What does everyone use?"*
 
+These are warm, inbound leads, people who already have the problem you solve, actively looking for a solution. But finding them manually across hundreds of subreddits, in real time, is impossible at scale.
+
+**LeadLooking solves this.**
+
+---
+
+## How It Works
+
+```
+Enter product details  →  Agent monitors Reddit  →  AI scores each post  →  Leads land in your dashboard
+```
+
+1. **Describe your product** — Name, description, and the core problem it solves
+2. **Agent spins up** — A persistent background agent begins scanning relevant subreddits
+3. **AI analysis** — Every post and thread is run through an LLM, scored for intent, pain, and product fit
+4. **Leads surfaced** — High-scoring matches appear in your dashboard with context, score, and a direct link
+5. **Runs forever** — The agent loops on a schedule with zero manual effort
+
+---
+
+## Features
+
+- **Autonomous Agent** — Persistent agent via Trigger.dev. Runs on a cron, survives failures, retries automatically
+- **LLM Intent Scoring** — Posts are semantically analysed for buying intent, not just keyword matched
+- **Smart Subreddit Targeting** — Relevant subreddits are identified automatically from your product description
+- **Lead Dashboard** — Clean, filterable UI with post scores, subreddit, engagement metrics, and direct links
+- **Rate-limit Aware Scraping** — Built to respect Reddit's API constraints and stay under the radar
+- **Multi-product Support** — Run independent agents for multiple products simultaneously
+- **Fully Open Source** — Self-hostable, transparent, and hackable
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Frontend | React 18, TypeScript, shadcn/ui, Tailwind CSS |
+| API & Auth | Vercel Serverless Functions |
+| Agent & Scraping | Trigger.dev (scheduled + durable background jobs) |
+| AI Scoring | LLM pipeline (OpenAI / Anthropic) |
+| Deployment | Vercel (frontend + API), Trigger.dev (agent) |
+
+---
+
+## Architecture
+
+```
+┌──────────────────────────────────────────────────────┐
+│                   CLIENT  (Vercel)                    │
+│           React + TypeScript + shadcn/ui              │
+└────────────────────────┬─────────────────────────────┘
+                         │  API Routes
+┌────────────────────────▼─────────────────────────────┐
+│                 API LAYER  (Vercel)                   │
+│          Serverless Functions · Auth · DB             │
+└────────────────────────┬─────────────────────────────┘
+                         │  Trigger Job
+┌────────────────────────▼─────────────────────────────┐
+│             AGENT RUNTIME  (Trigger.dev)              │
+│                                                       │
+│   ┌────────────┐    ┌───────────┐    ┌────────────┐  │
+│   │  Scheduler │───▶│  Scraper  │───▶│    LLM     │  │
+│   │ (Cron Job) │    │ (Reddit)  │    │  Scoring   │  │
+│   └────────────┘    └───────────┘    └─────┬──────┘  │
+│                                            │          │
+│                                   ┌────────▼───────┐  │
+│                                   │  Lead Storage  │  │
+│                                   └────────────────┘  │
+└───────────────────────────────────────────────────────┘
+```
+
+---
 
 ## Getting Started
 
-### 1. Clone the Repository
+### Prerequisites
 
-You have three options to get started:
+- Node.js `>= 18`
+- A [Trigger.dev](https://trigger.dev) account
+- A [Vercel](https://vercel.com) account
+- Reddit API credentials
+- OpenAI or Anthropic API key
 
-**Option A: Use as Template (Recommended)**
-- Click the "Use this template" button at the top of this repository
-- Create your own repository from this template
+### Installation
 
-**Option B: Clone via Git**
+**1. Clone the repo**
+
 ```bash
-git clone https://github.com/extFast/webapp-boilerplate.git [YOUR_APP_NAME]
-cd [YOUR_APP_NAME]
-npm install
-git remote remove origin
+git clone https://github.com/thishumanoid/leadlooking.git
+cd leadlooking
 ```
 
-**Option C: Download ZIP**
-- Click "Code" → "Download ZIP"
-- Extract and navigate to the folder
-- Run `npm install`
+**2. Install dependencies**
 
-## 2. Environment Setup
+```bash
+npm install
+```
 
-Rename `.env.example` file to `.env.development`
+**3. Set up environment variables**
 
-### 3. Start Development Server
+```bash
+cp .env.example .env.local
+```
+
+```env
+# App
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+
+# Auth
+AUTH_SECRET=
+
+# Database
+DATABASE_URL=
+
+# Reddit
+REDDIT_CLIENT_ID=
+REDDIT_CLIENT_SECRET=
+REDDIT_USER_AGENT=LeadLooking/1.0
+
+# AI  (pick one)
+OPENAI_API_KEY=
+ANTHROPIC_API_KEY=
+
+# Trigger.dev
+TRIGGER_SECRET_KEY=
+```
+
+**4. Start the dev server**
 
 ```bash
 npm run dev
 ```
 
-Your app will be available at `http://localhost:3000`
-
-### 4. Connect Services
-
-Rename `.env.example` to `.env.development` and configure the following variables:
-
-```env
-# SUPABASE
-NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
-NEXT_PUBLIC_SUPABASE_URL=
-SUPABASE_SECRET_KEY=
-
-# POLAR
-POLAR_ACCESS_TOKEN=
-# use "sandbox" in development and "production" when going live
-POLAR_SERVER=sandbox
-POLAR_CHECKOUT_SUCCESS_URL=
-NEXT_PUBLIC_POLAR_PRODUCT_A=
-NEXT_PUBLIC_POLAR_PRODUCT_B=
-POLAR_WEBHOOK_SECRET=
-
-# RESEND
-RESEND_API_KEY=
-
-# YOUR APP
-NEXT_PUBLIC_WEB_APP_URL=http://localhost:3000
-NEXT_PUBLIC_AUTH_SUCCESS_URL=http://localhost:3000/auth/auth-success
-NEXT_PUBLIC_PASSWORD_UPDATE_URL=http://localhost:3000/auth/update-password
-```
-
-#### 4.1 Supabase Setup (if not already done)
-
-1. Create a free account at [supabase.com](https://supabase.com)
-2. Create a new project
-3. Navigate to the SQL Editor and run this command to create the required table:
-
-```sql
-CREATE TABLE PremiumUsers (
-  user_email TEXT PRIMARY KEY,
-  subscription_status TEXT NOT NULL,
-  plan_type TEXT,
-  credits_used INTEGER,
-  subscribed_at TIMESTAMPTZ,
-  expires_at TIMESTAMPTZ,
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  subscription_id TEXT,
-  customer_id TEXT
-);
-```
-
-or if you want to create table manually then try to keep it in this format:  
-Table name should be: `PremiumUsers`
-columns are like these:
-
-`user_email`: text (not nullable)  
-`subscription_status`: text (not nullable)  
-`plan_type`: text (can be null)  
-`credits_used`: number (can be null)  
-`subscribed_at`: timestamptz (can be null)  
-`expires_at`: timestamptz (can be null)  
-`created_at`: timestamptz (can be null)  
-`subscription_id`: text (can be null)  
-`customer_id`: text (can be null)  
-
-like this screenshot:
-<img width="1920" height="450" alt="Image" src="https://github.com/user-attachments/assets/40a0f940-6c0b-4495-9682-968ad4176f18" />
-
-4. Copy your Project URL and paste it into `NEXT_PUBLIC_SUPABASE_URL`
-5. Copy your Publishable API Key and paste it into `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
-6. Copy your Secret API Key (service_role key) and paste it into `SUPABASE_SECRET_KEY`
-7. Enable Google authentication:
-   - Go to Authentication → Providers
-   - Enable Google OAuth provider
-
-#### 4.2 Polar.sh Setup - [docs](https://polar.sh/docs/guides/nextjs) or [video tutorial](https://www.youtube.com/watch?v=7oQr-Z-sCYU)
-
-1. Create a sandbox account at [sandbox.polar.sh](https://sandbox.polar.sh/)
-2. Create your products and get their IDs - [docs](https://polar.sh/docs/features/products)
-3. Copy your access token and paste it into `POLAR_ACCESS_TOKEN`
-4. Set up your product IDs in `NEXT_PUBLIC_POLAR_PRODUCT_A` and `NEXT_PUBLIC_POLAR_PRODUCT_B`
-5. Configure webhook secret in `POLAR_WEBHOOK_SECRET`
-
-
-#### 4.3 Replace Example URLs
-
-Throughout the codebase, replace `example.com` with your actual domain name.
-
-### 5. `context/AuthContext.tsx`
-
-#### Using AuthContext
-
-Access user authentication and subscription data in any component:
-
-```tsx
-import { useAuth } from '@/context/AuthContext';
-
-export default function UserDetails() {
-  const { user, subscription } = useAuth();
-
-  return (
-    <div>
-      <p>Email: {user?.email}</p>
-      <p>Plan: {subscription?.subscription_id}</p>
-    </div>
-  );
-}
-```
-
-#### App Configuration
-
-Edit `config.ts` to customize:
-- App name
-- Footer description
-- Other metadata
-
-## Customization Guide
-
-### Logo
-
-Replace the logo by editing `components/YourLogo.tsx` and pasting your SVG code. Need help creating a logo? Use this [Figma template](https://www.figma.com/community/file/1577982862611734351/chrome-web-store-assets-kit-extfast).
-
-### Theme Colors
-
-1. Visit [ui.shadcn.com/themes](https://ui.shadcn.com/themes)
-2. Choose your theme color (green, rose, orange, etc.)
-3. Copy the generated CSS code
-4. Paste it into your `globals.css` file (only replace the `.root` & `.dark` variables)
-
-### SEO Configuration
-
-**Sitemap**
-- ✅ Automatically generated using `next-sitemap.config.js`
-
-**Metadata**
-- Edit `app/layout.tsx`
-- Update title, description, and other metadata
-
-## Deployment Checklist
-
-Before deploying to production:
-
-- [ ] Replace `POLAR_SERVER="sandbox"` with `"production"` in `.env.development` or `.env.production` file
-- [ ] Update all Polar API keys from sandbox to production keys
-- [ ] Replace all `localhost` URLs with your production domain
-- [ ] Add your production web app domain as a callback redirect URL in Supabase Dashboard (Authentication → URL Configuration)
-- [ ] Update all `example.com` references with your actual domain
-- [ ] Build and test: `npm run build`
-- [ ] Deploy wherever you want!
-
-## Build for Production
+**5. Start the Trigger.dev agent** (separate terminal)
 
 ```bash
-npm run build
-npm start
+npx trigger dev
 ```
 
-## ☺️ Need Help?
-
-Send me an email at: neuhiman@gmail.com (i will try my best to reply ASAP)
+Visit [http://localhost:3000](http://localhost:3000) — you're live.
 
 ---
 
-Built with ❤️ for developers who want to build & monetize fast.
+## Project Structure
+
+```
+leadlooking/
+├── src/
+│   ├── app/
+│   │   ├── api/              # Vercel serverless endpoints
+│   │   └── dashboard/        # Lead dashboard pages
+│   ├── components/
+│   │   ├── ui/               # shadcn/ui primitives
+│   │   └── leads/            # Lead cards, filters, score display
+│   ├── lib/                  # Utilities, DB client, auth helpers
+│   └── trigger/
+│       ├── scraper.ts        # Reddit scraping logic
+│       ├── analyzer.ts       # LLM scoring pipeline
+│       └── scheduler.ts      # Cron job definitions
+├── .env.example
+└── README.md
+```
+
+---
+
+## Self-Hosting
+
+LeadLooking is fully self-hostable.
+
+1. Fork this repository
+2. Deploy to Vercel — [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/thishumanoid/leadlooking)
+3. Connect your Trigger.dev project and deploy the agent tasks
+4. Add your environment variables in the Vercel dashboard
+
+---
+
+## Roadmap
+
+- [x] Core Reddit scraping engine
+- [x] LLM intent scoring pipeline
+- [x] Lead dashboard with filters
+- [x] Trigger.dev scheduled agent
+- [ ] Slack and email notifications for new leads
+- [ ] Competitor mention tracking
+- [ ] Custom scoring rubric per product
+- [ ] Chrome extension for one-click outreach
+- [ ] Multi-platform support (Hacker News, X, Indie Hackers)
+
+---
+
+## Contributing
+
+Contributions are welcome. Please open an issue before submitting a large PR so we can align on direction.
+
+```bash
+git checkout -b feat/your-feature
+git commit -m "feat: describe your change"
+git push origin feat/your-feature
+```
+
+Then open a Pull Request against `main`.
+
+---
+
+## License
+
+MIT — free to use, modify, and distribute. See [`LICENSE`](./LICENSE) for details.
+
+---
+
+Built by [Himanshu](https://github.com/thishumanoid) 
