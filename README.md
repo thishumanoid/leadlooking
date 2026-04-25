@@ -1,6 +1,6 @@
 # LeadLooking 🔍
 
-> An autonomous AI agent that monitors Reddit 24/7 and surfaces warm leads for your product — on autopilot.
+> An autonomous AI agent that monitors Reddit 24/7 and surfaces warm leads for your product, on autopilot.
 
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178c6?style=flat-square&logo=typescript&logoColor=white)
 ![React](https://img.shields.io/badge/React-61dafb?style=flat-square&logo=react&logoColor=black)
