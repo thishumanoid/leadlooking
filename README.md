@@ -2,7 +2,7 @@
 
 **LeadLooking** runs on autopilot and finds potential leads for your business from Reddit, every single day, automatically.
 
-No more manually scrolling through subreddits. LeadLooking monitors relevant communities, identifies posts where people are looking for solutions you offer, and surfaces them for you daily.
+No more manually scrolling through subreddits. LeadLooking monitors relevant communities, identifies posts where people are looking for solutions you offer, and surfaces them for you daily :)
 
 ---
 
