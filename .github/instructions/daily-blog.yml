@@ -1,0 +1,48 @@
+name: Daily AI Blog Generator
+
+on:
+  schedule:
+    # Runs at 09:00 UTC every day
+    - cron: '0 9 * * *'
+  # Allows you to run it manually from GitHub UI for testing
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  write-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      # 1. Install pnpm environment
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      # 2. Setup Node (with pnpm caching enabled)
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      # 3. Install dependencies using pnpm
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Blog Post
+        env:
+          GOOGLE_GENERATIVE_AI_API_KEY: ${{ secrets.GOOGLE_GENERATIVE_AI_API_KEY }}
+        # 4. Use pnpm to run the script (assuming tsx is in your devDependencies)
+        run: pnpm dlx tsx scripts/generate-blog.ts
+
+      - name: Commit and Push
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "🤖 AI: Published new blog post"
+          branch: main
+          file_pattern: 'content/blogs/*.mdx blog-cache.json'
